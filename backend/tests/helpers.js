@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server';
+import { inject } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../src/app.js';
 import { User } from '../src/models/index.js';
@@ -15,11 +15,9 @@ const fakeAuth = {
   setRole: async () => {},
 };
 
-let mongo;
-
 export async function setupTestApp() {
-  mongo = await MongoMemoryServer.create();
-  await mongoose.connect(mongo.getUri());
+  // Unique database per test file on the shared server from globalSetup.js
+  await mongoose.connect(inject('mongoUri'), { dbName: `test_${Date.now()}_${Math.random().toString(36).slice(2, 6)}` });
   const app = await createApp({ auth: fakeAuth, connect: async () => {} });
 
   /** api(user?) → supertest agent that sends requests as that user. */
@@ -36,8 +34,8 @@ export async function setupTestApp() {
 }
 
 export async function teardownTestApp() {
+  await mongoose.connection.dropDatabase();
   await mongoose.disconnect();
-  await mongo?.stop();
 }
 
 export async function resetDb() {
