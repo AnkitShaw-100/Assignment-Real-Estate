@@ -14,6 +14,10 @@ const anonymousProvider = { resolveAuth: () => null, fetchProfile: async () => n
 
 async function defaultAuthProvider() {
   if (env.CLERK_SECRET_KEY) return (await import('./auth/clerkProvider.js')).clerkProvider;
+  if (env.DEV_AUTH === 'true' && !env.isProd) {
+    console.warn('DEV_AUTH is on: requests can pick a user with the x-dev-user header. Development only.');
+    return (await import('./auth/devProvider.js')).devProvider;
+  }
   if (!env.isTest) console.warn('CLERK_SECRET_KEY is not set: sign in is disabled, all requests are anonymous.');
   return anonymousProvider;
 }

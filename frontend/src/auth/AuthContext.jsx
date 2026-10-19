@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo } from 'react';
 import { ClerkProvider, useAuth, useClerk } from '@clerk/clerk-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { api, setTokenGetter } from '../lib/api';
+import { api, setTokenGetter, DEV_USER } from '../lib/api';
 
 /**
  * The app talks to this context, never to Clerk directly:
@@ -71,11 +71,12 @@ function ClerkBridge({ children }) {
 }
 
 function NoAuth({ children }) {
-  const meQuery = useMeQuery(false);
+  // With VITE_DEV_USER (dev builds only) the app behaves as that seeded user
+  const meQuery = useMeQuery(Boolean(DEV_USER));
   const value = buildValue({
     enabled: false,
     isLoaded: true,
-    isSignedIn: false,
+    isSignedIn: Boolean(DEV_USER),
     meQuery,
     signOut: async () => {},
     openSignIn: () => window.alert('Sign in is not configured. Add VITE_CLERK_PUBLISHABLE_KEY to frontend/.env.'),

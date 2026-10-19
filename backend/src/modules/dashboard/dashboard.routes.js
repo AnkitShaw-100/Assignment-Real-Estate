@@ -77,7 +77,7 @@ dashboardRouter.get('/overview', async (req, res) => {
     ]),
     Lead.aggregate([{ $match: leadScope }, { $group: { _id: '$status', count: { $sum: 1 }, value: { $sum: { $ifNull: ['$dealValue', 0] } } } }]),
     Lead.aggregate([
-      { $match: { ...leadScope, status: { $in: ['won', 'lost'] }, closedAt: { $gte: addDays(now, -90) } } },
+      { $match: { ...leadScope, status: { $in: ['won', 'lost'] }, closedAt: { $gte: yearAgo } } },
       { $group: { _id: '$status', count: { $sum: 1 } } },
     ]),
     Task.find({ ...mine('assignee'), status: 'open', dueAt: { $gte: todayStart, $lt: todayEnd } })
@@ -105,7 +105,9 @@ dashboardRouter.get('/overview', async (req, res) => {
   for (let i = 0; i < 12; i += 1) {
     const d = new Date(yearAgo.getFullYear(), yearAgo.getMonth() + i, 1);
     const hit = salesByMonth.find((s) => s._id.y === d.getFullYear() && s._id.m === d.getMonth() + 1);
-    monthly.push({ month: d.toISOString().slice(0, 7), value: hit?.value ?? 0, count: hit?.count ?? 0 });
+    // Build "YYYY-MM" from local parts: toISOString() would shift to UTC and mislabel the month
+    const month = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    monthly.push({ month, value: hit?.value ?? 0, count: hit?.count ?? 0 });
   }
 
   const funnelMap = new Map(funnel.map((f) => [f._id, f]));
