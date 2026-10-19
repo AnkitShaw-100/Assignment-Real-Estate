@@ -41,7 +41,8 @@ export default function Properties() {
 
   const update = (patch) => {
     const next = new URLSearchParams(params);
-    for (const [k, v] of Object.entries(patch)) (v ? next.set(k, v) : next.delete(k));
+    for (const [k, v] of Object.entries(patch)) if (v) next.set(k, v);
+      else next.delete(k);
     if (!('page' in patch)) next.delete('page'); // any filter change goes back to page 1
     setParams(next, { replace: !('page' in patch), preventScrollReset: true });
   };

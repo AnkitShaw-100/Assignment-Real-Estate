@@ -30,7 +30,8 @@ export default function PropertiesAdmin() {
 
   const setParam = (k, v) => {
     const next = new URLSearchParams(params);
-    v ? next.set(k, v) : next.delete(k);
+    if (v) next.set(k, v);
+      else next.delete(k);
     if (k !== 'page') next.delete('page');
     setParams(next, { replace: true });
   };

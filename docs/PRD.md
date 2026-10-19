@@ -239,9 +239,9 @@ Indexes: { assignedTo, status }, { followUpDate }, { email }.
 
 **Repo layout**
 ```
-/client   React app (website + dashboard)
-/server   Express API (api/index.js = Vercel entry, src/app.js = app)
-/docs     PRD.md, DESIGN.md, ARCHITECTURE.md, reference/
+/frontend  React app (website + dashboard)
+/backend   Express API (api/index.js = Vercel entry, src/app.js = app)
+/docs      PRD.md, DESIGN.md, ARCHITECTURE.md, reference/
 README.md
 ```
 

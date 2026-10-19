@@ -6,14 +6,13 @@ import { useAddInteraction, useCustomer, useCustomerMatches } from '../../hooks/
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { Card, PageHeader } from '../../routes/DashboardLayout';
 import { CustomerForm } from '../../components/crm/CustomerForm';
-import { budgetText } from './Customers';
 import { Modal } from '../../components/ui/Overlay';
 import { Button } from '../../components/ui/Button';
 import { Select, Textarea } from '../../components/ui/Field';
 import { StageBadge } from '../../components/ui/Badge';
 import { Avatar, ErrorState, Skeleton } from '../../components/ui/States';
 import { CUSTOMER_TYPES, INTERACTION_KINDS, LEAD_SOURCES, PROPERTY_TYPES, labelOf } from '../../lib/constants';
-import { coverOf, formatDate, formatDateTime, formatPrice, imageUrl, timeAgo } from '../../lib/format';
+import { budgetText, coverOf, formatDate, formatDateTime, formatPrice, imageUrl, timeAgo } from '../../lib/format';
 import { ease } from '../../lib/motion';
 
 const KIND_ICON = { call: Phone, email: Mail, meeting: Users, site_visit: MapPin, note: StickyNote };

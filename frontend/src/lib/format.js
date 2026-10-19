@@ -78,3 +78,11 @@ export function imageUrl(url, width = 800) {
 }
 
 export const coverOf = (property) => property?.images?.[property.coverIndex ?? 0] ?? property?.images?.[0];
+
+/** Customer budget as one phrase: "$500K to $1.2M", "Up to $2M", … */
+export function budgetText(r = {}) {
+  if (r.budgetMin && r.budgetMax) return `${formatPrice(r.budgetMin, { compact: true })} to ${formatPrice(r.budgetMax, { compact: true })}`;
+  if (r.budgetMax) return `Up to ${formatPrice(r.budgetMax, { compact: true })}`;
+  if (r.budgetMin) return `From ${formatPrice(r.budgetMin, { compact: true })}`;
+  return 'No budget set';
+}
