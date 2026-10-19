@@ -114,9 +114,10 @@ export async function seedDatabase({ log = console.log } = {}) {
       dealValue: status === 'won' || status === 'negotiation' ? Math.round((property?.price ?? 900_000) * (0.92 + rand() * 0.08)) : undefined,
       lostReason: status === 'lost' ? pick(LOST_REASONS) : undefined,
       followUpDate: OPEN_LEAD_STAGES.includes(status) && rand() < 0.7 ? daysFromNow(between(-3, 10)) : undefined,
-      activity: [{ type: 'created', to: 'website', at: createdAt }],
+      activity: [], // filled below once the source is known
       notes: rand() < 0.5 ? [{ body: pick(INTERACTIONS)[1], author: assignedTo }] : [],
     };
+    lead.activity.push({ type: 'created', to: lead.source, at: createdAt });
     leads.push(lead);
   }
   const createdLeads = await Lead.insertMany(leads);
