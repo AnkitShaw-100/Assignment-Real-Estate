@@ -1,4 +1,5 @@
 import { clerkMiddleware, clerkClient, getAuth } from '@clerk/express';
+import { env } from '../config/env.js';
 
 /**
  * Everything the API needs from an identity provider, behind one small
@@ -11,7 +12,8 @@ import { clerkMiddleware, clerkClient, getAuth } from '@clerk/express';
  *   setRole(id, role)     → mirrors our role into Clerk publicMetadata
  */
 export const clerkProvider = {
-  middleware: () => clerkMiddleware(),
+  // authorizedParties: only accept session tokens minted for our own frontend(s)
+  middleware: () => clerkMiddleware({ authorizedParties: env.clientOrigins }),
 
   resolveAuth(req) {
     return getAuth(req)?.userId ?? null;
