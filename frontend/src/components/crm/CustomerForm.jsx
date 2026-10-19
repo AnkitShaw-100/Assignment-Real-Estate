@@ -69,7 +69,8 @@ export function CustomerForm({ customer, onDone }) {
       ...(isAdmin && v.assignedAgent ? { assignedAgent: v.assignedAgent } : {}),
     };
     const onError = (err) => Object.entries(err.details ?? {}).forEach(([f, m]) => setError(f, { message: m[0] }));
-    customer ? update.mutate({ id: customer._id, ...body }, { onError }) : create.mutate(body, { onError });
+    if (customer) update.mutate({ id: customer._id, ...body }, { onError });
+    else create.mutate(body, { onError });
   };
 
   return (

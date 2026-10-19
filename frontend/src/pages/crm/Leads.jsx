@@ -34,7 +34,8 @@ export default function Leads() {
 
   const set = (patch) => {
     const next = new URLSearchParams(params);
-    for (const [k, v] of Object.entries(patch)) (v ? next.set(k, v) : next.delete(k));
+    for (const [k, v] of Object.entries(patch)) if (v) next.set(k, v);
+      else next.delete(k);
     if (!('page' in patch) && !('open' in patch) && !('new' in patch)) next.delete('page');
     setParams(next, { replace: true });
   };

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import clsx from 'clsx';
 import { ArrowLeft, ArrowRight, ImagePlus, Link2, Star, Trash2 } from 'lucide-react';
@@ -21,7 +21,9 @@ export function ImageManager({ value, onChange, cover, onCoverChange, error }) {
   const [url, setUrl] = useState('');
   // Latest images without stale closures while several uploads finish
   const latest = useRef(value);
-  latest.current = value;
+  useEffect(() => {
+    latest.current = value;
+  }, [value]);
 
   const addFiles = async (files) => {
     for (const file of Array.from(files)) {

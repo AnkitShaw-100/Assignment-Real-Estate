@@ -13,14 +13,8 @@ import { Input } from '../../components/ui/Field';
 import { Segmented } from '../../components/site/Filters';
 import { Avatar, EmptyState, ErrorState, Skeleton } from '../../components/ui/States';
 import { CUSTOMER_TYPES, labelOf } from '../../lib/constants';
-import { formatPrice, timeAgo } from '../../lib/format';
+import { budgetText, timeAgo } from '../../lib/format';
 
-export function budgetText(r = {}) {
-  if (r.budgetMin && r.budgetMax) return `${formatPrice(r.budgetMin, { compact: true })} to ${formatPrice(r.budgetMax, { compact: true })}`;
-  if (r.budgetMax) return `Up to ${formatPrice(r.budgetMax, { compact: true })}`;
-  if (r.budgetMin) return `From ${formatPrice(r.budgetMin, { compact: true })}`;
-  return 'No budget set';
-}
 
 export default function Customers() {
   usePageTitle('Customers');
@@ -34,7 +28,8 @@ export default function Customers() {
 
   const setParam = (k, v) => {
     const next = new URLSearchParams(params);
-    v ? next.set(k, v) : next.delete(k);
+    if (v) next.set(k, v);
+      else next.delete(k);
     if (k !== 'page') next.delete('page');
     setParams(next, { replace: true });
   };
