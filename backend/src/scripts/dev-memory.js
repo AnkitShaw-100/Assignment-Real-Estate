@@ -7,6 +7,8 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 
 const mongo = await MongoMemoryServer.create({ instance: { launchTimeout: 60_000 } });
 process.env.MONGODB_URI = `${mongo.getUri()}niwas`;
+// Try the CRM without Clerk: the frontend sends x-dev-user (see frontend/.env.example)
+process.env.DEV_AUTH ??= 'true';
 
 const { connectDB } = await import('../config/db.js');
 const { env } = await import('../config/env.js');

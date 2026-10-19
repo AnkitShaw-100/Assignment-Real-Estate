@@ -8,6 +8,7 @@ const schema = z.object({
   MONGODB_URI: z.string().optional(),
   CLIENT_URL: z.string().default('http://localhost:5173'),
   ADMIN_EMAILS: z.string().default(''),
+  DEV_AUTH: z.enum(['true', 'false']).default('false'),
   CLERK_SECRET_KEY: z.string().optional(),
   CLERK_PUBLISHABLE_KEY: z.string().optional(),
   CLOUDINARY_CLOUD_NAME: z.string().optional(),
@@ -19,6 +20,9 @@ const parsed = schema.safeParse(process.env);
 if (!parsed.success) {
   console.error('Invalid environment variables', z.flattenError(parsed.error).fieldErrors);
   throw new Error('Invalid environment variables');
+}
+if (parsed.data.DEV_AUTH === 'true' && parsed.data.NODE_ENV === 'production') {
+  throw new Error('DEV_AUTH must never be enabled in production');
 }
 
 export const env = {

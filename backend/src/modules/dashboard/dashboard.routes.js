@@ -77,7 +77,7 @@ dashboardRouter.get('/overview', async (req, res) => {
     ]),
     Lead.aggregate([{ $match: leadScope }, { $group: { _id: '$status', count: { $sum: 1 }, value: { $sum: { $ifNull: ['$dealValue', 0] } } } }]),
     Lead.aggregate([
-      { $match: { ...leadScope, status: { $in: ['won', 'lost'] }, closedAt: { $gte: addDays(now, -90) } } },
+      { $match: { ...leadScope, status: { $in: ['won', 'lost'] }, closedAt: { $gte: yearAgo } } },
       { $group: { _id: '$status', count: { $sum: 1 } } },
     ]),
     Task.find({ ...mine('assignee'), status: 'open', dueAt: { $gte: todayStart, $lt: todayEnd } })

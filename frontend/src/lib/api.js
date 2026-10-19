@@ -18,9 +18,13 @@ export function setTokenGetter(fn) {
   getToken = fn;
 }
 
+// Development only: act as a seeded user without Clerk (backend must run with DEV_AUTH=true)
+export const DEV_USER = import.meta.env.DEV ? import.meta.env.VITE_DEV_USER : undefined;
+
 api.interceptors.request.use(async (config) => {
   const token = await getToken();
   if (token) config.headers.Authorization = `Bearer ${token}`;
+  else if (DEV_USER) config.headers['x-dev-user'] = DEV_USER;
   return config;
 });
 
