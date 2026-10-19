@@ -7,7 +7,8 @@
     "test": "vitest run",
     "dev": "node --watch --env-file-if-exists=.env src/server.js",
     "start": "node src/server.js",
-    "seed": "node --env-file-if-exists=.env src/scripts/seed.js"
+    "seed": "node --env-file-if-exists=.env src/scripts/seed.js",
+    "dev:memory": "node --env-file-if-exists=.env src/scripts/dev-memory.js"
   },
   "keywords": [],
   "author": "",
