@@ -15,6 +15,7 @@ const VARIANTS = {
   ghost: 'text-navy-900 hover:bg-mist-100',
   light: 'border border-white/25 text-white hover:bg-white/10',
   danger: 'bg-danger text-white hover:bg-[#912018]',
+  'danger-ghost': 'text-danger hover:bg-[#fdf3f2]',
 };
 
 const SIZES = {
