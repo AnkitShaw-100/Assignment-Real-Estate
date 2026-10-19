@@ -24,7 +24,8 @@ The palette is taken from the mockup and tuned for contrast.
 | `navy-900` | `#0C1A3B` | Trust band, CTA band, footer, CRM sidebar, primary text on light |
 | `navy-700` | `#1E2E57` | Hover on navy, secondary dark surfaces |
 | `brass-400` | `#E8AD47` | The single accent: primary CTA, active arrow, badge, focus ring |
-| `brass-500` | `#D49A33` | Brass hover/pressed; brass text on white (AA large only) |
+| `brass-500` | `#D49A33` | Brass hover/pressed |
+| `brass-700` | `#94650F` | Brass **text** on white (prices): 5:1, passes AA at any size |
 | `mist-100` | `#F2F3F5` | Section panels (story, testimonial, logo strip), CRM canvas |
 | `paper` | `#FFFFFF` | Page background, cards in CRM |
 | `slate-500` | `#5D6678` | Body copy, secondary text (AA on white and mist) |
@@ -72,7 +73,7 @@ Why these: the mockup uses a light, high-contrast serif against a small neutral 
 Rules:
 - Sentence case everywhere. **No all-caps labels, no eyebrow text above headings**, no single-word color/italic accents in headlines.
 - Measure ≤ 68ch for body copy.
-- Prices: Hanken 600, tabular, brass on white cards; navy in tables.
+- Prices: Hanken 600, tabular, `brass-700` on white cards; navy in tables.
 - CRM headings use Fraunces only for the page title. Everything else in the CRM is Hanken.
 
 ---
@@ -231,7 +232,7 @@ The first-pass defaults I rejected, and why:
 - **Uppercase eyebrow labels above headings** → removed; the mockup doesn't use them.
 
 ## 10. Accessibility floor
-- Contrast AA for all text; brass on white only for ≥ 18px/600 text (prices), never small text.
+- Contrast AA for all text; small brass text uses `brass-700`, never `brass-400/500`.
 - Visible focus ring on every interactive element; logical tab order; skip link.
 - Carousels: arrow buttons + keyboard arrows + `aria-roledescription="carousel"`; kanban via dnd-kit keyboard sensor.
 - Touch targets ≥ 44px. Form errors are linked with `aria-describedby`.

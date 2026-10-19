@@ -61,7 +61,7 @@ export function PropertyCard({ property, variant = 'full', className, sizes = '(
           <h3 className="font-display text-[19px] leading-snug" style={{ fontWeight: 400 }}>
             {property.title}
           </h3>
-          <p className="mt-1 text-[15px] font-semibold text-brass-500 tabular">{formatPrice(property.price, { purpose: property.purpose })}</p>
+          <p className="mt-1 text-[15px] font-semibold text-brass-700 tabular">{formatPrice(property.price, { purpose: property.purpose })}</p>
           {variant === 'full' && (
             <>
               <p className="mt-2 flex items-center gap-1.5 text-sm text-slate-500">

@@ -10,6 +10,7 @@
   --color-brass-300: #f1c57a;
   --color-brass-400: #e8ad47;
   --color-brass-500: #d49a33;
+  --color-brass-700: #94650f; /* brass for small text on white: 5:1 contrast (AA) */
   --color-mist-100: #f2f3f5;
   --color-mist-200: #e9ebef;
   --color-paper: #ffffff;
