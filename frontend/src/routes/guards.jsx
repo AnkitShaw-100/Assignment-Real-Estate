@@ -36,17 +36,28 @@ export function RequireRole({ roles }) {
   if (!isLoaded) return <PageSpinner />;
   if (!isSignedIn) return <Navigate to={`/sign-in?redirect=${encodeURIComponent(location.pathname)}`} replace />;
   if (!roles.includes(role)) {
+    const adminOnly = roles.length === 1 && roles[0] === 'admin';
     return (
       <div className="grid min-h-dvh place-items-center bg-mist-100 px-6">
         <div className="max-w-sm text-center">
           <ShieldAlert className="mx-auto size-8 text-slate-400" strokeWidth={1.5} />
-          <h1 className="mt-4 font-display text-h2">This area is for the Niwas team</h1>
-          <p className="mt-3 text-slate-500">
-            Your account doesn’t have {roles.includes('agent') ? 'agent' : 'admin'} access. If you work with us, ask an admin to update your role.
-          </p>
-          <Button to="/" variant="dark" className="mt-6">
-            Back to the website
-          </Button>
+          {adminOnly ? (
+            <>
+              <h1 className="mt-4 font-display text-h2">Only admins can open this page</h1>
+              <p className="mt-3 text-slate-500">Team and role settings are managed by admins. Ask one if something here needs changing.</p>
+              <Button to="/dashboard" variant="dark" className="mt-6">
+                Back to the dashboard
+              </Button>
+            </>
+          ) : (
+            <>
+              <h1 className="mt-4 font-display text-h2">This area is for the Niwas team</h1>
+              <p className="mt-3 text-slate-500">Your account doesn’t have agent access. If you work with us, ask an admin to update your role.</p>
+              <Button to="/" variant="dark" className="mt-6">
+                Back to the website
+              </Button>
+            </>
+          )}
         </div>
       </div>
     );
