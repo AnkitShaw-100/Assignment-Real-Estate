@@ -101,6 +101,8 @@ describe('dashboard overview', () => {
     expect(mine.kpis.availableProperties).toBe(1);
     expect(mine.salesByMonth).toHaveLength(12);
     expect(mine.salesByMonth.at(-1).value).toBe(100);
+    const now = new Date();
+    expect(mine.salesByMonth.at(-1).month).toBe(`${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`);
     expect(mine.pipeline.map((p) => p.stage)).toEqual(['new', 'contacted', 'qualified', 'site_visit', 'negotiation', 'won', 'lost']);
 
     const all = (await api(admin).get('/api/dashboard/overview')).body.data;
