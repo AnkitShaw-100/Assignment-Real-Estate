@@ -111,7 +111,8 @@ export async function seedDatabase({ log = console.log } = {}) {
       assignedTo,
       createdAt,
       closedAt,
-      dealValue: status === 'won' || status === 'negotiation' ? Math.round((property?.price ?? 900_000) * (0.92 + rand() * 0.08)) : undefined,
+      // Agents estimate a deal value once a lead is qualified
+      dealValue: ['qualified', 'site_visit', 'negotiation', 'won'].includes(status) ? Math.round((property?.price ?? 900_000) * (0.92 + rand() * 0.08)) : undefined,
       lostReason: status === 'lost' ? pick(LOST_REASONS) : undefined,
       followUpDate: OPEN_LEAD_STAGES.includes(status) && rand() < 0.7 ? daysFromNow(between(-3, 10)) : undefined,
       activity: [], // filled below once the source is known
