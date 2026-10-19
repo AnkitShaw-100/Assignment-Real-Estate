@@ -9,6 +9,15 @@ import { attachUser } from './middleware/auth.js';
 import { notFound, errorHandler } from './middleware/error.js';
 import { apiRouter } from './routes.js';
 
+// Without Clerk keys the API still serves public routes; every caller is anonymous.
+const anonymousProvider = { resolveAuth: () => null, fetchProfile: async () => null };
+
+async function defaultAuthProvider() {
+  if (env.CLERK_SECRET_KEY) return (await import('./auth/clerkProvider.js')).clerkProvider;
+  if (!env.isTest) console.warn('CLERK_SECRET_KEY is not set: sign in is disabled, all requests are anonymous.');
+  return anonymousProvider;
+}
+
 /**
  * Builds the Express app. Dependencies are injectable for tests:
  *   auth      – identity provider (defaults to Clerk)
@@ -16,7 +25,7 @@ import { apiRouter } from './routes.js';
  */
 export async function createApp({ auth, connect = connectDB } = {}) {
   const app = express();
-  app.locals.auth = auth ?? (await import('./auth/clerkProvider.js')).clerkProvider;
+  app.locals.auth = auth ?? (await defaultAuthProvider());
 
   app.set('trust proxy', 1); // Vercel sits behind a proxy; needed for rate-limit IPs
   app.disable('x-powered-by');

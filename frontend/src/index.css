@@ -1,0 +1,158 @@
+@import 'tailwindcss';
+
+/* Design tokens — see docs/DESIGN.md. Tailwind v4 turns these into utilities
+   (bg-navy-900, text-brass-400, font-display, rounded-hero, ease-out-soft …). */
+@theme {
+  --color-navy-900: #0c1a3b;
+  --color-navy-800: #152548;
+  --color-navy-700: #1e2e57;
+  --color-navy-600: #34446c;
+  --color-brass-300: #f1c57a;
+  --color-brass-400: #e8ad47;
+  --color-brass-500: #d49a33;
+  --color-brass-700: #94650f; /* brass for small text on white: 5:1 contrast (AA) */
+  --color-mist-100: #f2f3f5;
+  --color-mist-200: #e9ebef;
+  --color-paper: #ffffff;
+  --color-slate-500: #5d6678;
+  --color-slate-400: #8a92a3;
+  --color-line: #e3e5ea;
+  --color-danger: #b42318;
+  --color-success: #1e7b45;
+
+  /* Pipeline stages: soft bg + strong text */
+  --color-stage-new-bg: #eef2ff;
+  --color-stage-new: #3949ab;
+  --color-stage-contacted-bg: #e8f4fd;
+  --color-stage-contacted: #1769aa;
+  --color-stage-qualified-bg: #f3eefc;
+  --color-stage-qualified: #6b3fa0;
+  --color-stage-site_visit-bg: #fff6e5;
+  --color-stage-site_visit: #9a6200;
+  --color-stage-negotiation-bg: #fdefe7;
+  --color-stage-negotiation: #b04a12;
+  --color-stage-won-bg: #e9f7ef;
+  --color-stage-won: #1e7b45;
+  --color-stage-lost-bg: #f4f4f5;
+  --color-stage-lost: #6b6b73;
+
+  --font-display: 'Fraunces', 'Times New Roman', serif;
+  --font-sans: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
+
+  --radius-hero: 32px;
+  --radius-panel: 20px;
+  --radius-card: 14px;
+  --radius-field: 12px;
+
+  --shadow-float: 0 1px 2px rgb(12 26 59 / 0.06), 0 12px 32px -8px rgb(12 26 59 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(12 26 59 / 0.08), 0 24px 48px -12px rgb(12 26 59 / 0.28);
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --animate-spin-slow: spin 20s linear infinite;
+  --animate-shimmer: shimmer 1.6s ease-in-out infinite;
+
+  @keyframes shimmer {
+    0% { background-position: 100% 0; }
+    100% { background-position: -100% 0; }
+  }
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-paper font-sans text-navy-900;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  /* Thin editorial serif; opsz keeps hairlines crisp at large sizes */
+  .font-display {
+    font-variation-settings: 'opsz' 144, 'SOFT' 0, 'WONK' 0;
+    font-weight: 300;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brass-400);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: var(--color-brass-300);
+    color: var(--color-navy-900);
+  }
+
+  img {
+    -webkit-user-drag: none;
+  }
+}
+
+@layer components {
+  .container-page {
+    width: 100%;
+    max-width: 1240px;
+    margin-inline: auto;
+    padding-inline: 20px;
+  }
+  @media (min-width: 768px) {
+    .container-page { padding-inline: 32px; }
+  }
+  @media (min-width: 1280px) {
+    .container-page { padding-inline: 48px; max-width: 1336px; }
+  }
+
+  /* Type scale (1.25 ratio; display sizes are fluid) */
+  .text-display {
+    font-size: clamp(44px, 6vw, 88px);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+  }
+  .text-h1 {
+    font-size: clamp(34px, 4vw, 52px);
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+  }
+  .text-h2 {
+    font-size: clamp(28px, 3vw, 40px);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  .text-h3 {
+    font-size: 22px;
+    line-height: 1.25;
+  }
+
+  .tabular { font-variant-numeric: tabular-nums; }
+
+  .skeleton {
+    background: linear-gradient(90deg, var(--color-mist-100) 25%, var(--color-mist-200) 50%, var(--color-mist-100) 75%);
+    background-size: 200% 100%;
+    animation: var(--animate-shimmer);
+  }
+
+  .glass {
+    background: rgb(255 255 255 / 0.72);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+  }
+
+  .scrollbar-none { scrollbar-width: none; }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

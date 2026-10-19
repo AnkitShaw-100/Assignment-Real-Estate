@@ -61,9 +61,9 @@ const weightedStage = () => {
   return 'new';
 };
 
-async function run() {
-  await connectDB();
-  console.log('Connected. Clearing collections…');
+/** Resets and fills the connected database. Exported so dev-memory.js can reuse it. */
+export async function seedDatabase({ log = console.log } = {}) {
+  log('Clearing collections…');
   await Promise.all([Property.deleteMany({}), Lead.deleteMany({}), Customer.deleteMany({}), Task.deleteMany({})]);
 
   // Keep users who already signed in (real Clerk ids), reset seeded ones
@@ -86,7 +86,7 @@ async function run() {
     const agent = p.category === 'commercial' || p.type === 'land' ? daniel : i % 2 ? sofia : aarav;
     properties.push(await Property.create({ ...p, agent: agent._id, views: between(40, 900), createdAt: daysAgo(between(5, 170)) }));
   }
-  console.log(`Created ${properties.length} properties`);
+  log(`Created ${properties.length} properties`);
 
   // Leads across the last ~6 months
   const leads = [];
@@ -120,7 +120,7 @@ async function run() {
     leads.push(lead);
   }
   const createdLeads = await Lead.insertMany(leads);
-  console.log(`Created ${createdLeads.length} leads`);
+  log(`Created ${createdLeads.length} leads`);
 
   // Customers: every won lead, plus qualified-or-later leads
   let customerCount = 0;
@@ -157,7 +157,7 @@ async function run() {
     }
     customerCount += 1;
   }
-  console.log(`Created ${customerCount} customers`);
+  log(`Created ${customerCount} customers`);
 
   // Tasks: follow-ups from leads plus some general ones
   const tasks = createdLeads
@@ -170,15 +170,21 @@ async function run() {
     tasks.push({ title: `${title} (last month)`, dueAt: daysAgo(20 + i), assignee, status: 'done', completedAt: daysAgo(19 + i) });
   }
   await Task.insertMany(tasks.map((t) => ({ ...t, createdBy: staff[0]._id })));
-  console.log(`Created ${tasks.length} tasks`);
+  log(`Created ${tasks.length} tasks`);
 
-  console.log('\nDemo staff accounts (sign up in Clerk with these emails; dev code 424242):');
-  for (const s of staff) console.log(`  ${s.role.padEnd(6)} ${s.email}`);
-  await mongoose.disconnect();
+  log('\nDemo staff accounts (sign up in Clerk with these emails; dev code 424242):');
+  for (const s of staff) log(`  ${s.role.padEnd(6)} ${s.email}`);
 }
 
-run().catch(async (err) => {
-  console.error(err);
-  await mongoose.disconnect();
-  process.exit(1);
-});
+// Run directly with `npm run seed` (not when imported by dev-memory.js)
+if (process.argv[1]?.replaceAll('\\', '/').endsWith('scripts/seed.js')) {
+  try {
+    await connectDB();
+    await seedDatabase();
+  } catch (err) {
+    console.error(err);
+    process.exitCode = 1;
+  } finally {
+    await mongoose.disconnect();
+  }
+}
