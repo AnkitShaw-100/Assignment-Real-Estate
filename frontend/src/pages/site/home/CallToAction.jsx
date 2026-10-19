@@ -9,7 +9,7 @@ export function CallToAction() {
     <section className="px-3 sm:px-4" aria-labelledby="cta-title">
       <div className="relative isolate overflow-hidden rounded-t-hero bg-navy-900">
         <img src={`${IMG}&w=1600`} alt="" loading="lazy" className="absolute inset-0 -z-10 size-full object-cover opacity-35" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-navy-900 via-navy-900/70 to-navy-900/30" aria-hidden />
+        <div className="absolute inset-0 -z-10 bg-linear-to-r from-navy-900 via-navy-900/70 to-navy-900/30" aria-hidden />
         <div className="container-page flex flex-col items-start gap-10 py-20 md:flex-row md:items-center md:gap-20 md:py-28">
           <ExploreBadge size={150} className="md:ml-16" />
           <div className="max-w-lg text-white">

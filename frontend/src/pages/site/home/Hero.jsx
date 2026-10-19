@@ -38,7 +38,7 @@ export function Hero() {
           />
         </motion.div>
         {/* Gentle scrims keep white text readable on bright skies */}
-        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-navy-900/45 via-navy-900/0 via-55% to-navy-900/70" aria-hidden />
+        <div className="absolute inset-0 -z-10 bg-linear-to-b from-navy-900/45 via-navy-900/0 via-55% to-navy-900/70" aria-hidden />
 
         <div className="container-page flex h-full flex-col justify-between pt-[120px] pb-8 lg:pt-[150px] lg:pb-12">
           <h1 id="hero-title" className="font-display text-display text-white">
