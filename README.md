@@ -9,7 +9,8 @@ Built with **React, Node.js/Express and MongoDB** for the Anuverse Technologies 
 | **Live website** | https://assignment-real-estate-alpha.vercel.app |
 | **REST API** | https://assignment-real-estate-backend.vercel.app (health check: [/api/health](https://assignment-real-estate-backend.vercel.app/api/health)) |
 | **Source code** | https://github.com/AnkitShaw-100/Assignment-Real-Estate |
-| **CRM sign-in** | https://assignment-real-estate-alpha.vercel.app/admin/login (demo admin and agent logins are shared in the submission email). Visitors can sign up on the site as normal users. |
+| **CRM (staff)** | https://assignment-real-estate-alpha.vercel.app/admin/login (demo logins are shared in the submission email) |
+| **Website accounts** | Anyone can sign up at [/sign-up](https://assignment-real-estate-alpha.vercel.app/sign-up) to save homes and track inquiries |
 
 ![Home page](docs/screenshots/home.webp)
 
@@ -20,15 +21,17 @@ Built with **React, Node.js/Express and MongoDB** for the Anuverse Technologies 
 1. [Assignment requirements and where they are met](#assignment-requirements-and-where-they-are-met)
 2. [Features](#features)
 3. [Roles and access](#roles-and-access)
-4. [Tech stack](#tech-stack)
-5. [Architecture](#architecture)
-6. [Key technical decisions](#key-technical-decisions)
-7. [Security](#security)
-8. [REST API](#rest-api)
-9. [Run it locally](#run-it-locally)
-10. [Deployment](#deployment)
-11. [Project structure](#project-structure)
-12. [Screenshots](#screenshots)
+4. [Using the CRM](#using-the-crm)
+5. [Tech stack](#tech-stack)
+6. [Architecture](#architecture)
+7. [Key technical decisions](#key-technical-decisions)
+8. [Security](#security)
+9. [REST API](#rest-api)
+10. [Run it locally](#run-it-locally)
+11. [Deployment](#deployment)
+12. [Project structure](#project-structure)
+13. [Known limitations](#known-limitations)
+14. [Screenshots](#screenshots)
 
 ---
 
@@ -101,6 +104,28 @@ Built with **React, Node.js/Express and MongoDB** for the Anuverse Technologies 
 
 ---
 
+## Using the CRM
+
+**Signing in as the admin**
+1. Open **`/admin/login`**. Signed-out visits to any `/admin/...` page land here too, and old `/dashboard` links redirect to `/admin`.
+2. Sign in with the `ADMIN_EMAIL` and `ADMIN_PASSWORD` set in the API's environment. The admin account is created on the first sign-in.
+
+**Adding an agent**
+1. Go to **Team → Add team member** (admins only).
+2. Enter name, email, role (**Agent** or **Admin**), an optional job title and a **starting password** (8+ characters).
+3. Share the email, the password and the `/admin/login` link with them.
+
+**How an agent signs in**
+- At the same **`/admin/login`** page, with the email and starting password the admin gave them.
+- Agents see Overview, Leads, Pipeline, Customers, Tasks and Properties, limited to their own records. They don't see Team.
+- A normal website account that tries `/admin/login` is refused with "This account doesn't have CRM access".
+
+**Managing the team**
+- Change someone's role, or click **Deactivate** to remove access. Both take effect on their next request.
+- Website sign-ups appear under **Team → Buyers**.
+
+---
+
 ## Tech stack
 
 | Layer | Choice |
@@ -146,6 +171,7 @@ The full write-up, with the request lifecycle, data model and business flows, is
 | Decision | Why | Trade-off |
 |---|---|---|
 | Own email/password auth with JWT, roles read from the DB per request | No third-party dependency; role changes and deactivation apply instantly; the whole flow is covered by tests | Password reset and email verification are not built yet |
+| Admin defined in server settings (`ADMIN_EMAIL` / `ADMIN_PASSWORD`); agents created by the admin | Nobody can make themselves staff: public sign-up is always a buyer, the CRM sign-in refuses non-staff, and there is no secret URL to leak | One admin comes from the settings; more admins are added from Team |
 | Bearer token instead of cookies | The website and the API are separate Vercel deployments on different domains, where browsers often block cross-site cookies | The token lives in `localStorage`, so XSS protection matters (React escaping, Helmet headers) |
 | Out-of-scope records return **404, not 403** | An agent can't discover that another agent's lead exists by probing IDs | Slightly less explicit when debugging |
 | Signed direct uploads to Cloudinary | Files go straight from the browser to Cloudinary, avoiding Vercel's 4.5 MB request limit, and the secret never leaves the server | Two round trips per upload |
@@ -164,6 +190,7 @@ The full write-up, with the request lifecycle, data model and business flows, is
 - **NoSQL injection**: keys starting with `$` or containing `.` are stripped from all input.
 - **Rate limiting**: 300 requests / 15 min per IP on the API, 20 / 15 min on sign-in and sign-up, 5 / 10 min on the public inquiry form (which also has a honeypot field).
 - **Sign-in** returns the same message for an unknown email and a wrong password, with equal timing.
+- **Staff access**: the admin password is compared in constant time and lives only in the server settings; the admin email can't be registered publicly; the CRM sign-in (`staff: true`) refuses accounts without CRM access.
 - **Helmet** security headers, a **CORS allowlist** (`CLIENT_URL`) and a 1 MB JSON body limit.
 - **Errors** use one shape, `{ error: { message, details? } }`. Unexpected errors return a generic 500 without internal details.
 
@@ -175,7 +202,7 @@ All routes are under `/api`. Responses are JSON: `{ data }` on success, `{ error
 
 | Resource | Endpoints | Access |
 |---|---|---|
-| Auth | `POST /auth/register`, `POST /auth/login` | public |
+| Auth | `POST /auth/register` (always a buyer), `POST /auth/login` (send `"staff": true` from the CRM sign-in to refuse non-staff) | public |
 | Properties | `GET /properties`, `GET /properties/cities`, `GET /properties/:slug`, `GET /properties/:slug/similar` | public |
 | | `GET /properties/id/:id`, `POST /properties`, `PATCH /properties/:id`, `DELETE /properties/:id` | agent (own) / admin |
 | Leads | `POST /leads/inquiry` | public, rate-limited |
@@ -196,7 +223,7 @@ All routes are under `/api`. Responses are JSON: `{ data }` on success, `{ error
 
 ## Run it locally
 
-Requirements: **Node.js 20+** and npm.
+Requirements: **Node.js 22** and npm.
 
 ### Option A: no setup (about 2 minutes)
 
@@ -288,6 +315,9 @@ Two Vercel projects from this repository:
 - `frontend/vercel.json` rewrites all paths to `index.html`, so deep links work.
 - The website calls the API directly at `VITE_API_URL`; the API allows it through its CORS allowlist (`CLIENT_URL`).
 - The API refuses to start in production without `JWT_SECRET`.
+- In MongoDB Atlas, allow `0.0.0.0/0` under *Network access*; Vercel has no fixed IPs.
+- Opening the API URL shows a status page with the database state, handy for checking a deployment.
+- To deploy a specific commit, use **Deployments → Create Deployment** with the branch or commit. **Redeploy** rebuilds an older deployment's original commit.
 
 ---
 
@@ -310,7 +340,7 @@ frontend/
   src/components/site/    website components
   src/components/crm/     CRM components
   src/pages/site/         public pages
-  src/pages/crm/          dashboard pages (lazy-loaded)
+  src/pages/crm/          CRM pages and the /admin/login sign-in (lazy-loaded)
   src/hooks/              TanStack Query hooks per resource
   src/lib/                API client, formatting, constants, uploads
 docs/
@@ -322,12 +352,21 @@ docs/
 
 ---
 
+## Known limitations
+
+- **No password reset or email verification.** Agents keep the starting password the admin sets; to reset one, the admin deactivates the account and adds it again.
+- **Rate limits are per serverless instance** on Vercel, so they are looser than on a single server. A shared store (for example Redis) would make them global.
+- **Photo uploads need Cloudinary keys.** Without them the property form accepts image links instead.
+
+---
+
 ## Screenshots
 
 | | |
 |---|---|
 | ![Property listings with filters](docs/screenshots/listings.webp) | ![Property detail page](docs/screenshots/detail.webp) |
 | ![CRM overview](docs/screenshots/overview.webp) | ![Sales pipeline](docs/screenshots/pipeline.webp) |
+| ![Staff sign-in at /admin/login](docs/screenshots/admin-login.webp) | ![Adding a team member](docs/screenshots/add-team-member.webp) |
 
 <p align="center">
   <img src="docs/screenshots/home-mobile.webp" alt="Home page on a phone" width="250">
