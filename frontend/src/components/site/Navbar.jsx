@@ -59,7 +59,8 @@ export function Navbar({ overlay = false }) {
         <div
           className={clsx(
             'transition-[background-color,box-shadow,backdrop-filter] duration-300',
-            scrolled || menuOpen ? 'glass shadow-[0_1px_0_rgb(12_26_59/0.06)]' : 'bg-transparent',
+            // Solid once scrolled, so page content never shows through the bar
+            scrolled || menuOpen ? 'bg-paper shadow-[0_1px_0_rgb(12_26_59/0.08)]' : 'bg-transparent',
           )}
         >
           <nav className={clsx('container-page flex h-[72px] items-center justify-between gap-6', overlay && !scrolled && 'lg:h-[92px] lg:pt-4')} aria-label="Main">

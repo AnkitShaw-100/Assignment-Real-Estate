@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import {
   DndContext, DragOverlay, KeyboardSensor, PointerSensor, closestCorners, useDraggable, useDroppable, useSensor, useSensors,
@@ -12,6 +12,7 @@ import { PageHeader } from '../../routes/DashboardLayout';
 import { StageDialog } from '../../components/crm/StageDialog';
 import { STAGE_DOT } from '../../components/ui/Badge';
 import { Avatar, ErrorState, Skeleton } from '../../components/ui/States';
+import { ArrowButton } from '../../components/ui/Button';
 import { LEAD_STAGES } from '../../lib/constants';
 import { formatDate, formatPrice } from '../../lib/format';
 import { spring } from '../../lib/motion';
@@ -72,13 +73,13 @@ function DraggableCard({ lead, onOpen }) {
   );
 }
 
-function Column({ stage, leads, onOpen }) {
+function Column({ stage, step, leads, onOpen }) {
   const { setNodeRef, isOver } = useDroppable({ id: stage.value });
   const total = leads.reduce((s, l) => s + (l.dealValue ?? 0), 0);
   return (
     <section
       ref={setNodeRef}
-      aria-label={`${stage.label}, ${leads.length} leads`}
+      aria-label={`Step ${step} of ${LEAD_STAGES.length}: ${stage.label}, ${leads.length} leads`}
       className={clsx(
         'flex w-[280px] shrink-0 flex-col overflow-hidden rounded-panel border bg-paper transition-[border-color,box-shadow] duration-200',
         isOver ? 'border-accent-400 shadow-float' : 'border-line',
@@ -87,6 +88,10 @@ function Column({ stage, leads, onOpen }) {
       <span className={clsx('h-1 w-full', STAGE_DOT[stage.value])} aria-hidden />
       <header className="flex items-center justify-between gap-2 px-4 pt-3.5 pb-3">
         <h2 className="flex items-center gap-2 text-sm font-semibold">
+          {/* Step number shows where the stage sits in the journey (1 New → 7 Lost) */}
+          <span className={clsx('grid size-6 shrink-0 place-items-center rounded-full text-[11px] font-semibold text-white tabular', STAGE_DOT[stage.value])} aria-hidden>
+            {step}
+          </span>
           {stage.label}
           <span className="rounded-full bg-mist-100 px-2 py-0.5 text-xs font-medium text-slate-500 tabular">{leads.length}</span>
         </h2>
@@ -131,6 +136,24 @@ function Summary({ leads }) {
   );
 }
 
+/** Horizontal scrolling for the board: arrow buttons move two columns; edges disable them. */
+function useBoardScroll() {
+  const ref = useRef(null);
+  const [edges, setEdges] = useState({ start: true, end: false });
+  const update = useCallback(() => {
+    const el = ref.current;
+    if (!el) return;
+    setEdges({ start: el.scrollLeft <= 4, end: el.scrollLeft + el.clientWidth >= el.scrollWidth - 4 });
+  }, []);
+  useEffect(() => {
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  });
+  const scroll = (dir) => ref.current?.scrollBy({ left: dir * 2 * (280 + 16), behavior: 'smooth' });
+  return { ref, edges, update, scroll };
+}
+
 export default function Pipeline() {
   usePageTitle('Pipeline');
   const navigate = useNavigate();
@@ -138,6 +161,7 @@ export default function Pipeline() {
   const move = useMoveStage(LIST_KEY);
   const [active, setActive] = useState(null);
   const [closing, setClosing] = useState(null); // { lead, stage } awaiting won/lost details
+  const { ref: boardRef, edges: boardEdges, update: updateBoard, scroll: scrollBoard } = useBoardScroll();
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }), // small threshold so clicks still work
@@ -195,9 +219,22 @@ export default function Pipeline() {
             },
           }}
         >
-          <div className="scroll-thin -mx-4 flex min-h-[calc(100dvh-300px)] gap-4 overflow-x-auto px-4 pb-6 md:-mx-8 md:px-8 xl:-mx-10 xl:px-10">
-            {LEAD_STAGES.map((s) => (
-              <Column key={s.value} stage={s} leads={byStage[s.value]} onOpen={openLead} />
+          <div className="mb-3 flex items-center justify-between gap-4">
+            <p className="text-sm text-slate-500">{LEAD_STAGES.length} stages, from first inquiry to won or lost</p>
+            <div className="flex items-center gap-2.5" role="group" aria-label="Scroll the pipeline">
+              <ArrowButton direction="left" active={false} onClick={() => scrollBoard(-1)} disabled={boardEdges.start} aria-label="Previous stages" />
+              <ArrowButton direction="right" active={!boardEdges.end} onClick={() => scrollBoard(1)} disabled={boardEdges.end} aria-label="Next stages" />
+            </div>
+          </div>
+          <div
+            ref={boardRef}
+            onScroll={updateBoard}
+            className="scroll-thin -mx-4 flex min-h-[calc(100dvh-340px)] snap-x scroll-px-4 gap-4 overflow-x-auto scroll-smooth px-4 pb-6 md:-mx-8 md:scroll-px-8 md:px-8 xl:-mx-10 xl:scroll-px-10 xl:px-10"
+          >
+            {LEAD_STAGES.map((s, i) => (
+              <div key={s.value} className="flex snap-start">
+                <Column stage={s} step={i + 1} leads={byStage[s.value]} onOpen={openLead} />
+              </div>
             ))}
           </div>
           {/* The lifted card: tilts and gains depth; settles back on a spring when dropped */}
