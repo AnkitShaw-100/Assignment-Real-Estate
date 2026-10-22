@@ -3,11 +3,10 @@ import { ROLES } from './enums.js';
 
 const userSchema = new mongoose.Schema(
   {
-    // Clerk's user id. Seeded users get a placeholder that is relinked
-    // by email the first time the real person signs in.
-    clerkId: { type: String, required: true, unique: true, index: true },
     name: { type: String, required: true, trim: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+    // bcrypt hash; never returned by queries unless explicitly selected
+    passwordHash: { type: String, required: true, select: false },
     avatar: String,
     phone: { type: String, trim: true },
     role: { type: String, enum: ROLES, default: 'buyer', index: true },

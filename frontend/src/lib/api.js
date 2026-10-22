@@ -4,7 +4,7 @@ import axios from 'axios';
  * One axios instance for the whole app.
  *  - In dev, /api is proxied to the local Express server (vite.config.js).
  *  - In production, VITE_API_URL points at the deployed API.
- *  - The Clerk session token is attached to every request when signed in.
+ *  - The session token is attached to every request when signed in.
  *  - Errors are normalised to { message, details, status } from the API's error shape.
  */
 export const api = axios.create({
@@ -12,19 +12,33 @@ export const api = axios.create({
   timeout: 20_000,
 });
 
-let getToken = async () => null;
-/** Called by the auth provider so requests can carry the session token. */
-export function setTokenGetter(fn) {
-  getToken = fn;
+// The API runs on its own domain in production, where third-party cookies are
+// often blocked, so the session token travels as a Bearer header instead.
+const TOKEN_KEY = 'niwas.session';
+export const SIGNED_OUT_EVENT = 'niwas:signed-out';
+
+export function getToken() {
+  try {
+    return localStorage.getItem(TOKEN_KEY);
+  } catch {
+    return null;
+  }
 }
 
-// Development only: act as a seeded user without Clerk (backend must run with DEV_AUTH=true)
-export const DEV_USER = import.meta.env.DEV ? import.meta.env.VITE_DEV_USER : undefined;
+export function setToken(token) {
+  try {
+    if (token) localStorage.setItem(TOKEN_KEY, token);
+    else localStorage.removeItem(TOKEN_KEY);
+  } catch {
+    // Storage unavailable (private mode): the session lasts until reload
+  }
+}
 
-api.interceptors.request.use(async (config) => {
-  const token = await getToken();
+export const isTokenKey = (key) => key === TOKEN_KEY;
+
+api.interceptors.request.use((config) => {
+  const token = getToken();
   if (token) config.headers.Authorization = `Bearer ${token}`;
-  else if (DEV_USER) config.headers['x-dev-user'] = DEV_USER;
   return config;
 });
 
@@ -43,6 +57,11 @@ api.interceptors.response.use(
       return Promise.reject(new ApiError("We couldn't reach the server. Check your connection and try again.", 0));
     }
     const { status, data } = err.response;
+    // Expired or revoked session: forget the token so the app falls back to signed out
+    if (status === 401 && err.config?.headers?.Authorization) {
+      setToken(null);
+      window.dispatchEvent(new Event(SIGNED_OUT_EVENT));
+    }
     return Promise.reject(new ApiError(data?.error?.message ?? 'Something went wrong. Try again.', status, data?.error?.details));
   },
 );

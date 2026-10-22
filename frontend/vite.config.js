@@ -16,7 +16,6 @@ export default defineConfig({
         manualChunks(id) {
           if (id.includes('recharts') || id.includes('d3-')) return 'charts';
           if (id.includes('@dnd-kit')) return 'dnd';
-          if (id.includes('@clerk')) return 'clerk';
         },
       },
     },

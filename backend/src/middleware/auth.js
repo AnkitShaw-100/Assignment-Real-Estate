@@ -1,44 +1,24 @@
 import { User } from '../models/index.js';
-import { env } from '../config/env.js';
 import { HttpError } from '../utils/httpError.js';
+import { verifyToken } from '../auth/tokens.js';
 
 /**
- * Loads the signed-in user's Mongo document onto req.user.
+ * Loads the signed-in user's document onto req.user from the Bearer token.
  *
- * Clerk proves *who* the caller is; roles live in our database. On first
- * sight we create the Mongo user (or relink a seeded one by email), so no
- * Clerk webhook is needed. Anonymous requests pass through with req.user = null.
+ * The token only proves *who* the caller is; the role is read from the
+ * database on every request, so role changes and deactivation apply at once.
+ * Requests without a token pass through anonymously (req.user = null).
  */
 export async function attachUser(req, _res, next) {
   req.user = null;
-  const auth = req.app.locals.auth;
-  const clerkId = auth.resolveAuth(req);
-  if (!clerkId) return next();
+  const header = req.get('authorization') ?? '';
+  if (!header.startsWith('Bearer ')) return next();
 
-  let user = await User.findOne({ clerkId });
-  if (!user) {
-    const profile = await auth.fetchProfile(clerkId);
-    if (!profile?.email) throw HttpError.unauthorized('Your account has no email address');
-    const email = profile.email.toLowerCase();
-
-    user = await User.findOne({ email });
-    if (user) {
-      // A seeded/pre-invited user signing in for the first time
-      user.clerkId = clerkId;
-      if (profile.avatar && !user.avatar) user.avatar = profile.avatar;
-      await user.save();
-    } else {
-      user = await User.create({
-        clerkId,
-        email,
-        name: profile.name || email,
-        avatar: profile.avatar,
-        role: env.adminEmails.includes(email) ? 'admin' : 'buyer',
-      });
-    }
-  }
-
+  const userId = verifyToken(header.slice(7).trim());
+  const user = userId && (await User.findById(userId));
+  if (!user) throw HttpError.unauthorized('Your session has expired. Sign in again.');
   if (!user.active) throw HttpError.forbidden('This account has been deactivated');
+
   req.user = user;
   next();
 }

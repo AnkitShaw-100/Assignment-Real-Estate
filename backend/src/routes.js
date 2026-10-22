@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { authRouter } from './modules/auth/auth.routes.js';
 import { propertiesRouter } from './modules/properties/properties.routes.js';
 import { leadsRouter } from './modules/leads/leads.routes.js';
 import { customersRouter } from './modules/customers/customers.routes.js';
@@ -10,6 +11,7 @@ import { uploadsRouter } from './modules/uploads/uploads.routes.js';
 
 export const apiRouter = Router();
 
+apiRouter.use('/auth', authRouter);
 apiRouter.use('/properties', propertiesRouter);
 apiRouter.use('/leads', leadsRouter);
 apiRouter.use('/customers', customersRouter);

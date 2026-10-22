@@ -20,7 +20,7 @@ Built with **React, Node.js/Express and MongoDB** for the Anuverse Technologies 
 - **Home page** built from the provided design: hero with location search, partner strip, story, popular and featured carousels, live trust numbers, testimonial, call to action.
 - **Property search** with filters for location, buy or rent, residential or commercial, type, price range and bedrooms. Filters live in the URL, so results are shareable and the back button works. Includes sorting, pagination, and a bottom-sheet filter panel on mobile.
 - **Property pages** with photo gallery and full-screen lightbox (keyboard and swipe), key facts, amenities, agent card, similar homes and an **inquiry form** that becomes a CRM lead.
-- **Accounts (Clerk)**: save homes with the heart button, and see the status of your inquiries under "My inquiries".
+- **Accounts** (email and password): save homes with the heart button, and see the status of your inquiries under "My inquiries".
 - **Responsive** from 360 px phones to wide desktops, with no horizontal scroll at any width (checked at 360, 390, 768, 1024 and 1440 px).
 
 ### CRM (`/dashboard`, agents and admins)
@@ -53,9 +53,9 @@ Agents only ever see records assigned to them. The API enforces this on every re
 | Frontend | React 19, Vite, Tailwind CSS v4, Motion (Framer Motion), React Router, TanStack Query, React Hook Form + Zod, Recharts, dnd-kit |
 | Backend | Node.js 22, Express 5, Mongoose, Zod, Helmet, express-rate-limit |
 | Database | MongoDB Atlas |
-| Auth | Clerk (sign-in) + our own role-based access control |
+| Auth | Own email/password auth (bcrypt + JWT) with role-based access control |
 | Images | Cloudinary (signed direct uploads), Unsplash for seed photos |
-| Tests | Vitest + Supertest + mongodb-memory-server (45 API tests) |
+| Tests | Vitest + Supertest + mongodb-memory-server (50 API tests) |
 | Hosting | Vercel (frontend and API as two projects) |
 
 Architecture, data flow and the reasoning behind each decision: **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**.
@@ -68,7 +68,7 @@ Requirements: **Node.js 20+** and npm.
 
 ### Option A: zero setup (about 2 minutes)
 
-No database or accounts needed. The API runs on an in-memory MongoDB seeded with demo data, and a **development-only** sign-in bypass lets you use the CRM without Clerk.
+No database or accounts needed. The API runs on an in-memory MongoDB seeded with demo data, including staff accounts you can sign in with.
 
 ```bash
 # terminal 1: API on http://localhost:5000
@@ -79,35 +79,31 @@ npm run dev:memory
 # terminal 2: website on http://localhost:5173
 cd frontend
 npm install
-echo VITE_DEV_USER=admin+clerk_test@niwas.app > .env.local   # act as the seeded admin
 npm run dev
 ```
 
-Open http://localhost:5173 and go to **/dashboard**. To act as an agent instead, set `VITE_DEV_USER=agent+clerk_test@niwas.app` and restart `npm run dev`. Data resets when the API stops.
+Open http://localhost:5173/sign-in, sign in as `admin@niwas.app` with password `niwas-demo-2026`, and go to **/dashboard**. The agents in [Demo accounts](#demo-accounts) use the same password. Data resets when the API stops.
 
-> The bypass is refused when `NODE_ENV=production` and ignored whenever Clerk keys are set, so it can't reach a deployed site.
-
-### Option B: real setup (Atlas + Clerk + Cloudinary)
+### Option B: real setup (Atlas + Cloudinary)
 
 1. **MongoDB Atlas**: create a free cluster and a database user. Under *Network access*, allow `0.0.0.0/0` (Vercel has no fixed IPs). Copy the connection string.
-2. **Clerk**: create an application with email and Google sign-in, then copy the publishable and secret keys.
-3. **Cloudinary** (optional; without it, photos can be added by link): copy the cloud name, API key and API secret.
-4. Configure and run:
+2. **Cloudinary** (optional; without it, photos can be added by link): copy the cloud name, API key and API secret.
+3. Configure and run:
 
 ```bash
 cd backend
-cp .env.example .env          # fill in MONGODB_URI, CLERK_*, CLOUDINARY_*, ADMIN_EMAILS
+cp .env.example .env          # fill in MONGODB_URI, JWT_SECRET, ADMIN_EMAILS, CLOUDINARY_*
 npm install
 npm run seed                  # demo listings, leads, customers and tasks
 npm run dev
 
 cd ../frontend
-cp .env.example .env.local    # fill in VITE_CLERK_PUBLISHABLE_KEY
+cp .env.example .env.local    # nothing to fill in for local dev
 npm install
 npm run dev
 ```
 
-5. Sign up with an email listed in `ADMIN_EMAILS` and you become an admin. Promote other accounts from **Dashboard → Team**.
+4. Create an account at `/sign-up` with an email listed in `ADMIN_EMAILS` and you become an admin. Everyone else signs up as a normal user; promote accounts from **Dashboard → Team**.
 
 ### Environment variables
 
@@ -116,19 +112,19 @@ npm run dev
 | Variable | Required | Purpose |
 |---|---|---|
 | `MONGODB_URI` | yes | Atlas connection string |
-| `CLIENT_URL` | yes | Frontend origin(s) allowed by CORS and Clerk, comma separated |
-| `CLERK_SECRET_KEY`, `CLERK_PUBLISHABLE_KEY` | yes | Verify session tokens and read user profiles |
-| `ADMIN_EMAILS` | yes | Emails that become admin on first sign-in |
+| `CLIENT_URL` | yes | Frontend origin(s) allowed by CORS, comma separated |
+| `JWT_SECRET` | in production | Signs session tokens (32+ random characters). A dev-only key is used locally if unset |
+| `JWT_EXPIRES_IN` | no | Session length, default `7d` |
+| `ADMIN_EMAILS` | yes | Emails that become admin when they register |
+| `SEED_PASSWORD` | no | Password for the demo staff accounts, default `niwas-demo-2026` |
+| `DNS_SERVERS` | no | DNS resolvers for the Atlas SRV lookup, if it fails with `querySrv ECONNREFUSED` |
 | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | no | Photo uploads |
-| `DEV_AUTH` | no | `true` enables the local sign-in bypass (refused in production) |
 
 **frontend/.env.local**
 
 | Variable | Required | Purpose |
 |---|---|---|
-| `VITE_CLERK_PUBLISHABLE_KEY` | yes | Clerk sign-in |
 | `VITE_API_URL` | in production | Deployed API origin, for example `https://niwas-api.vercel.app` (in dev, `/api` is proxied) |
-| `VITE_DEV_USER` | no | Dev builds only: act as a seeded user without Clerk |
 
 ### Scripts
 
@@ -137,21 +133,21 @@ npm run dev
 | backend | `npm run dev` | API with auto-reload (needs `.env`) |
 | backend | `npm run dev:memory` | API on an in-memory, pre-seeded database |
 | backend | `npm run seed` | Reset the database to the demo data |
-| backend | `npm test` | Run the 45 API tests |
+| backend | `npm test` | Run the 50 API tests |
 | frontend | `npm run dev` / `npm run build` | Dev server / production build |
 
 ---
 
 ## Demo accounts
 
-`npm run seed` creates these staff accounts. Sign up through Clerk with the same email and you're linked to the seeded account, keeping its role and data. In a Clerk development instance, `+clerk_test` emails accept the verification code **424242**.
+`npm run seed` creates these staff accounts with the password `niwas-demo-2026` (or `SEED_PASSWORD`). An account that already exists keeps its own password.
 
 | Role | Email |
 |---|---|
-| Admin | `admin+clerk_test@niwas.app` (or the first email in `ADMIN_EMAILS`) |
-| Agent | `agent+clerk_test@niwas.app` (Aarav Mehta) |
-| Agent | `sofia+clerk_test@niwas.app` (Sofia Lindqvist) |
-| Agent | `daniel+clerk_test@niwas.app` (Daniel Okafor, commercial) |
+| Admin | `admin@niwas.app` (or the first email in `ADMIN_EMAILS`) |
+| Agent | `aarav@niwas.app` (Aarav Mehta) |
+| Agent | `sofia@niwas.app` (Sofia Lindqvist) |
+| Agent | `daniel@niwas.app` (Daniel Okafor, commercial) |
 
 ---
 
@@ -162,11 +158,11 @@ Create **two Vercel projects** from this repository:
 | Project | Root directory | Environment variables |
 |---|---|---|
 | API | `backend` | everything from `backend/.env`, with `NODE_ENV=production` and `CLIENT_URL=https://<your-frontend>.vercel.app` |
-| Website | `frontend` | `VITE_CLERK_PUBLISHABLE_KEY`, `VITE_API_URL=https://<your-api>.vercel.app` |
+| Website | `frontend` | `VITE_API_URL=https://<your-api>.vercel.app` |
 
 - `backend/vercel.json` routes every request to `api/index.js`, which exports the Express app as a serverless function.
 - `frontend/vercel.json` rewrites all paths to `index.html` so deep links work.
-- In Clerk, add the website's domain under *Domains / Allowed origins*.
+- Set a strong `JWT_SECRET` on the API project; it refuses to start in production without one.
 - Run `npm run seed` once against the Atlas database from your machine.
 
 ---
@@ -177,14 +173,14 @@ Create **two Vercel projects** from this repository:
 backend/
   api/index.js            Vercel entry (exports the Express app)
   src/app.js              middleware chain and routes
-  src/auth/               Clerk provider, dev-only provider
+  src/auth/               token signing and password hashing
   src/middleware/         auth + roles, validation, sanitising, errors
   src/models/             User, Property, Lead, Customer, Task
   src/modules/<feature>/  routes, controllers, schemas, services per feature
   src/scripts/            seed and dev:memory
   tests/                  API tests (in-memory MongoDB)
 frontend/
-  src/auth/               AuthContext: wraps Clerk, exposes role
+  src/auth/               AuthContext: session token, current user and role
   src/components/ui/      design-system primitives
   src/components/site/    website components
   src/components/crm/     CRM components

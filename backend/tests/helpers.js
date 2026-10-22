@@ -1,28 +1,23 @@
 import mongoose from 'mongoose';
 import { inject } from 'vitest';
 import request from 'supertest';
+import bcrypt from 'bcryptjs';
 import { createApp } from '../src/app.js';
 import { User } from '../src/models/index.js';
+import { signToken } from '../src/auth/tokens.js';
 
-/**
- * Fake identity provider: the test chooses who is "signed in" with the
- * x-test-clerk-id header, and profiles come from a map instead of Clerk.
- */
-export const profiles = new Map();
-const fakeAuth = {
-  resolveAuth: (req) => req.get('x-test-clerk-id') ?? null,
-  fetchProfile: async (id) => profiles.get(id),
-  setRole: async () => {},
-};
+export const TEST_PASSWORD = 'correct-horse-battery';
+// Cost 4 keeps makeUser fast; login still verifies it like a real hash
+const TEST_HASH = bcrypt.hashSync(TEST_PASSWORD, 4);
 
 export async function setupTestApp() {
   // Unique database per test file on the shared server from globalSetup.js
   await mongoose.connect(inject('mongoUri'), { dbName: `test_${Date.now()}_${Math.random().toString(36).slice(2, 6)}` });
-  const app = await createApp({ auth: fakeAuth, connect: async () => {} });
+  const app = await createApp({ connect: async () => {} });
 
-  /** api(user?) → supertest agent that sends requests as that user. */
+  /** api(user?) → supertest agent that sends requests as that user (real signed token). */
   const api = (user) => {
-    const as = (req) => (user ? req.set('x-test-clerk-id', user.clerkId) : req);
+    const as = (req) => (user ? req.set('authorization', `Bearer ${signToken(user)}`) : req);
     return {
       get: (url) => as(request(app).get(url)),
       post: (url) => as(request(app).post(url)),
@@ -41,14 +36,13 @@ export async function teardownTestApp() {
 export async function resetDb() {
   const { collections } = mongoose.connection;
   await Promise.all(Object.values(collections).map((c) => c.deleteMany({})));
-  profiles.clear();
 }
 
 let counter = 0;
 export async function makeUser(role = 'buyer', overrides = {}) {
   counter += 1;
   return User.create({
-    clerkId: `user_${counter}`,
+    passwordHash: TEST_HASH,
     name: `${role} ${counter}`,
     email: `${role}${counter}@niwas.test`,
     role,
