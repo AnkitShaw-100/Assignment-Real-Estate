@@ -12,7 +12,6 @@ import { ease, spring } from '../../lib/motion';
 const LINKS = [
   { to: '/properties?purpose=sale', label: 'Buy' },
   { to: '/properties?purpose=rent', label: 'Rent' },
-  { to: '/properties?category=commercial', label: 'Commercial' },
   { to: '/properties', label: 'All properties' },
   { to: '/about', label: 'About' },
 ];

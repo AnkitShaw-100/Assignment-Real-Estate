@@ -18,10 +18,3 @@ export const duration = { fast: 0.16, base: 0.28, slow: 0.6 };
 /** Press feedback for anything tappable */
 export const press = { whileTap: { scale: 0.97 }, transition: spring.ui };
 
-/** One-time image reveal when a section first enters the viewport */
-export const clipReveal = {
-  initial: { clipPath: 'inset(6% 6% 6% 6% round 14px)', opacity: 0.6 },
-  whileInView: { clipPath: 'inset(0% 0% 0% 0% round 14px)', opacity: 1 },
-  viewport: { once: true, margin: '-10% 0px' },
-  transition: { duration: 0.7, ease: ease.out },
-};

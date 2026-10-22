@@ -1,7 +1,6 @@
-import { motion } from 'motion/react';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { Button } from '../../components/ui/Button';
-import { clipReveal } from '../../lib/motion';
+import { FadeImage } from '../../components/ui/FadeImage';
 
 const IMG = 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&q=80';
 
@@ -25,7 +24,7 @@ export default function About() {
             countries, and the rule hasn’t changed.
           </p>
         </div>
-        <motion.img {...clipReveal} src={`${IMG}&w=1200`} alt="Two Niwas agents celebrating a closed sale at the office" className="aspect-[4/3] w-full rounded-panel object-cover" />
+        <FadeImage className="aspect-[4/3] w-full rounded-panel" src={`${IMG}&w=1200`} alt="Two Niwas agents celebrating a closed sale at the office" />
       </section>
 
       <section className="bg-mist-100 py-20 md:py-28" aria-labelledby="how-title">

@@ -45,7 +45,7 @@ export const Textarea = forwardRef(function Textarea({ className, rows = 4, ...p
     <textarea
       ref={ref}
       rows={rows}
-      className={clsx(control, 'resize-y py-2.5 leading-relaxed', props['aria-invalid'] ? 'border-danger' : 'border-line', className)}
+      className={clsx(control, 'resize-none py-2.5 leading-relaxed', props['aria-invalid'] ? 'border-danger' : 'border-line', className)}
       {...props}
     />
   );

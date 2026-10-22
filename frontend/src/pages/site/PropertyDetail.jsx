@@ -1,7 +1,7 @@
-import { Link, useParams } from 'react-router';
+import { useParams } from 'react-router';
 import { motion } from 'motion/react';
 import {
-  AirVent, ArrowUpDown, Bath, BedDouble, Briefcase, CalendarDays, Car, Check, ChevronLeft, Clock, ConciergeBell, Dumbbell,
+  AirVent, ArrowUpDown, Bath, BedDouble, Briefcase, CalendarDays, Car, Check, Clock, ConciergeBell, Dumbbell,
   Flame, HousePlug, Mail, MapPin, Phone, PlugZap, Ruler, ShieldCheck, Shirt, Sunset, Trees, Truck, Waves, Wifi, Building,
 } from '../../components/ui/icons';
 import { useProperty, useSimilar } from '../../hooks/usePublic';
@@ -55,12 +55,7 @@ export default function PropertyDetail() {
   ].filter(Boolean);
 
   return (
-    <article className="container-page pt-6 pb-24">
-      <Link to="/properties" className="mb-5 inline-flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-navy-900">
-        <ChevronLeft className="size-4" />
-        All properties
-      </Link>
-
+    <article className="container-page pt-8 pb-24">
       <Gallery property={property} />
 
       <div className="mt-10 grid gap-12 lg:grid-cols-[minmax(0,1fr)_400px] lg:gap-16">
@@ -168,9 +163,9 @@ export default function PropertyDetail() {
 
 function DetailSkeleton() {
   return (
-    <div className="container-page pt-14 pb-24" aria-busy="true" aria-label="Loading property">
-      <div className="grid gap-3 md:grid-cols-[2fr_1fr] md:grid-rows-2">
-        <Skeleton className="aspect-[4/3] rounded-panel md:row-span-2 md:aspect-auto md:min-h-[520px]" />
+    <div className="container-page pt-8 pb-24" aria-busy="true" aria-label="Loading property">
+      <div className="grid gap-3 md:h-[540px] md:grid-cols-[2fr_1fr] md:grid-rows-2">
+        <Skeleton className="aspect-[4/3] rounded-panel md:row-span-2 md:aspect-auto md:h-full" />
         <Skeleton className="hidden rounded-panel md:block" />
         <Skeleton className="hidden rounded-panel md:block" />
       </div>
