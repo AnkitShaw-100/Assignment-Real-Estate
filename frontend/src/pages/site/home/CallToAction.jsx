@@ -44,8 +44,11 @@ export function CallToAction() {
             loading="lazy"
             className="absolute inset-0 size-full object-cover md:rounded-r-hero"
           />
-          {/* Sits on the seam between the text panel and the photo */}
-          <ExploreBadge size={132} className="absolute bottom-8 left-0 z-10 hidden -translate-x-1/2 shadow-float md:block" />
+          {/* Centred on the seam between text and photo, half over the card's bottom edge.
+              The wrapper does the positioning; the badge itself is position: relative. */}
+          <div className="absolute bottom-0 left-0 z-10 hidden -translate-x-1/2 translate-y-1/2 md:block">
+            <ExploreBadge size={132} className="shadow-float" />
+          </div>
         </div>
       </div>
     </section>

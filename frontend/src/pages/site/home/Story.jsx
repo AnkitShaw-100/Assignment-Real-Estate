@@ -35,7 +35,9 @@ export function Story() {
             src={`${INSET}&w=600`}
             alt="A bright, furnished living room"
           />
-          <ExploreBadge size={120} className="absolute top-6 left-6 shadow-float" />
+          <div className="absolute top-6 left-6">
+            <ExploreBadge size={120} className="shadow-float" />
+          </div>
         </div>
 
         <div>
