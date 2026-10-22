@@ -24,8 +24,15 @@ export async function uploadImage(file, { onProgress } = {}) {
   form.append('signature', sig.signature);
   form.append('folder', sig.folder);
 
-  const res = await axios.post(`https://api.cloudinary.com/v1_1/${sig.cloudName}/image/upload`, form, {
-    onUploadProgress: (e) => e.total && onProgress?.(Math.round((e.loaded / e.total) * 100)),
-  });
+  let res;
+  try {
+    res = await axios.post(`https://api.cloudinary.com/v1_1/${sig.cloudName}/image/upload`, form, {
+      onUploadProgress: (e) => e.total && onProgress?.(Math.round((e.loaded / e.total) * 100)),
+    });
+  } catch (err) {
+    // Show Cloudinary's own reason (e.g. a key without upload permission) instead of axios's generic text
+    const reason = err.response?.data?.error?.message?.replace(/^\[[^\]]*\]\s*/, '');
+    throw new Error(reason ? `Cloudinary refused the upload: ${reason}` : "The photo couldn't be uploaded. Check your connection and try again.");
+  }
   return { url: res.data.secure_url, publicId: res.data.public_id, alt: '' };
 }
