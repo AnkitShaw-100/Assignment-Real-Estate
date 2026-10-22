@@ -3,19 +3,17 @@ import axios from 'axios';
 /**
  * One axios instance for the whole app.
  *  - In dev, /api is proxied to the local Express server (vite.config.js).
- *  - In production, vercel.json forwards /api to the deployed API (same origin).
+ *  - In production, VITE_API_URL points at the deployed API.
  *  - The session token is attached to every request when signed in.
  *  - Errors are normalised to { message, details, status } from the API's error shape.
  */
-// Same-origin /api by default: Vite proxies it in dev and frontend/vercel.json
-// forwards it to the API in production, so the browser never makes a
-// cross-origin call. VITE_API_URL can point elsewhere, but a localhost value
-// baked into a production build could never work for visitors, so it's ignored.
-const configured = import.meta.env.VITE_API_URL?.replace(/\/$/, '');
-const usable = configured && !(import.meta.env.PROD && /\/\/(localhost|127\.0\.0\.1)/.test(configured));
+// In production VITE_API_URL is the deployed API (set in the Vercel project);
+// the browser calls it directly and the API allows this site via CORS.
+// Locally it's left empty and Vite proxies /api to localhost:5000.
+const API_URL = import.meta.env.VITE_API_URL?.replace(/\/$/, '');
 
 export const api = axios.create({
-  baseURL: usable ? `${configured}/api` : '/api',
+  baseURL: API_URL ? `${API_URL}/api` : '/api',
   timeout: 20_000,
 });
 
