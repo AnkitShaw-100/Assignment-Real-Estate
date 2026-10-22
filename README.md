@@ -282,7 +282,7 @@ Two Vercel projects from this repository:
 | API | `backend` | everything from `backend/.env`, plus `NODE_ENV=production` and `CLIENT_URL=https://assignment-real-estate-alpha.vercel.app` |
 | Website | `frontend` | `VITE_API_URL=https://assignment-real-estate-backend.vercel.app` |
 
-- `backend/vercel.json` builds `src/server.js` with `@vercel/node` and routes every request to it; on Vercel that file only exports the Express app, so it runs as a serverless function.
+- The API uses Vercel's Express preset: it picks up `backend/src/server.js`, which imports Express and exports the app. On Vercel that file doesn't listen or connect at startup; each request connects lazily (cached per instance).
 - `frontend/vercel.json` rewrites all paths to `index.html`, so deep links work.
 - The website calls the API directly at `VITE_API_URL`; the API allows it through its CORS allowlist (`CLIENT_URL`).
 - The API refuses to start in production without `JWT_SECRET`.
