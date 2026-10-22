@@ -4,7 +4,7 @@ import { api } from '../lib/api';
 import { cleanParams } from './usePublic';
 
 // All CRM data access in one place. Query keys are grouped by resource
-// ('leads', 'customers', …) so a mutation can refresh everything
+// ('leads', 'customers', 'tasks', …) so a mutation can refresh everything
 // related with one invalidateQueries call.
 
 const get = (url, params) => api.get(url, { params: params && cleanParams(params) }).then((r) => r.data);
@@ -43,7 +43,7 @@ export const useLeads = (params) =>
   useQuery({ queryKey: ['leads', cleanParams(params)], queryFn: () => get('/leads', params), placeholderData: keepPreviousData });
 export const useLead = (id) => useQuery({ queryKey: ['leads', 'one', id], queryFn: () => get(`/leads/${id}`).then((r) => r.data), enabled: Boolean(id) });
 
-const LEAD_RELATED = ['leads', 'dashboard', 'customers'];
+const LEAD_RELATED = ['leads', 'dashboard', 'tasks', 'customers'];
 export const useCreateLead = (opts) => useAction((body) => data(api.post('/leads', body)), { success: 'Lead added', invalidate: LEAD_RELATED, ...opts });
 export const useUpdateLead = (opts) =>
   useAction(({ id, ...body }) => data(api.patch(`/leads/${id}`, body)), { success: 'Lead updated', invalidate: LEAD_RELATED, ...opts });
@@ -88,6 +88,35 @@ export const useUpdateCustomer = (opts) =>
   useAction(({ id, ...body }) => data(api.patch(`/customers/${id}`, body)), { success: 'Customer updated', invalidate: ['customers'], ...opts });
 export const useAddInteraction = (opts) =>
   useAction(({ id, ...body }) => data(api.post(`/customers/${id}/interactions`, body)), { success: 'Interaction logged', invalidate: ['customers'], ...opts });
+
+// ---------- tasks ----------
+export const useTasks = (params) => useQuery({ queryKey: ['tasks', cleanParams(params)], queryFn: () => get('/tasks', params).then((r) => r.data) });
+export const useCreateTask = (opts) =>
+  useAction((body) => data(api.post('/tasks', body)), { success: 'Task added', invalidate: ['tasks', 'dashboard'], ...opts });
+export const useDeleteTask = () => useAction((id) => api.delete(`/tasks/${id}`), { success: 'Task deleted', invalidate: ['tasks', 'dashboard'] });
+
+/** Checking a task off is optimistic so the checkbox responds instantly. */
+export function useToggleTask() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, status }) => data(api.patch(`/tasks/${id}`, { status })),
+    onMutate: async ({ id, status }) => {
+      await qc.cancelQueries({ queryKey: ['tasks'] });
+      const snapshots = qc.getQueriesData({ queryKey: ['tasks'] });
+      qc.setQueriesData({ queryKey: ['tasks'] }, (old) => (Array.isArray(old) ? old.map((t) => (t._id === id ? { ...t, status } : t)) : old));
+      return { snapshots };
+    },
+    onError: (err, _v, ctx) => {
+      ctx.snapshots.forEach(([key, value]) => qc.setQueryData(key, value));
+      toast.error(err.message);
+    },
+    onSuccess: (_d, { status }) => toast.success(status === 'done' ? 'Task completed' : 'Task reopened'),
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: ['tasks'] });
+      qc.invalidateQueries({ queryKey: ['dashboard'] });
+    },
+  });
+}
 
 // ---------- properties (management) ----------
 export const useManagedProperties = (params) =>

@@ -6,10 +6,11 @@ import { useSession } from '../../auth/AuthContext';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { Card, PageHeader } from '../../routes/DashboardLayout';
 import { HorizontalBars, SalesChart, sourceRows, stageRows } from '../../components/crm/Charts';
+import { TaskRow } from '../../components/crm/TaskRow';
 import { StageBadge } from '../../components/ui/Badge';
 import { Avatar, EmptyState, ErrorState, Skeleton } from '../../components/ui/States';
 import { Button } from '../../components/ui/Button';
-import { formatDateTime, formatNumber, formatPrice, timeAgo } from '../../lib/format';
+import { formatNumber, formatPrice, timeAgo } from '../../lib/format';
 
 function Delta({ value, suffix = 'vs last period' }) {
   if (value == null) return <p className="mt-2 text-[13px] text-slate-400">No earlier data to compare</p>;
@@ -103,28 +104,17 @@ export default function Overview() {
 
             <Card className="flex flex-col p-5 md:p-6">
               <div className="mb-2 flex items-baseline justify-between">
-                <h2 className="text-[17px] font-semibold">Follow-ups due</h2>
-                <Link to="/dashboard/leads?followUp=today" className="text-sm font-medium text-slate-500 hover:text-navy-900">
-                  All leads
+                <h2 className="text-[17px] font-semibold">Today</h2>
+                <Link to="/dashboard/tasks" className="text-sm font-medium text-slate-500 hover:text-navy-900">
+                  All tasks
                 </Link>
               </div>
-              {data.followUps.length === 0 ? (
-                <EmptyState icon={CircleCheckBig} title="You’re all caught up" description="No lead follow-ups due today or overdue." className="flex-1 border-0" />
+              {data.tasks.overdue.length + data.tasks.today.length === 0 ? (
+                <EmptyState icon={CircleCheckBig} title="You’re all caught up" description="No tasks due today or overdue." className="flex-1 border-0" />
               ) : (
-                <ul className="scroll-thin -my-1 max-h-[300px] divide-y divide-line overflow-y-auto pr-1">
-                  {data.followUps.map((l) => (
-                    <li key={l._id}>
-                      <Link to={`/dashboard/leads?open=${l._id}`} className="flex items-center gap-3 rounded-lg py-3 hover:bg-mist-100/60">
-                        <span className={clsx('size-2 shrink-0 rounded-full', l.overdue ? 'bg-danger' : 'bg-accent-500')} aria-hidden />
-                        <span className="min-w-0 flex-1">
-                          <span className="block truncate text-[15px] font-medium">{l.name}</span>
-                          <span className="block truncate text-[13px] text-slate-500">{l.property?.title ?? 'General inquiry'}</span>
-                        </span>
-                        <span className={clsx('shrink-0 text-[13px] tabular', l.overdue ? 'font-medium text-danger' : 'text-slate-500')}>
-                          {l.overdue ? 'Overdue' : formatDateTime(l.followUpDate).split(', ').pop()}
-                        </span>
-                      </Link>
-                    </li>
+                <ul className="-my-1 max-h-[300px] divide-y divide-line overflow-y-auto pr-1">
+                  {[...data.tasks.overdue, ...data.tasks.today].map((t) => (
+                    <TaskRow key={t._id} task={t} />
                   ))}
                 </ul>
               )}

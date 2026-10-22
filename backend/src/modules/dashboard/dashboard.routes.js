@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { Lead, Property, Customer, LEAD_STAGES, OPEN_LEAD_STAGES } from '../../models/index.js';
+import { Lead, Property, Customer, Task, LEAD_STAGES, OPEN_LEAD_STAGES } from '../../models/index.js';
 import { requireStaff } from '../../middleware/auth.js';
 import { addDays, dayRange, startOfMonth } from '../../utils/dates.js';
 
@@ -41,7 +41,8 @@ dashboardRouter.get('/overview', async (req, res) => {
     leadsBySource,
     funnel,
     closedCounts,
-    followUps,
+    tasksToday,
+    tasksOverdue,
     recentLeads,
   ] = await Promise.all([
     Property.countDocuments({ status: 'available', ...mine('agent') }),
@@ -79,12 +80,16 @@ dashboardRouter.get('/overview', async (req, res) => {
       { $match: { ...leadScope, status: { $in: ['won', 'lost'] }, closedAt: { $gte: yearAgo } } },
       { $group: { _id: '$status', count: { $sum: 1 } } },
     ]),
-    // Open leads whose follow-up is due today or overdue
-    Lead.find({ ...leadScope, status: { $in: OPEN_LEAD_STAGES }, followUpDate: { $lt: todayEnd } })
-      .sort({ followUpDate: 1 })
-      .limit(12)
-      .select('name status followUpDate property')
-      .populate('property', 'title')
+    Task.find({ ...mine('assignee'), status: 'open', dueAt: { $gte: todayStart, $lt: todayEnd } })
+      .sort({ dueAt: 1 })
+      .populate('lead', 'name')
+      .populate('customer', 'name')
+      .lean(),
+    Task.find({ ...mine('assignee'), status: 'open', dueAt: { $lt: todayStart } })
+      .sort({ dueAt: 1 })
+      .limit(10)
+      .populate('lead', 'name')
+      .populate('customer', 'name')
       .lean(),
     Lead.find(leadScope)
       .sort({ createdAt: -1 })
@@ -128,7 +133,7 @@ dashboardRouter.get('/overview', async (req, res) => {
         count: funnelMap.get(stage)?.count ?? 0,
         value: funnelMap.get(stage)?.value ?? 0,
       })),
-      followUps: followUps.map((l) => ({ ...l, overdue: l.followUpDate < todayStart })),
+      tasks: { today: tasksToday, overdue: tasksOverdue },
       recentLeads,
     },
   });

@@ -21,6 +21,7 @@ const Leads = lazy(() => import('./pages/crm/Leads'));
 const Pipeline = lazy(() => import('./pages/crm/Pipeline'));
 const Customers = lazy(() => import('./pages/crm/Customers'));
 const CustomerDetail = lazy(() => import('./pages/crm/CustomerDetail'));
+const Tasks = lazy(() => import('./pages/crm/Tasks'));
 const PropertiesAdmin = lazy(() => import('./pages/crm/PropertiesAdmin'));
 const Team = lazy(() => import('./pages/crm/Team'));
 
@@ -57,6 +58,7 @@ const router = createBrowserRouter([
           { path: 'pipeline', element: <Pipeline /> },
           { path: 'customers', element: <Customers /> },
           { path: 'customers/:id', element: <CustomerDetail /> },
+          { path: 'tasks', element: <Tasks /> },
           { path: 'properties', element: <PropertiesAdmin /> },
           {
             element: <RequireRole roles={['admin']} />,

@@ -1,4 +1,4 @@
-import { Lead, User, Customer, Property, OPEN_LEAD_STAGES } from '../../models/index.js';
+import { Lead, User, Customer, Property, Task, OPEN_LEAD_STAGES } from '../../models/index.js';
 import { HttpError } from '../../utils/httpError.js';
 
 /**
@@ -27,6 +27,27 @@ export async function pickAssignee(propertyId) {
 
   const admin = await User.findOne({ role: 'admin', active: true }).select('_id').lean();
   return admin?._id;
+}
+
+/** Keeps exactly one open follow-up task per lead in sync with its followUpDate. */
+export async function syncFollowUpTask(lead, actorId) {
+  const existing = await Task.findOne({ lead: lead._id, status: 'open', title: /^Follow up/ });
+
+  if (!lead.followUpDate || !OPEN_LEAD_STAGES.includes(lead.status)) {
+    if (existing) await existing.deleteOne();
+    return;
+  }
+
+  const fields = {
+    title: `Follow up with ${lead.name}`,
+    dueAt: lead.followUpDate,
+    assignee: lead.assignedTo,
+    lead: lead._id,
+    customer: lead.customer,
+    priority: 'medium',
+  };
+  if (existing) await existing.set(fields).save();
+  else await Task.create({ ...fields, createdBy: actorId });
 }
 
 /** Creates (or reuses, matched by email) the Customer for a lead. */
@@ -100,6 +121,7 @@ export async function changeStage(lead, { stage, dealValue, lostReason }, actorI
   }
 
   await lead.save();
+  await syncFollowUpTask(lead, actorId);
   return lead;
 }
 

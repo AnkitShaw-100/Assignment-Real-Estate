@@ -9,7 +9,7 @@ import mongoose from 'mongoose';
 import { connectDB } from '../config/db.js';
 import { env } from '../config/env.js';
 import { hashPassword } from '../auth/tokens.js';
-import { User, Property, Lead, Customer, OPEN_LEAD_STAGES } from '../models/index.js';
+import { User, Property, Lead, Customer, Task, OPEN_LEAD_STAGES } from '../models/index.js';
 import { PROPERTIES } from './data/properties.js';
 
 // Deterministic randomness: same data on every run
@@ -66,7 +66,7 @@ const weightedStage = () => {
 /** Resets and fills the connected database. Exported so dev-memory.js can reuse it. */
 export async function seedDatabase({ log = console.log } = {}) {
   log('Clearing collections…');
-  await Promise.all([Property.deleteMany({}), Lead.deleteMany({}), Customer.deleteMany({}), mongoose.connection.db.collection('tasks').deleteMany({})]); // tasks: removed feature, clear old data
+  await Promise.all([Property.deleteMany({}), Lead.deleteMany({}), Customer.deleteMany({}), Task.deleteMany({})]);
 
   // Drops indexes the schema no longer declares (e.g. the old clerkId index)
   await User.syncIndexes();
@@ -163,6 +163,19 @@ export async function seedDatabase({ log = console.log } = {}) {
     customerCount += 1;
   }
   log(`Created ${customerCount} customers`);
+
+  // Tasks: follow-ups from leads plus some general ones
+  const tasks = createdLeads
+    .filter((l) => l.followUpDate)
+    .map((l) => ({ title: `Follow up with ${l.name}`, dueAt: l.followUpDate, assignee: l.assignedTo, lead: l._id, customer: l.customer, priority: pick(['low', 'medium', 'high']) }));
+  const general = ['Prepare monthly market report', 'Update listing photos', 'Call mortgage partner', 'Plan open house', 'Review pricing on slow listings'];
+  for (const [i, title] of general.entries()) {
+    const assignee = agents[i % agents.length]._id;
+    tasks.push({ title, dueAt: daysFromNow(i - 1), assignee, priority: i % 2 ? 'medium' : 'high' });
+    tasks.push({ title: `${title} (last month)`, dueAt: daysAgo(20 + i), assignee, status: 'done', completedAt: daysAgo(19 + i) });
+  }
+  await Task.insertMany(tasks.map((t) => ({ ...t, createdBy: staff[0]._id })));
+  log(`Created ${tasks.length} tasks`);
 
   log(`\nDemo staff accounts (password "${SEED_PASSWORD}" unless the account already had one):`);
   for (const s of staff) log(`  ${s.role.padEnd(6)} ${s.email}`);
