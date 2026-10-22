@@ -1,5 +1,6 @@
 import { createElement } from 'react';
 import * as Pi from 'react-icons/pi';
+import { FaFacebookF, FaInstagram, FaLinkedinIn, FaXTwitter } from 'react-icons/fa6';
 
 /**
  * The app's icon set: Phosphor (regular weight) via react-icons, exported
@@ -72,9 +73,11 @@ export const HouseLine = icon(Pi.PiHouseLine, 'HouseLine');
 export const Key = icon(Pi.PiKey, 'Key');
 export const Handshake = icon(Pi.PiHandshake, 'Handshake');
 export const Globe = icon(Pi.PiGlobeHemisphereWest, 'Globe');
-export const FacebookLogo = icon(Pi.PiFacebookLogo, 'FacebookLogo');
-export const InstagramLogo = icon(Pi.PiInstagramLogo, 'InstagramLogo');
-export const LinkedinLogo = icon(Pi.PiLinkedinLogo, 'LinkedinLogo');
+// Official brand glyphs (Font Awesome brands) for social links
+export const FacebookLogo = icon(FaFacebookF, 'FacebookLogo');
+export const InstagramLogo = icon(FaInstagram, 'InstagramLogo');
+export const LinkedinLogo = icon(FaLinkedinIn, 'LinkedinLogo');
+export const XLogo = icon(FaXTwitter, 'XLogo');
 // Amenities, CRM and misc
 export const AirVent = icon(Pi.PiFan, 'AirVent');
 export const ArrowUpDown = icon(Pi.PiArrowsDownUp, 'ArrowUpDown');

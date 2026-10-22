@@ -27,6 +27,7 @@ const SOCIAL = [
   { name: 'facebook', label: 'Facebook', href: 'https://facebook.com' },
   { name: 'instagram', label: 'Instagram', href: 'https://instagram.com' },
   { name: 'linkedin', label: 'LinkedIn', href: 'https://linkedin.com' },
+  { name: 'x', label: 'X', href: 'https://x.com' },
 ];
 
 export function Footer() {
@@ -54,13 +55,12 @@ export function Footer() {
           </div>
         ))}
         <div>
-          <h2 className="font-display text-xl">Social media</h2>
-          <ul className="mt-5 space-y-3">
+          <h2 className="font-display text-xl">Follow us</h2>
+          <ul className="mt-5 flex gap-2.5">
             {SOCIAL.map((s) => (
               <li key={s.name}>
-                <a href={s.href} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2.5 text-[15px] text-white/65 transition-colors hover:text-white">
-                  <SocialIcon name={s.name} />
-                  {s.label}
+                <a href={s.href} target="_blank" rel="noreferrer" aria-label={s.label} title={s.label} className="grid size-10 place-items-center rounded-full bg-white/10 text-white/80 transition-colors hover:bg-white hover:text-navy-900">
+                  <SocialIcon name={s.name} className="size-[17px]" />
                 </a>
               </li>
             ))}

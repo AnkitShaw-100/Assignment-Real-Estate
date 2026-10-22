@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 import clsx from 'clsx';
-import { FacebookLogo, InstagramLogo, LinkedinLogo } from '../ui/icons';
+import { FacebookLogo, InstagramLogo, LinkedinLogo, XLogo } from '../ui/icons';
 
 /** Wordmark: semibold display face, Apple-style. */
 export function Logo({ className, tone = 'dark' }) {
@@ -15,7 +15,7 @@ export function Logo({ className, tone = 'dark' }) {
   );
 }
 
-const SOCIAL_ICONS = { facebook: FacebookLogo, instagram: InstagramLogo, linkedin: LinkedinLogo };
+const SOCIAL_ICONS = { facebook: FacebookLogo, instagram: InstagramLogo, linkedin: LinkedinLogo, x: XLogo };
 
 export function SocialIcon({ name, className = 'size-4' }) {
   const Icon = SOCIAL_ICONS[name];

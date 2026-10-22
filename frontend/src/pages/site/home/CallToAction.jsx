@@ -10,7 +10,7 @@ const PROMISES = ['Every home visited by our own agents', 'Viewings arranged wit
 export function CallToAction() {
   return (
     <section className="container-page pb-20 md:pb-28" aria-labelledby="cta-title">
-      <div className="grid overflow-hidden rounded-hero bg-mist-100 md:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
+      <div className="grid overflow-hidden rounded-hero bg-mist-100 md:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] md:overflow-visible">
         <div className="flex flex-col justify-center p-8 sm:p-12 lg:p-16">
           <h2 id="cta-title" className="font-display text-h1">
             Let’s find your dream home
@@ -35,16 +35,17 @@ export function CallToAction() {
             </Button>
           </div>
         </div>
-        <div className="relative min-h-[300px] md:min-h-[480px]">
+        <div className="relative min-h-[300px] overflow-hidden rounded-b-hero md:min-h-[480px] md:overflow-visible md:rounded-none">
           <img
             src={`${IMG}&w=1400`}
             srcSet={`${IMG}&w=800 800w, ${IMG}&w=1400 1400w`}
             sizes="(min-width: 768px) 50vw, 100vw"
             alt="A modern timber and glass home lit up at dusk"
             loading="lazy"
-            className="absolute inset-0 size-full object-cover"
+            className="absolute inset-0 size-full object-cover md:rounded-r-hero"
           />
-          <ExploreBadge size={132} className="absolute bottom-6 left-6 hidden sm:block" />
+          {/* Sits on the seam between the text panel and the photo */}
+          <ExploreBadge size={132} className="absolute bottom-8 left-0 z-10 hidden -translate-x-1/2 shadow-float md:block" />
         </div>
       </div>
     </section>
