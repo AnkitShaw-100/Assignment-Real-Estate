@@ -4,6 +4,11 @@ import { env } from './env.js';
 
 mongoose.set('strictQuery', true);
 
+// Without a listener, a failed connection's 'error' event is thrown as an
+// uncaught exception and kills the serverless function (FUNCTION_INVOCATION_FAILED).
+// Requests still get a 500 from the awaited connect() below; this just logs.
+mongoose.connection.on('error', (err) => console.error('MongoDB connection error:', err.message));
+
 // mongodb+srv needs an SRV lookup, which fails with ECONNREFUSED when Node
 // picks up an unreachable resolver (e.g. 127.0.0.1 on some Windows setups).
 if (env.dnsServers.length) dns.setServers(env.dnsServers);

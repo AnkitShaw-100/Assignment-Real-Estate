@@ -34,6 +34,7 @@ export async function createApp({ connect = connectDB } = {}) {
   app.use(express.json({ limit: '1mb' }));
   app.use(sanitize);
 
+  app.get('/', (_req, res) => res.json({ name: 'Niwas API', health: '/api/health' }));
   app.get('/api/health', (_req, res) => res.json({ ok: true }));
 
   if (!env.isTest) {

@@ -7,7 +7,7 @@ Built with **React, Node.js/Express and MongoDB** for the Anuverse Technologies 
 | | |
 |---|---|
 | **Live website** | https://assignment-real-estate-alpha.vercel.app |
-| **REST API** | _API URL_ |
+| **REST API** | https://assignment-real-estate-backend.vercel.app (health check: [/api/health](https://assignment-real-estate-backend.vercel.app/api/health)) |
 | **Source code** | https://github.com/AnkitShaw-100/Assignment-Real-Estate |
 | **CRM access** | Demo admin and agent logins are shared in the submission email. You can also sign up on the site as a normal user. |
 
@@ -280,7 +280,7 @@ Two Vercel projects from this repository:
 | Project | Root directory | Environment variables |
 |---|---|---|
 | API | `backend` | everything from `backend/.env`, plus `NODE_ENV=production` and `CLIENT_URL=https://assignment-real-estate-alpha.vercel.app` |
-| Website | `frontend` | `VITE_API_URL=<API URL>` |
+| Website | `frontend` | `VITE_API_URL=https://assignment-real-estate-backend.vercel.app` |
 
 - `backend/vercel.json` routes every request to `api/index.js`, which exports the Express app as a serverless function.
 - `frontend/vercel.json` rewrites all paths to `index.html`, so deep links work.
