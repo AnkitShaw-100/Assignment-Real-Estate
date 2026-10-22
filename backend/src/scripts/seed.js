@@ -1,10 +1,11 @@
 /**
  * npm run seed — resets the database with realistic demo data.
  *
- * Staff accounts are upserted by email with a demo password (SEED_PASSWORD).
+ * Staff accounts are upserted by email with SEED_PASSWORD (random if unset).
  * An account that already exists keeps its own password, so re-seeding never
  * locks a real person out.
  */
+import { randomBytes } from 'node:crypto';
 import mongoose from 'mongoose';
 import { connectDB } from '../config/db.js';
 import { env } from '../config/env.js';
@@ -24,7 +25,9 @@ const daysAgo = (n) => new Date(Date.now() - n * 86_400_000);
 const daysFromNow = (n) => new Date(Date.now() + n * 86_400_000);
 
 const ADMIN_EMAIL = env.adminEmails[0] ?? 'admin@niwas.app';
-export const SEED_PASSWORD = process.env.SEED_PASSWORD || 'niwas-demo-2026';
+// No password is hardcoded: set SEED_PASSWORD, or a random one is generated
+// for this run and printed at the end.
+export const SEED_PASSWORD = process.env.SEED_PASSWORD || randomBytes(9).toString('base64url');
 
 const STAFF = [
   { name: 'Niwas Admin', email: ADMIN_EMAIL, role: 'admin', title: 'Managing director', phone: '+1 415 555 0100' },

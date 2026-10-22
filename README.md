@@ -212,7 +212,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:5173/sign-in and sign in as `admin@niwas.app` with password `niwas-demo-2026`, then go to **/dashboard**. Agents `aarav@niwas.app`, `sofia@niwas.app` and `daniel@niwas.app` use the same password. Data resets when the API stops.
+The API prints the demo logins when it starts: `admin@niwas.app` plus agents `aarav@niwas.app`, `sofia@niwas.app` and `daniel@niwas.app`, all with a random password generated for that run (set `SEED_PASSWORD` to choose your own). Sign in at http://localhost:5173/sign-in and go to **/dashboard**. Data resets when the API stops.
 
 ### Option B: with MongoDB Atlas
 
@@ -246,7 +246,7 @@ npm run dev
 | `JWT_SECRET` | in production | Signs session tokens (32+ random characters) |
 | `JWT_EXPIRES_IN` | no | Session length, default `7d` |
 | `ADMIN_EMAILS` | yes | Emails that become admin when they register |
-| `SEED_PASSWORD` | no | Password for demo staff accounts created by `npm run seed` |
+| `SEED_PASSWORD` | no | Password for demo staff accounts created by `npm run seed` (random and printed if unset) |
 | `DNS_SERVERS` | no | DNS resolvers for the Atlas lookup, if startup fails with `querySrv ECONNREFUSED` |
 | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | no | Photo uploads |
 
