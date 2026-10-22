@@ -324,6 +324,5 @@ docs/
 |---|---|
 | ![Property listings with filters](docs/screenshots/listings.webp) | ![Property detail page](docs/screenshots/detail.webp) |
 | ![CRM overview](docs/screenshots/overview.webp) | ![Sales pipeline](docs/screenshots/pipeline.webp) |
-| ![Lead detail drawer](docs/screenshots/lead.webp) | ![Add property form](docs/screenshots/property-form.webp) |
 
 <p align="center"><img src="docs/screenshots/home-mobile.webp" alt="Home page on a phone" width="300"></p>
