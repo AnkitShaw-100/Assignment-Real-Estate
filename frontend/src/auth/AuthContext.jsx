@@ -89,7 +89,7 @@ const clerkAppearance = {
     colorPrimary: '#0c1a3b',
     colorText: '#0c1a3b',
     colorTextSecondary: '#5d6678',
-    fontFamily: '"Hanken Grotesk", system-ui, sans-serif',
+    fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, "Segoe UI", Roboto, sans-serif',
     borderRadius: '12px',
   },
   elements: {

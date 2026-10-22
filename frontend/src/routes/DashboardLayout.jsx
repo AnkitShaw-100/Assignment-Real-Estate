@@ -124,7 +124,7 @@ export default function DashboardLayout() {
   );
 }
 
-/** Page title row used by every CRM screen: Fraunces title, optional subtitle and actions. */
+/** Page title row used by every CRM screen: display title, optional subtitle and actions. */
 export function PageHeader({ title, description, actions, children }) {
   return (
     <div className="mb-7 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">

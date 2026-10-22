@@ -1,13 +1,12 @@
 import { Link } from 'react-router';
 import clsx from 'clsx';
 
-/** Wordmark: italic Fraunces, like the mockup's logotype. */
+/** Wordmark: semibold display face, Apple-style. */
 export function Logo({ className, tone = 'dark' }) {
   return (
     <Link
       to="/"
-      className={clsx('font-display text-[28px] leading-none tracking-[-0.02em] italic', tone === 'light' ? 'text-white' : 'text-navy-900', className)}
-      style={{ fontWeight: 400 }}
+      className={clsx('font-display text-[28px] leading-none tracking-[-0.03em]', tone === 'light' ? 'text-white' : 'text-navy-900', className)}
       aria-label="Niwas home"
     >
       Niwas

@@ -53,28 +53,28 @@ Dark mode: CRM only, phase 2 if time allows (tokens are CSS variables so it is a
 
 | Role | Family | Settings |
 |---|---|---|
-| Display / headings | **Fraunces** (variable, Google Fonts) | weight 300, `opsz` 144, `SOFT` 0, `WONK` 0. Thin, high-contrast and editorial, matching the mockup's headlines |
-| UI / body / numbers | **Hanken Grotesk** (Google Fonts) | 400 / 500 / 600; `font-variant-numeric: tabular-nums` for prices and stats |
+| Display / headings | **SF Pro Display** via `-apple-system`, falling back to **Inter** | weight 600, tracking −0.022em. Apple-style headlines |
+| UI / body / numbers | **SF Pro Text** via `-apple-system`, falling back to **Inter** | 400 / 500 / 600; `font-variant-numeric: tabular-nums` for prices and stats |
 
-Why these: the mockup uses a light, high-contrast serif against a small neutral grotesk. Fraunces' optical-size axis keeps hairlines crisp at 72px and sturdy at 24px. Hanken Grotesk is quieter and narrower than Inter, so small CRM labels stay calm.
+Why: SF Pro's license allows use only on Apple platforms, so it can't be served as a web font. The system stack renders real SF Pro on macOS/iOS. Everywhere else, Inter (Google Fonts, variable with `opsz`) is the closest free match.
 
 **Scale** (1.25 ratio; display sizes clamp fluidly):
 | Token | Size / line-height | Font |
 |---|---|---|
-| `display` | clamp(44px, 6vw, 88px) / 0.98, tracking −0.02em | Fraunces 300 |
-| `h1` | clamp(34px, 4vw, 52px) / 1.05, −0.015em | Fraunces 300 |
-| `h2` | clamp(28px, 3vw, 40px) / 1.1 | Fraunces 300 |
-| `h3` | 22px / 1.25 | Fraunces 400 |
-| `lead` | 18px / 1.6 | Hanken 400 |
-| `body` | 16px / 1.6 | Hanken 400 |
-| `small` | 14px / 1.5 | Hanken 400/500 |
-| `micro` | 12px / 1.4 | Hanken 500 |
+| `display` | clamp(44px, 6vw, 88px) / 0.98, tracking −0.02em | Display 600 |
+| `h1` | clamp(34px, 4vw, 52px) / 1.05, −0.015em | Display 600 |
+| `h2` | clamp(28px, 3vw, 40px) / 1.1 | Display 600 |
+| `h3` | 22px / 1.25 | Display 600 |
+| `lead` | 18px / 1.6 | Sans 400 |
+| `body` | 16px / 1.6 | Sans 400 |
+| `small` | 14px / 1.5 | Sans 400/500 |
+| `micro` | 12px / 1.4 | Sans 500 |
 
 Rules:
 - Sentence case everywhere. **No all-caps labels, no eyebrow text above headings**, no single-word color/italic accents in headlines.
 - Measure ≤ 68ch for body copy.
-- Prices: Hanken 600, tabular, `brass-700` on white cards; navy in tables.
-- CRM headings use Fraunces only for the page title. Everything else in the CRM is Hanken.
+- Prices: Sans 600, tabular, `brass-700` on white cards; navy in tables.
+- CRM headings use the display face only for the page title. Everything else in the CRM is Sans.
 
 ---
 
@@ -131,7 +131,7 @@ Mobile: hero headline stacks, search pill goes full-width under it, carousels be
 ### CRM shell
 ```
 ┌────────┬─────────────────────────────────────┐
-│ navy   │ Page title (Fraunces)   [search][+] │
+│ navy   │ Page title (display)   [search][+] │
 │ sidebar│─────────────────────────────────────│
 │ Niwas  │ mist canvas                         │
 │ ○ Home │ ┌white┐┌white┐┌white┐┌white┐  KPIs  │
@@ -186,15 +186,15 @@ Nothing else on the page auto-animates on load.
 
 ## 6. Components (key specs)
 
-- **Button / primary**: pill, brass-400 bg, navy-900 text, 44px tall (touch target), 0 20px padding, Hanken 600 14px. Hover brass-500. Focus: 2px brass ring + 2px offset.
+- **Button / primary**: pill, brass-400 bg, navy-900 text, 44px tall (touch target), 0 20px padding, Sans 600 14px. Hover brass-500. Focus: 2px brass ring + 2px offset.
 - **Button / secondary**: pill, 1px `line` border, navy text; on dark backgrounds a white 20% border with white text.
 - **Arrow button**: 40px circle; disabled = `line` border, navy at 40%; active = brass fill.
 - **Search pill**: white, `shadow-float`, location icon + input + navy "Search" button inside; on the listings page it expands into the full filter bar.
-- **Property card**: image 4:3 at 14r, then title (Fraunces 400 18px) and price (Hanken 600 brass). Location and facts (beds, baths, sqft) with Lucide icons, `slate-500` small. Heart button on the image's top-right (glass circle).
+- **Property card**: image 4:3 at 14r, then title (display 600 18px) and price (Sans 600 brass). Location and facts (beds, baths, sqft) with Lucide icons, `slate-500` small. Heart button on the image's top-right (glass circle).
 - **Expanded feature card** (popular listings): mist panel holding title, blurb, price, three location lines, with the image to its right.
 - **Inputs**: 44px, 12r, `line` border; focus = brass ring. Labels above, 14px 500. Errors in `#B42318` below the field, saying what's wrong and how to fix it.
-- **Badge (status)**: 24px pill, stage colors from §2, Hanken 500 12px, sentence case.
-- **KPI card**: white, label (small, slate), value (Hanken 600 32px tabular), delta chip (green/red with arrow icon).
+- **Badge (status)**: 24px pill, stage colors from §2, Sans 500 12px, sentence case.
+- **KPI card**: white, label (small, slate), value (Sans 600 32px tabular), delta chip (green/red with arrow icon).
 - **Table**: 52px rows, `line` row dividers, sticky header on mist, row hover mist; actions in a trailing menu.
 - **Empty state**: one line saying what's missing plus one action ("No leads yet. Add a lead").
 - **Skeleton**: mist blocks with a soft 1.6s shimmer (none under reduced motion).
@@ -225,7 +225,7 @@ Hero copy stays from the mockup: **"Discover heavenly homes"**.
 ## 9. Design review against the brief
 
 The first-pass defaults I rejected, and why:
-- **Playfair Display + Inter** (the default "luxury" pairing) → **Fraunces 300 + Hanken Grotesk**: closer to the mockup's thin serif, and less generic.
+- **Playfair Display + Inter** (the default "luxury" pairing) → **SF Pro (system) + Inter fallback**: Apple-style clarity at no licensing cost.
 - **Identical rounded cards with soft grey shadows everywhere** → flat tonal panels plus a radius hierarchy. Shadows are kept only for floating layers, as in the mockup.
 - **Fade-up on every section** → a single hero load sequence, one image clip reveal per section, and motion otherwise only in response to the user.
 - **Gold used decoratively** → brass is reserved for actionable elements and prices, so it always means "you can do something here".
