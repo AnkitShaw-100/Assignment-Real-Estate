@@ -7,12 +7,13 @@
   --color-navy-800: #152548;
   --color-navy-700: #1e2e57;
   --color-navy-600: #34446c;
-  /* Cobalt accent: buttons, focus rings and highlights (white text on 500/600 passes AA) */
-  --color-accent-300: #b9cdfc;
-  --color-accent-400: #4874f0;
-  --color-accent-500: #2f5fe8;
-  --color-accent-600: #2450cc;
-  --color-accent-700: #2449b8; /* accent for small text on white: 7:1 contrast */
+  /* Steel-blue accent: buttons, focus rings and highlights. Muted so it sits
+     beside navy without shouting; white text on 500/600 passes AA. */
+  --color-accent-300: #c7d4e6;
+  --color-accent-400: #5a7aa6;
+  --color-accent-500: #3d5a80;
+  --color-accent-600: #314a6b;
+  --color-accent-700: #34507a; /* accent for small text on white: 7:1 contrast */
   --color-mist-100: #f2f3f5;
   --color-mist-200: #e9ebef;
   --color-paper: #ffffff;

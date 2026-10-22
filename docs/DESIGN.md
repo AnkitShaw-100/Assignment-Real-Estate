@@ -23,10 +23,10 @@ The palette is taken from the mockup and tuned for contrast.
 |---|---|---|
 | `navy-900` | `#0C1A3B` | Trust band, CTA band, footer, CRM sidebar, primary text on light |
 | `navy-700` | `#1E2E57` | Hover on navy, secondary dark surfaces |
-| `accent-400` | `#4874F0` | Cobalt accent: focus rings, active icons, borders |
-| `accent-500` | `#2F5FE8` | Primary CTA, active arrow, badge (white text, passes AA) |
-| `accent-600` | `#2450CC` | Accent hover/pressed |
-| `accent-700` | `#2449B8` | Accent **text** on white (prices): 7:1 |
+| `accent-400` | `#5A7AA6` | Steel-blue accent: focus rings, active icons, borders |
+| `accent-500` | `#3D5A80` | Primary CTA, active arrow, badge (white text, passes AA) |
+| `accent-600` | `#314A6B` | Accent hover/pressed |
+| `accent-700` | `#34507A` | Accent **text** on white (prices): 7:1 |
 | `mist-100` | `#F2F3F5` | Section panels (story, testimonial, logo strip), CRM canvas |
 | `paper` | `#FFFFFF` | Page background, cards in CRM |
 | `slate-500` | `#5D6678` | Body copy, secondary text (AA on white and mist) |
