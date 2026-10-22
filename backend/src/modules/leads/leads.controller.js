@@ -6,7 +6,6 @@ import { escapeRegex } from '../../utils/escapeRegex.js';
 import { dayRange } from '../../utils/dates.js';
 import {
   pickAssignee,
-  syncFollowUpTask,
   convertToCustomer,
   changeStage,
   assertAssignable,
@@ -103,7 +102,6 @@ export async function create(req, res) {
     createdBy: req.user._id,
     activity: [{ type: 'created', to: body.source, by: req.user._id }],
   });
-  await syncFollowUpTask(lead, req.user._id);
   res.status(201).json({ data: lead });
 }
 
@@ -125,7 +123,6 @@ export async function update(req, res) {
 
   for (const [key, value] of Object.entries(fields)) lead.set(key, value ?? undefined);
   await lead.save();
-  await syncFollowUpTask(lead, req.user._id);
   res.json({ data: lead });
 }
 

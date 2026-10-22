@@ -3,7 +3,7 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router';
 import { AnimatePresence, motion } from 'motion/react';
 import clsx from 'clsx';
 import {
-  Building2, CircleCheckBig, ExternalLink, LayoutDashboard, LogOut, Menu, SquareKanban, UserRoundSearch, Users, UsersRound, X,
+  Building2, ExternalLink, LayoutDashboard, LogOut, Menu, SquareKanban, UserRoundSearch, Users, UsersRound, X,
 } from '../components/ui/icons';
 import { useSession } from '../auth/AuthContext';
 import { Avatar } from '../components/ui/States';
@@ -15,7 +15,6 @@ const NAV = [
   { to: '/dashboard/leads', label: 'Leads', icon: UserRoundSearch },
   { to: '/dashboard/pipeline', label: 'Pipeline', icon: SquareKanban },
   { to: '/dashboard/customers', label: 'Customers', icon: UsersRound },
-  { to: '/dashboard/tasks', label: 'Tasks', icon: CircleCheckBig },
   { to: '/dashboard/properties', label: 'Properties', icon: Building2 },
   { to: '/dashboard/team', label: 'Team', icon: Users, admin: true },
 ];

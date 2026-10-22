@@ -53,7 +53,7 @@ Every request passes through the same chain in `backend/src/app.js`:
 
 **Why a Bearer token, not a cookie.** The website and API are separate Vercel projects on different domains. Cross-site cookies are blocked by Safari and Brave by default, so the token is kept in `localStorage` and sent as `Authorization: Bearer`. The trade-off is exposure to XSS, mitigated by React's escaping, Helmet's headers and short-ish token lifetime.
 
-**Row-level scoping.** `scopeFilter(user, field)` returns `{}` for admins and `{ [field]: user._id }` for agents. It is applied to every list query (leads by `assignedTo`, customers by `assignedAgent`, tasks by `assignee`, listings by `agent`). `assertInScope` returns **404 rather than 403** for other agents' records, so IDs can't be probed. Dashboard aggregates use the same scope, so an agent's KPIs are their own.
+**Row-level scoping.** `scopeFilter(user, field)` returns `{}` for admins and `{ [field]: user._id }` for agents. It is applied to every list query (leads by `assignedTo`, customers by `assignedAgent`, listings by `agent`). `assertInScope` returns **404 rather than 403** for other agents' records, so IDs can't be probed. Dashboard aggregates use the same scope, so an agent's KPIs are their own.
 
 **Tested through the real path.** API tests sign real tokens with the same helper the server uses, and cover registration, login, forged and expired tokens, deactivated accounts and role changes.
 
@@ -67,7 +67,6 @@ Every request passes through the same chain in `backend/src/app.js`:
 - **Won** requires `dealValue`. It upserts the Customer by email, records the deal, and marks the property `sold` or `rented`.
 - **Lost** requires `lostReason`.
 - **Re-opening** a won lead reverses the side effects: the deal is removed and the property goes back to `under_offer`.
-- After every change, `syncFollowUpTask` keeps exactly one open follow-up task in line with the lead's `followUpDate`, and removes it when the lead closes.
 
 **Image upload**
 The browser asks `POST /uploads/signature` (staff only) for a short-lived Cloudinary signature, then uploads the file **directly** to Cloudinary. Files never pass through our function, which matters because Vercel caps request bodies at 4.5 MB. The secret stays on the server. Deleting a listing, or removing photos while editing it, also deletes them from Cloudinary.
@@ -88,10 +87,9 @@ User ──< Property (agent)
 User ──< Lead (assignedTo) >── Property
 Lead >── Customer ──< deals { property, lead, value, closedAt }
                   └─< interactions { kind, summary, at, by }
-User ──< Task (assignee) >── Lead / Customer
 ```
 
-Indexes cover the hot paths: listing search (`status, category, type, purpose, price`, `location.city`), agent work queues (`assignedTo, status`, `assignee, status, dueAt`) and follow-up lookups (`followUpDate`).
+Indexes cover the hot paths: listing search (`status, category, type, purpose, price`, `location.city`), agent work queues (`assignedTo, status`) and follow-up lookups (`followUpDate`).
 
 ## Key decisions
 
@@ -113,7 +111,7 @@ Indexes cover the hot paths: listing search (`status, category, type, purpose, p
 - listing filters and visibility
 - ownership rules for listings and leads
 - auto-assignment, honeypot handling, pipeline side effects and re-opening, and conversion idempotency
-- customer matching, task buckets and completion
+- customer matching
 - dashboard scoping
 
-The UI flows (inquiry, lead lifecycle, pipeline drag and drop, task completion, property create → visible on the website, agent scoping) were checked end to end with Playwright against the running app during development.
+The UI flows (inquiry, lead lifecycle, pipeline drag and drop, property create → visible on the website, agent scoping) were checked end to end with Playwright against the running app during development.

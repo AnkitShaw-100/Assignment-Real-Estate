@@ -1,6 +1,6 @@
 # Niwas: Real Estate Website & CRM
 
-A real estate website where buyers and renters browse and inquire about properties, connected to a CRM where agents and admins manage listings, leads, customers, the sales pipeline and follow-up tasks.
+A real estate website where buyers and renters browse and inquire about properties, connected to a CRM where agents and admins manage listings, leads, customers and the sales pipeline.
 
 Built with **React, Node.js/Express and MongoDB** for the Anuverse Technologies full-stack assignment.
 
@@ -24,11 +24,10 @@ Built with **React, Node.js/Express and MongoDB** for the Anuverse Technologies 
 - **Responsive** from 360 px phones to wide desktops, with no horizontal scroll at any width (checked at 360, 390, 768, 1024 and 1440 px).
 
 ### CRM (`/dashboard`, agents and admins)
-- **Overview**: KPIs (available properties, new leads with change vs the previous 30 days, active clients, sales this month), 12-month sales chart, pipeline and lead-source charts, today's and overdue tasks, recent leads.
+- **Overview**: KPIs (available properties, new leads with change vs the previous 30 days, active clients, sales this month), 12-month sales chart, pipeline and lead-source charts, lead follow-ups due today or overdue, recent leads.
 - **Leads**: searchable, filterable table (stage, source, follow-up, agent). A detail drawer covers contact info, stage, assignment, follow-up date, deal value, notes, an activity log, and conversion to a customer.
 - **Pipeline**: drag-and-drop Kanban (New → Contacted → Qualified → Site visit → Negotiation → Won/Lost) with optimistic updates. Winning a deal asks for the final value, creates or updates the customer and marks the property sold or rented. Losing asks for a reason.
 - **Customers**: profiles with requirements (budget, cities, types, bedrooms), an interaction timeline (calls, emails, meetings, visits, notes), deals, linked leads and **matching properties**.
-- **Tasks**: overdue / today / upcoming / completed, quick add, one-tap completion. Setting a follow-up date on a lead creates the task automatically.
 - **Properties**: add, edit and delete listings, with **photo upload to Cloudinary** (drag and drop, reorder, choose cover), draft/available/under offer/sold/rented status, and a featured flag.
 - **Team** (admin only): promote buyers to agents, change roles, deactivate accounts, see each agent's open leads, deals and revenue.
 
@@ -38,7 +37,7 @@ Built with **React, Node.js/Express and MongoDB** for the Anuverse Technologies 
 |---|:-:|:-:|:-:|:-:|
 | Browse, search, send inquiries | ✅ | ✅ | ✅ | ✅ |
 | Save homes, see own inquiries | | ✅ | ✅ | ✅ |
-| CRM: leads, customers, tasks | | | **own only** | all |
+| CRM: leads, customers | | | **own only** | all |
 | Add and edit listings | | | **own only** | all |
 | Reassign leads, delete records, manage team | | | | ✅ |
 
@@ -55,7 +54,7 @@ Agents only ever see records assigned to them. The API enforces this on every re
 | Database | MongoDB Atlas |
 | Auth | Own email/password auth (bcrypt + JWT) with role-based access control |
 | Images | Cloudinary (signed direct uploads), Unsplash for seed photos |
-| Tests | Vitest + Supertest + mongodb-memory-server (50 API tests) |
+| Tests | Vitest + Supertest + mongodb-memory-server (46 API tests) |
 | Hosting | Vercel (frontend and API as two projects) |
 
 Architecture, data flow and the reasoning behind each decision: **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**.
@@ -94,7 +93,7 @@ Open http://localhost:5173/sign-in, sign in as `admin@niwas.app` with password `
 cd backend
 cp .env.example .env          # fill in MONGODB_URI, JWT_SECRET, ADMIN_EMAILS, CLOUDINARY_*
 npm install
-npm run seed                  # demo listings, leads, customers and tasks
+npm run seed                  # demo listings, leads and customers
 npm run dev
 
 cd ../frontend
@@ -133,7 +132,7 @@ npm run dev
 | backend | `npm run dev` | API with auto-reload (needs `.env`) |
 | backend | `npm run dev:memory` | API on an in-memory, pre-seeded database |
 | backend | `npm run seed` | Reset the database to the demo data |
-| backend | `npm test` | Run the 50 API tests |
+| backend | `npm test` | Run the 46 API tests |
 | frontend | `npm run dev` / `npm run build` | Dev server / production build |
 
 ---
@@ -175,7 +174,7 @@ backend/
   src/app.js              middleware chain and routes
   src/auth/               token signing and password hashing
   src/middleware/         auth + roles, validation, sanitising, errors
-  src/models/             User, Property, Lead, Customer, Task
+  src/models/             User, Property, Lead, Customer
   src/modules/<feature>/  routes, controllers, schemas, services per feature
   src/scripts/            seed and dev:memory
   tests/                  API tests (in-memory MongoDB)

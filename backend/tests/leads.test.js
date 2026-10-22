@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import { setupTestApp, teardownTestApp, resetDb, makeUser, propertyInput } from './helpers.js';
-import { Lead, Property, Customer, Task } from '../src/models/index.js';
+import { Lead, Property, Customer } from '../src/models/index.js';
 
 let api;
 beforeAll(async () => ({ api } = await setupTestApp()));
@@ -100,23 +100,6 @@ describe('lead access', () => {
     expect(String(res.body.data.assignedTo)).toBe(String(b._id));
   });
 
-  it('creates a follow-up task when a follow-up date is set, and moves it when changed', async () => {
-    const agent = await makeUser('agent');
-    const lead = await Lead.create({ name: 'Ravi', email: 'r@x.com', assignedTo: agent._id });
-    const first = new Date(Date.now() + 86_400_000);
-    const second = new Date(Date.now() + 3 * 86_400_000);
-
-    await api(agent).patch(`/api/leads/${lead._id}`).send({ followUpDate: first.toISOString(), note: 'Called, call back tomorrow' });
-    await api(agent).patch(`/api/leads/${lead._id}`).send({ followUpDate: second.toISOString() });
-
-    const tasks = await Task.find({ lead: lead._id });
-    expect(tasks).toHaveLength(1);
-    expect(tasks[0]).toMatchObject({ title: 'Follow up with Ravi', status: 'open' });
-    expect(tasks[0].dueAt.toISOString()).toBe(second.toISOString());
-
-    const detail = await api(agent).get(`/api/leads/${lead._id}`);
-    expect(detail.body.data.notes[0].body).toBe('Called, call back tomorrow');
-  });
 });
 
 describe('pipeline', () => {

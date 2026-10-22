@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import { setupTestApp, teardownTestApp, resetDb, makeUser, propertyInput } from './helpers.js';
-import { Customer, Lead, Property, Task } from '../src/models/index.js';
+import { Customer, Lead, Property } from '../src/models/index.js';
 
 let api;
 beforeAll(async () => ({ api } = await setupTestApp()));
@@ -41,45 +41,6 @@ describe('customers', () => {
 
     const res = await api(agent).get(`/api/customers/${customer._id}/matches`);
     expect(res.body.data.map((p) => p.title)).toEqual(['Fits']);
-  });
-});
-
-describe('tasks', () => {
-  it('buckets tasks by due date for the signed in agent', async () => {
-    const agent = await makeUser('agent');
-    const other = await makeUser('agent');
-    const noon = new Date();
-    noon.setHours(12, 0, 0, 0);
-    await Task.create([
-      { title: 'Overdue', dueAt: new Date(noon - 2 * DAY), assignee: agent._id },
-      { title: 'Today', dueAt: noon, assignee: agent._id },
-      { title: 'Upcoming', dueAt: new Date(+noon + 2 * DAY), assignee: agent._id },
-      { title: 'Done', dueAt: noon, assignee: agent._id, status: 'done', completedAt: new Date() },
-      { title: 'Not mine', dueAt: noon, assignee: other._id },
-    ]);
-
-    const titles = async (due) => (await api(agent).get(`/api/tasks?due=${due}`)).body.data.map((t) => t.title);
-    expect(await titles('overdue')).toEqual(['Overdue']);
-    expect(await titles('today')).toEqual(['Today']);
-    expect(await titles('upcoming')).toEqual(['Upcoming']);
-    expect(await titles('done')).toEqual(['Done']);
-  });
-
-  it('stamps completedAt when a task is completed and clears it when reopened', async () => {
-    const agent = await makeUser('agent');
-    const task = await Task.create({ title: 'Send brochure', dueAt: new Date(), assignee: agent._id });
-
-    const done = await api(agent).patch(`/api/tasks/${task._id}`).send({ status: 'done' });
-    expect(done.body.data.completedAt).toBeTruthy();
-    const reopened = await api(agent).patch(`/api/tasks/${task._id}`).send({ status: 'open' });
-    expect(reopened.body.data.completedAt).toBeNull();
-  });
-
-  it('agents always assign tasks to themselves', async () => {
-    const agent = await makeUser('agent');
-    const other = await makeUser('agent');
-    const res = await api(agent).post('/api/tasks').send({ title: 'Call back', dueAt: new Date().toISOString(), assignee: String(other._id) });
-    expect(String(res.body.data.assignee)).toBe(String(agent._id));
   });
 });
 
