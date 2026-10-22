@@ -8,6 +8,7 @@ import { sanitize } from './middleware/sanitize.js';
 import { attachUser } from './middleware/auth.js';
 import { notFound, errorHandler } from './middleware/error.js';
 import { apiRouter } from './routes.js';
+import { statusPage } from './statusPage.js';
 
 /**
  * Builds the Express app. Dependencies are injectable for tests:
@@ -34,7 +35,7 @@ export async function createApp({ connect = connectDB } = {}) {
   app.use(express.json({ limit: '1mb' }));
   app.use(sanitize);
 
-  app.get('/', (_req, res) => res.json({ name: 'Niwas API', health: '/api/health' }));
+  app.get('/', statusPage(connect));
   app.get('/api/health', (_req, res) => res.json({ ok: true }));
 
   if (!env.isTest) {
