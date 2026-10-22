@@ -1,7 +1,10 @@
 # Niwas — Product Requirements Document
 
 > Real estate website + CRM platform. Demo assignment for Anuverse Technologies.
-> Stack: React (Vite) · Node/Express · MongoDB Atlas · Clerk · Cloudinary · Vercel.
+> Stack: React (Vite) · Node/Express · MongoDB Atlas · Cloudinary · Vercel.
+
+> **Update (2026-10-22):** Clerk was replaced by our own email/password auth (bcrypt + JWT). Roles and RBAC are unchanged. See [ARCHITECTURE.md](ARCHITECTURE.md#authentication-vs-authorization). Clerk references below describe the original plan.
+
 > Deadline: 7 days from 2026-10-19 → **submit by 2026-10-26**.
 
 ---
