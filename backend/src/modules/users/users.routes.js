@@ -5,6 +5,7 @@ import { validate } from '../../middleware/validate.js';
 import { requireAuth, requireAdmin, requireStaff } from '../../middleware/auth.js';
 import { idParams, objectId, phone } from '../../utils/schemas.js';
 import { HttpError } from '../../utils/httpError.js';
+import { publicUser } from './publicUser.js';
 
 const meBody = z
   .object({
@@ -17,10 +18,6 @@ const meBody = z
 const roleBody = z.object({ role: z.enum(ROLES) });
 const activeBody = z.object({ active: z.boolean() });
 
-function publicUser(user) {
-  const { _id, name, email, avatar, phone: tel, role, title, savedProperties, createdAt } = user;
-  return { _id, name, email, avatar, phone: tel, role, title, savedProperties, createdAt };
-}
 
 export const usersRouter = Router();
 
@@ -93,11 +90,6 @@ usersRouter.patch('/:id/role', requireAdmin, validate({ params: idParams, body: 
 
   user.role = req.body.role;
   await user.save();
-  // Mirror to Clerk so the frontend can read the role from the session. Not fatal if it fails:
-  // our database is the source of truth and the API enforces it.
-  if (!user.clerkId.startsWith('seed_')) {
-    Promise.resolve(req.app.locals.auth.setRole?.(user.clerkId, user.role)).catch((err) => console.warn('Clerk role sync failed', err.message));
-  }
   res.json({ data: publicUser(user) });
 });
 

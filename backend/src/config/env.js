@@ -9,9 +9,9 @@ const schema = z.object({
   DNS_SERVERS: z.string().default(''),
   CLIENT_URL: z.string().default('http://localhost:5173'),
   ADMIN_EMAILS: z.string().default(''),
-  DEV_AUTH: z.enum(['true', 'false']).default('false'),
-  CLERK_SECRET_KEY: z.string().optional(),
-  CLERK_PUBLISHABLE_KEY: z.string().optional(),
+  // Signs session tokens. Required in production; a fixed dev value is used otherwise.
+  JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters').optional(),
+  JWT_EXPIRES_IN: z.string().default('7d'),
   CLOUDINARY_CLOUD_NAME: z.string().optional(),
   CLOUDINARY_API_KEY: z.string().optional(),
   CLOUDINARY_API_SECRET: z.string().optional(),
@@ -22,14 +22,15 @@ if (!parsed.success) {
   console.error('Invalid environment variables', z.flattenError(parsed.error).fieldErrors);
   throw new Error('Invalid environment variables');
 }
-if (parsed.data.DEV_AUTH === 'true' && parsed.data.NODE_ENV === 'production') {
-  throw new Error('DEV_AUTH must never be enabled in production');
+if (!parsed.data.JWT_SECRET && parsed.data.NODE_ENV === 'production') {
+  throw new Error('JWT_SECRET must be set in production');
 }
 
 export const env = {
   ...parsed.data,
   isProd: parsed.data.NODE_ENV === 'production',
   isTest: parsed.data.NODE_ENV === 'test',
+  jwtSecret: parsed.data.JWT_SECRET ?? 'niwas-development-only-secret-do-not-use-in-prod',
   // Comma separated lists → arrays
   clientOrigins: parsed.data.CLIENT_URL.split(',').map((s) => s.trim()).filter(Boolean),
   dnsServers: parsed.data.DNS_SERVERS.split(',').map((s) => s.trim()).filter(Boolean),

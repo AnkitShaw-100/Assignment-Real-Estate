@@ -9,27 +9,13 @@ import { attachUser } from './middleware/auth.js';
 import { notFound, errorHandler } from './middleware/error.js';
 import { apiRouter } from './routes.js';
 
-// Without Clerk keys the API still serves public routes; every caller is anonymous.
-const anonymousProvider = { resolveAuth: () => null, fetchProfile: async () => null };
-
-async function defaultAuthProvider() {
-  if (env.CLERK_SECRET_KEY) return (await import('./auth/clerkProvider.js')).clerkProvider;
-  if (env.DEV_AUTH === 'true' && !env.isProd) {
-    console.warn('DEV_AUTH is on: requests can pick a user with the x-dev-user header. Development only.');
-    return (await import('./auth/devProvider.js')).devProvider;
-  }
-  if (!env.isTest) console.warn('CLERK_SECRET_KEY is not set: sign in is disabled, all requests are anonymous.');
-  return anonymousProvider;
-}
-
 /**
  * Builds the Express app. Dependencies are injectable for tests:
- *   auth      – identity provider (defaults to Clerk)
  *   connect   – DB connector (tests connect to an in-memory Mongo themselves)
  */
-export async function createApp({ auth, connect = connectDB } = {}) {
+export async function createApp({ connect = connectDB } = {}) {
+  if (!env.JWT_SECRET && !env.isTest) console.warn('JWT_SECRET is not set: using a development-only signing key.');
   const app = express();
-  app.locals.auth = auth ?? (await defaultAuthProvider());
 
   app.set('trust proxy', 1); // Vercel sits behind a proxy; needed for rate-limit IPs
   app.disable('x-powered-by');
@@ -60,7 +46,6 @@ export async function createApp({ auth, connect = connectDB } = {}) {
     next();
   });
 
-  if (app.locals.auth.middleware) app.use(app.locals.auth.middleware());
   app.use('/api', attachUser);
   app.use('/api', apiRouter);
 

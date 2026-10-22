@@ -1,13 +1,14 @@
 /**
  * npm run seed — resets the database with realistic demo data.
  *
- * Staff accounts are created with placeholder Clerk ids (seed_*). When a
- * person signs in through Clerk with the same email, attachUser() links the
- * real Clerk id to the seeded user, keeping their role and data.
+ * Staff accounts are upserted by email with a demo password (SEED_PASSWORD).
+ * An account that already exists keeps its own password, so re-seeding never
+ * locks a real person out.
  */
 import mongoose from 'mongoose';
 import { connectDB } from '../config/db.js';
 import { env } from '../config/env.js';
+import { hashPassword } from '../auth/tokens.js';
 import { User, Property, Lead, Customer, Task, OPEN_LEAD_STAGES } from '../models/index.js';
 import { PROPERTIES } from './data/properties.js';
 
@@ -22,13 +23,14 @@ const between = (min, max) => Math.floor(min + rand() * (max - min + 1));
 const daysAgo = (n) => new Date(Date.now() - n * 86_400_000);
 const daysFromNow = (n) => new Date(Date.now() + n * 86_400_000);
 
-const ADMIN_EMAIL = env.adminEmails[0] ?? 'admin+clerk_test@niwas.app';
+const ADMIN_EMAIL = env.adminEmails[0] ?? 'admin@niwas.app';
+export const SEED_PASSWORD = process.env.SEED_PASSWORD || 'niwas-demo-2026';
 
 const STAFF = [
   { name: 'Niwas Admin', email: ADMIN_EMAIL, role: 'admin', title: 'Managing director', phone: '+1 415 555 0100' },
-  { name: 'Aarav Mehta', email: 'agent+clerk_test@niwas.app', role: 'agent', title: 'Senior agent', phone: '+1 415 555 0101', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop' },
-  { name: 'Sofia Lindqvist', email: 'sofia+clerk_test@niwas.app', role: 'agent', title: 'Luxury homes specialist', phone: '+1 415 555 0102', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop' },
-  { name: 'Daniel Okafor', email: 'daniel+clerk_test@niwas.app', role: 'agent', title: 'Commercial agent', phone: '+1 415 555 0103', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop' },
+  { name: 'Aarav Mehta', email: 'aarav@niwas.app', role: 'agent', title: 'Senior agent', phone: '+1 415 555 0101', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop' },
+  { name: 'Sofia Lindqvist', email: 'sofia@niwas.app', role: 'agent', title: 'Luxury homes specialist', phone: '+1 415 555 0102', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop' },
+  { name: 'Daniel Okafor', email: 'daniel@niwas.app', role: 'agent', title: 'Commercial agent', phone: '+1 415 555 0103', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop' },
 ];
 
 const FIRST = ['Meera', 'James', 'Lucia', 'Omar', 'Hannah', 'Kenji', 'Priya', 'Lars', 'Amara', 'Diego', 'Chloe', 'Ravi', 'Elena', 'Tom', 'Fatima', 'Noah', 'Isabel', 'Yusuf', 'Grace', 'Mateo'];
@@ -66,13 +68,14 @@ export async function seedDatabase({ log = console.log } = {}) {
   log('Clearing collections…');
   await Promise.all([Property.deleteMany({}), Lead.deleteMany({}), Customer.deleteMany({}), Task.deleteMany({})]);
 
-  // Keep users who already signed in (real Clerk ids), reset seeded ones
-  await User.deleteMany({ clerkId: /^seed_/ });
+  // Drops indexes the schema no longer declares (e.g. the old clerkId index)
+  await User.syncIndexes();
+  const passwordHash = await hashPassword(SEED_PASSWORD);
   const staff = [];
-  for (const [i, s] of STAFF.entries()) {
+  for (const s of STAFF) {
     const user = await User.findOneAndUpdate(
       { email: s.email },
-      { $set: { ...s, active: true }, $setOnInsert: { clerkId: `seed_${i}` } },
+      { $set: { ...s, active: true }, $setOnInsert: { passwordHash } },
       { upsert: true, returnDocument: 'after' },
     );
     staff.push(user);
@@ -174,7 +177,7 @@ export async function seedDatabase({ log = console.log } = {}) {
   await Task.insertMany(tasks.map((t) => ({ ...t, createdBy: staff[0]._id })));
   log(`Created ${tasks.length} tasks`);
 
-  log('\nDemo staff accounts (sign up in Clerk with these emails; dev code 424242):');
+  log(`\nDemo staff accounts (password "${SEED_PASSWORD}" unless the account already had one):`);
   for (const s of staff) log(`  ${s.role.padEnd(6)} ${s.email}`);
 }
 
