@@ -12,7 +12,7 @@ import { Button } from '../../components/ui/Button';
 
 const IMG = 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1400&q=80';
 
-const email = z.string().trim().min(1, 'Enter your email').pipe(z.email('Enter a valid email address'));
+const email = z.string().trim().min(1, 'Enter your email').email('Enter a valid email address');
 const schemas = {
   'sign-in': z.object({ email, password: z.string().min(1, 'Enter your password') }),
   'sign-up': z.object({
