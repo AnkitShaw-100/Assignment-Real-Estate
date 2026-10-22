@@ -229,7 +229,7 @@ export default function Pipeline() {
           <div
             ref={boardRef}
             onScroll={updateBoard}
-            className="scroll-thin -mx-4 flex min-h-[calc(100dvh-340px)] snap-x scroll-px-4 gap-4 overflow-x-auto scroll-smooth px-4 pb-6 md:-mx-8 md:scroll-px-8 md:px-8 xl:-mx-10 xl:scroll-px-10 xl:px-10"
+            className="scrollbar-none -mx-4 flex min-h-[calc(100dvh-340px)] snap-x scroll-px-4 gap-4 overflow-x-auto scroll-smooth px-4 pb-6 md:-mx-8 md:scroll-px-8 md:px-8 xl:-mx-10 xl:scroll-px-10 xl:px-10"
           >
             {LEAD_STAGES.map((s, i) => (
               <div key={s.value} className="flex snap-start">
