@@ -254,7 +254,7 @@ npm run dev
 
 | Variable | Required | Purpose |
 |---|---|---|
-| `VITE_API_URL` | in production | Deployed API origin. Leave empty locally, where `/api` is proxied to `localhost:5000` |
+| `VITE_API_URL` | no | Only to call an API on another origin. Leave unset: `/api` is proxied to `localhost:5000` in dev and forwarded by `vercel.json` in production |
 
 ### Scripts
 
@@ -280,10 +280,10 @@ Two Vercel projects from this repository:
 | Project | Root directory | Environment variables |
 |---|---|---|
 | API | `backend` | everything from `backend/.env`, plus `NODE_ENV=production` and `CLIENT_URL=https://assignment-real-estate-alpha.vercel.app` |
-| Website | `frontend` | `VITE_API_URL=https://assignment-real-estate-backend.vercel.app` |
+| Website | `frontend` | none needed (leave `VITE_API_URL` unset) |
 
 - `backend/vercel.json` routes every request to `api/index.js`, which exports the Express app as a serverless function.
-- `frontend/vercel.json` rewrites all paths to `index.html`, so deep links work.
+- `frontend/vercel.json` forwards `/api/*` to the API project, so the website calls its own origin (no CORS round trips), and rewrites every other path to `index.html` so deep links work.
 - The API refuses to start in production without `JWT_SECRET`.
 
 ---
