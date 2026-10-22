@@ -97,3 +97,5 @@ export const Trees = icon(Pi.PiTree, 'Trees');
 export const Truck = icon(Pi.PiTruck, 'Truck');
 export const Waves = icon(Pi.PiWaves, 'Waves');
 export const Wifi = icon(Pi.PiWifiHigh, 'Wifi');
+export const Lock = icon(Pi.PiLockSimple, 'Lock');
+export const ChartUp = icon(Pi.PiChartLineUp, 'ChartUp');
