@@ -159,7 +159,7 @@ export default function Pipeline() {
     move.mutate({ id: lead._id, stage });
   };
 
-  const openLead = (id) => navigate(`/dashboard/leads?open=${id}`);
+  const openLead = (id) => navigate(`/admin/leads?open=${id}`);
   const label = (id) => LEAD_STAGES.find((s) => s.value === id)?.label ?? id;
 
   return (

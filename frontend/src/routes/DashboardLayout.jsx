@@ -11,20 +11,20 @@ import { PageSkeleton } from './guards';
 import { spring } from '../lib/motion';
 
 const NAV = [
-  { to: '/dashboard', label: 'Overview', icon: LayoutDashboard, end: true },
-  { to: '/dashboard/leads', label: 'Leads', icon: UserRoundSearch },
-  { to: '/dashboard/pipeline', label: 'Pipeline', icon: SquareKanban },
-  { to: '/dashboard/customers', label: 'Customers', icon: UsersRound },
-  { to: '/dashboard/tasks', label: 'Tasks', icon: CircleCheckBig },
-  { to: '/dashboard/properties', label: 'Properties', icon: Building2 },
-  { to: '/dashboard/team', label: 'Team', icon: Users, admin: true },
+  { to: '/admin', label: 'Overview', icon: LayoutDashboard, end: true },
+  { to: '/admin/leads', label: 'Leads', icon: UserRoundSearch },
+  { to: '/admin/pipeline', label: 'Pipeline', icon: SquareKanban },
+  { to: '/admin/customers', label: 'Customers', icon: UsersRound },
+  { to: '/admin/tasks', label: 'Tasks', icon: CircleCheckBig },
+  { to: '/admin/properties', label: 'Properties', icon: Building2 },
+  { to: '/admin/team', label: 'Team', icon: Users, admin: true },
 ];
 
 function SidebarContent({ onNavigate }) {
   const { me, isAdmin, signOut } = useSession();
   return (
     <div className="flex h-full flex-col">
-      <Link to="/dashboard" onClick={onNavigate} className="flex items-baseline gap-2 px-3 pt-1 pb-8">
+      <Link to="/admin" onClick={onNavigate} className="flex items-baseline gap-2 px-3 pt-1 pb-8">
         <span className="font-display text-[26px] text-white italic" style={{ fontWeight: 400 }}>
           Niwas
         </span>

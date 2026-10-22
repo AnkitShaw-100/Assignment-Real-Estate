@@ -67,7 +67,7 @@ export default function CustomerDetail() {
         description={`${labelOf(CUSTOMER_TYPES, c.type)} · customer since ${formatDate(c.createdAt, { month: 'long', year: 'numeric' })}`}
         actions={<Button variant="secondary" size="sm" icon={Pencil} onClick={() => setEditing(true)}>Edit customer</Button>}
       >
-        <Link to="/dashboard/customers" className="mb-2 inline-flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-navy-900">
+        <Link to="/admin/customers" className="mb-2 inline-flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-navy-900">
           <ChevronLeft className="size-4" /> Customers
         </Link>
       </PageHeader>
@@ -167,7 +167,7 @@ export default function CustomerDetail() {
             <ul className="space-y-2">
               {c.leads.map((l) => (
                 <li key={l._id}>
-                  <Link to={`/dashboard/leads?open=${l._id}`} className="-mx-2 flex items-center justify-between rounded-[10px] px-2 py-2 text-sm hover:bg-mist-100">
+                  <Link to={`/admin/leads?open=${l._id}`} className="-mx-2 flex items-center justify-between rounded-[10px] px-2 py-2 text-sm hover:bg-mist-100">
                     <span>{formatDate(l.createdAt)} · {labelOf(LEAD_SOURCES, l.source)}</span>
                     <StageBadge stage={l.status} />
                   </Link>

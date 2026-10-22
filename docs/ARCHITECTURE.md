@@ -6,7 +6,7 @@
             ┌──────────────────────── Browser ────────────────────────┐
             │  React SPA (Vite)                                       │
             │   ├─ Website  /, /properties, /properties/:slug, …      │
-            │   └─ CRM      /dashboard/* (lazy-loaded, role-gated)    │
+            │   └─ CRM      /admin/* (lazy-loaded, role-gated)        │
             │  TanStack Query cache · AuthContext (session token)     │
             └──────────────────────────┬──────────────────┬───────┘
                    REST/JSON + Bearer  │   signed upload  │
@@ -47,7 +47,7 @@ Every request passes through the same chain in `backend/src/createApp.js`:
 - **Authentication** (*who is this?*): `POST /auth/register` and `POST /auth/login`. Passwords are hashed with bcrypt (cost 12) and never leave the database (`select: false`). A successful call returns a signed JWT (HS256, `JWT_SECRET`, 7 days) that holds only the user id.
 - **Authorization** (*what can they do?*): the role (`buyer | agent | admin`) lives on our own `User` document. `attachUser` reads it from the database on **every** request instead of trusting the token, so role changes and deactivation take effect immediately, without token revocation lists.
 
-**Accounts and admins.** Anyone can register; new accounts are `buyer` (a normal user who can save homes and track inquiries). Emails listed in `ADMIN_EMAILS` become `admin` at registration, which bootstraps the first admin. Admins can then promote users to `agent` or `admin` from Dashboard → Team. A `role` sent to `/auth/register` is ignored.
+**Accounts and admins.** Anyone can register on the website; every public sign-up is a `buyer` (saves homes, tracks inquiries), and a `role` sent to `/auth/register` is ignored. Staff sign in at `/admin/login`, which sends `staff: true`; the API refuses that sign-in for accounts without CRM access. The admin is defined by `ADMIN_EMAIL` / `ADMIN_PASSWORD` in the server settings: signing in with them (compared in constant time) creates the admin account on first use and keeps it in sync, and that email can't be registered publicly. The admin adds agents under Team (`POST /users`) with a starting password. Nobody can make themselves staff.
 
 **Hardening.** The auth routes have their own rate limit (20 attempts per 15 minutes per IP). Login returns the same message for an unknown email and a wrong password, and compares against a dummy hash when the email doesn't exist so response times don't reveal which emails are registered. Passwords are capped at 72 characters, bcrypt's input limit.
 

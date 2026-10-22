@@ -138,7 +138,7 @@ function AccountArea({ light }) {
   }
 
   const items = [
-    ...(isStaff ? [{ to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard }] : []),
+    ...(isStaff ? [{ to: '/admin', label: 'CRM', icon: LayoutDashboard }] : []),
     { to: '/saved', label: 'Saved homes', icon: Heart },
     { to: '/account/inquiries', label: 'My inquiries', icon: MessageSquareText },
   ];

@@ -67,7 +67,7 @@ export default function Customers() {
           <ul className="divide-y divide-line">
             {data.data.map((c) => (
               <li key={c._id}>
-                <Link to={`/dashboard/customers/${c._id}`} className="grid grid-cols-[auto_1fr_auto] items-center gap-x-4 gap-y-1 px-5 py-4 transition-colors hover:bg-mist-100/70 md:grid-cols-[auto_minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_auto]">
+                <Link to={`/admin/customers/${c._id}`} className="grid grid-cols-[auto_1fr_auto] items-center gap-x-4 gap-y-1 px-5 py-4 transition-colors hover:bg-mist-100/70 md:grid-cols-[auto_minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_auto]">
                   <Avatar user={{ name: c.name }} size={40} />
                   <div className="min-w-0">
                     <p className="truncate font-medium">{c.name}</p>

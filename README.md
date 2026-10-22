@@ -9,7 +9,7 @@ Built with **React, Node.js/Express and MongoDB** for the Anuverse Technologies 
 | **Live website** | https://assignment-real-estate-alpha.vercel.app |
 | **REST API** | https://assignment-real-estate-backend.vercel.app (health check: [/api/health](https://assignment-real-estate-backend.vercel.app/api/health)) |
 | **Source code** | https://github.com/AnkitShaw-100/Assignment-Real-Estate |
-| **CRM access** | Demo admin and agent logins are shared in the submission email. You can also sign up on the site as a normal user. |
+| **CRM sign-in** | https://assignment-real-estate-alpha.vercel.app/admin/login (demo admin and agent logins are shared in the submission email). Visitors can sign up on the site as normal users. |
 
 ![Home page](docs/screenshots/home.webp)
 
@@ -44,7 +44,7 @@ Built with **React, Node.js/Express and MongoDB** for the Anuverse Technologies 
 | Inquiry forms for buyers and renters | Inquiry form on every property page (Buy / Rent / Visit / Ask) and on `/contact`. Each inquiry becomes a lead in the CRM, assigned to an agent automatically. |
 | Responsive design | Built mobile-first. Checked at 360, 390, 768, 1024 and 1440 px with no horizontal scroll. Filters become a bottom sheet on phones. |
 
-### 2. CRM dashboard (`/dashboard`)
+### 2. CRM dashboard (`/admin`)
 
 | Requirement | Implementation |
 |---|---|
@@ -78,7 +78,7 @@ Built with **React, Node.js/Express and MongoDB** for the Anuverse Technologies 
 
 ### CRM
 - **Overview, Leads, Pipeline, Customers, Tasks and Properties** as described in the requirements table.
-- **Team** (admin only): see every user, promote a user to agent or admin, deactivate accounts, and see each agent's open leads, deals won and revenue.
+- **Team** (admin only): add agents (or more admins) with a starting password, change roles, deactivate accounts, and see each agent's open leads, deals won and revenue.
 - **Row-level scoping**: agents see only their own leads, customers, tasks and listings; admins see everything.
 
 ---
@@ -93,7 +93,9 @@ Built with **React, Node.js/Express and MongoDB** for the Anuverse Technologies 
 | Add and edit listings | | | own listings | all listings |
 | Reassign leads, delete records, manage team and roles | | | | ✅ |
 
-- New sign-ups are **buyers**. Emails listed in `ADMIN_EMAILS` become **admins** when they register, which creates the first admin. Admins promote others from **Dashboard → Team**.
+- **Two entrances.** Visitors use `/sign-up` and `/sign-in`, and every public sign-up is a **buyer**. Staff use **`/admin/login`**, which has no sign-up and refuses accounts without CRM access (checked by the API, not just the page).
+- **The admin** is defined by `ADMIN_EMAIL` and `ADMIN_PASSWORD` in the server settings. Signing in with them creates the account on first use; the email can't be claimed through public sign-up.
+- **Agents** are added by the admin under **Team → Add team member**, with a starting password they sign in with at `/admin/login`.
 - The role is read from the database on every request, so a role change or deactivation takes effect immediately.
 - Hiding CRM pages in the UI is only a convenience. The API is the real gate.
 
@@ -107,7 +109,7 @@ Built with **React, Node.js/Express and MongoDB** for the Anuverse Technologies 
 | Backend | Node.js 22, Express 5, Mongoose, Zod, bcryptjs, jsonwebtoken, Helmet, express-rate-limit |
 | Database | MongoDB Atlas |
 | Images | Cloudinary (signed direct uploads) and Unsplash for demo photos |
-| Testing | Vitest + Supertest + mongodb-memory-server (50 API tests) |
+| Testing | Vitest + Supertest + mongodb-memory-server (54 API tests) |
 | Hosting | Vercel (website and API deployed as two projects) |
 
 ---
@@ -117,7 +119,7 @@ Built with **React, Node.js/Express and MongoDB** for the Anuverse Technologies 
 ```
  Browser (React SPA)
  ├─ Website   /, /properties, /properties/:slug, /contact, /sign-in …
- └─ CRM       /dashboard/*  (lazy-loaded, role-gated)
+ └─ CRM       /admin/*  (staff sign-in at /admin/login, lazy-loaded, role-gated)
         │  REST/JSON over HTTPS, "Authorization: Bearer <JWT>"
         ▼
  Express API (Vercel serverless function)
@@ -185,7 +187,7 @@ All routes are under `/api`. Responses are JSON: `{ data }` on success, `{ error
 | Tasks | `GET /tasks`, `POST /tasks`, `PATCH /tasks/:id`, `DELETE /tasks/:id` | agent (own) / admin |
 | Users | `GET /users/me`, `PATCH /users/me`, `GET /users/me/saved`, `POST/DELETE /users/me/saved/:propertyId` | signed in |
 | | `GET /users/agents` | agent / admin |
-| | `GET /users`, `PATCH /users/:id/role`, `PATCH /users/:id/active` | admin |
+| | `GET /users`, `POST /users` (add team member), `PATCH /users/:id/role`, `PATCH /users/:id/active` | admin |
 | Dashboard | `GET /dashboard/overview` | agent (own) / admin |
 | Stats | `GET /stats/public` | public |
 | Uploads | `POST /uploads/signature` | agent / admin |
@@ -212,7 +214,7 @@ npm install
 npm run dev
 ```
 
-The API prints the demo logins when it starts: `admin@niwas.app` plus agents `aarav@niwas.app`, `sofia@niwas.app` and `daniel@niwas.app`, all with a random password generated for that run (set `SEED_PASSWORD` to choose your own). Sign in at http://localhost:5173/sign-in and go to **/dashboard**. Data resets when the API stops.
+The API prints the demo logins when it starts: `admin@niwas.app` plus agents `aarav@niwas.app`, `sofia@niwas.app` and `daniel@niwas.app`, all with a random password generated for that run (set `SEED_PASSWORD` to choose your own). Sign in at http://localhost:5173/admin/login. Data resets when the API stops.
 
 ### Option B: with MongoDB Atlas
 
@@ -222,7 +224,7 @@ The API prints the demo logins when it starts: `admin@niwas.app` plus agents `aa
 
 ```bash
 cd backend
-cp .env.example .env      # fill in MONGODB_URI, JWT_SECRET, ADMIN_EMAILS (and CLOUDINARY_* if used)
+cp .env.example .env      # fill in MONGODB_URI, JWT_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD (and CLOUDINARY_* if used)
 npm install
 npm run seed              # optional: demo listings, leads, customers and tasks (replaces existing data)
 npm run dev
@@ -233,7 +235,7 @@ npm install
 npm run dev
 ```
 
-4. Sign up at `/sign-up` with an email listed in `ADMIN_EMAILS` to become an admin.
+4. Sign in at `/admin/login` with your `ADMIN_EMAIL` and `ADMIN_PASSWORD`, then add agents under **Team**.
 
 ### Environment variables
 
@@ -245,7 +247,7 @@ npm run dev
 | `CLIENT_URL` | yes | Allowed frontend origin(s) for CORS, comma separated |
 | `JWT_SECRET` | in production | Signs session tokens (32+ random characters) |
 | `JWT_EXPIRES_IN` | no | Session length, default `7d` |
-| `ADMIN_EMAILS` | yes | Emails that become admin when they register |
+| `ADMIN_EMAIL`, `ADMIN_PASSWORD` | yes | The admin account for the CRM (`/admin/login`). Keep the password only in your server settings |
 | `SEED_PASSWORD` | no | Password for demo staff accounts created by `npm run seed` (random and printed if unset) |
 | `DNS_SERVERS` | no | DNS resolvers for the Atlas lookup, if startup fails with `querySrv ECONNREFUSED` |
 | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | no | Photo uploads |
@@ -263,13 +265,13 @@ npm run dev
 | backend | `npm run dev` | API with auto-reload |
 | backend | `npm run dev:memory` | API on an in-memory, pre-filled database |
 | backend | `npm run seed` | Reset the database to the demo data |
-| backend | `npm test` | Run the 50 API tests |
+| backend | `npm test` | Run the 54 API tests |
 | frontend | `npm run dev` | Development server |
 | frontend | `npm run build` | Production build |
 
 ### Tests
 
-`npm test` in `backend/` runs 50 API tests against an in-memory MongoDB. They cover auth (registration, login, forged and expired tokens, deactivated accounts), role and row-level access, validation and injection handling, the inquiry → lead → pipeline → customer flow, deals and property status, tasks and follow-ups, and customer matching.
+`npm test` in `backend/` runs 54 API tests against an in-memory MongoDB. They cover auth (registration, admin and staff-only sign-in, adding team members, forged and expired tokens, deactivated accounts), role and row-level access, validation and injection handling, the inquiry → lead → pipeline → customer flow, deals and property status, tasks and follow-ups, and customer matching.
 
 ---
 
@@ -279,7 +281,7 @@ Two Vercel projects from this repository:
 
 | Project | Root directory | Environment variables |
 |---|---|---|
-| API | `backend` | everything from `backend/.env`, plus `NODE_ENV=production` and `CLIENT_URL=https://assignment-real-estate-alpha.vercel.app` |
+| API | `backend` | everything from `backend/.env` (including `ADMIN_EMAIL` and `ADMIN_PASSWORD`), plus `NODE_ENV=production` and `CLIENT_URL=https://assignment-real-estate-alpha.vercel.app` |
 | Website | `frontend` | `VITE_API_URL=https://assignment-real-estate-backend.vercel.app` |
 
 - `backend/vercel.json` sets `framework: null` (plain serverless function) and rewrites every path to `api/index.js`, which re-exports the app from `src/server.js`. On Vercel that file doesn't listen or connect at startup; each request connects lazily (cached per instance).
