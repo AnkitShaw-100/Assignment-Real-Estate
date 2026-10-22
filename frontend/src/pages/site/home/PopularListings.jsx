@@ -3,12 +3,12 @@ import { motion } from 'motion/react';
 import { MapPin } from 'lucide-react';
 import { useProperties } from '../../../hooks/usePublic';
 import { CarouselControls, CarouselItem, CarouselTrack, useCarousel } from '../../../components/site/Carousel';
-import { PropertyCard, PropertyCardSkeleton } from '../../../components/site/PropertyCard';
+import { PropertyCardSkeleton } from '../../../components/site/PropertyCard';
 import { ErrorState } from '../../../components/ui/States';
 import { coverOf, formatPrice, imageUrl } from '../../../lib/format';
 import { spring } from '../../../lib/motion';
 
-/** The expanded first card from the mockup: text panel + photo side by side. */
+/** Wide listing card: text panel + photo side by side. */
 function FeatureCard({ property }) {
   const cover = coverOf(property);
   return (
@@ -41,10 +41,12 @@ function FeatureCard({ property }) {
   );
 }
 
+// Every card uses the wide layout; two fit side by side on desktop
+const CARD_WIDTH = 'w-[88%] sm:w-[70%] lg:w-[calc((100%-20px)/2)]';
+
 export function PopularListings() {
   const carousel = useCarousel();
   const { data, isPending, isError, error, refetch } = useProperties({ sort: 'popular', category: 'residential', limit: 8 });
-  const [first, ...rest] = data?.data ?? [];
 
   return (
     <section className="container-page py-16 md:py-24" aria-labelledby="popular-title">
@@ -64,22 +66,15 @@ export function PopularListings() {
         <CarouselTrack carousel={carousel} label="Popular listings">
           {isPending
             ? Array.from({ length: 4 }, (_, i) => (
-                <CarouselItem key={i} className="w-[78%] sm:w-[42%] lg:w-[23%]">
+                <CarouselItem key={i} className={CARD_WIDTH}>
                   <PropertyCardSkeleton />
                 </CarouselItem>
               ))
-            : [
-                first && (
-                  <CarouselItem key={first._id} className="w-[88%] sm:w-[70%] lg:w-[46%]">
-                    <FeatureCard property={first} />
-                  </CarouselItem>
-                ),
-                ...rest.map((p) => (
-                  <CarouselItem key={p._id} className="w-[72%] sm:w-[40%] lg:w-[21%]">
-                    <PropertyCard property={p} variant="compact" />
-                  </CarouselItem>
-                )),
-              ]}
+            : data.data.map((p) => (
+                <CarouselItem key={p._id} className={CARD_WIDTH}>
+                  <FeatureCard property={p} />
+                </CarouselItem>
+              ))}
         </CarouselTrack>
       )}
       <CarouselControls carousel={carousel} label="popular listings" className="mt-6 sm:hidden" />

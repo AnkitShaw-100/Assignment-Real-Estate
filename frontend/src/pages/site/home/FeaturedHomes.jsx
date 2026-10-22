@@ -1,5 +1,5 @@
 import { useProperties } from '../../../hooks/usePublic';
-import { CarouselControls, CarouselItem, CarouselTrack, useCarousel } from '../../../components/site/Carousel';
+import { CarouselItem, CarouselTrack, useCarousel } from '../../../components/site/Carousel';
 import { PropertyCard, PropertyCardSkeleton } from '../../../components/site/PropertyCard';
 import { ErrorState } from '../../../components/ui/States';
 import { Button } from '../../../components/ui/Button';
@@ -17,7 +17,9 @@ export function FeaturedHomes() {
           </h2>
           <p className="mt-3 max-w-xs text-slate-500">A selection of the finest homes, handpicked by our agents.</p>
         </div>
-        <CarouselControls carousel={carousel} label="featured homes" className="hidden sm:flex" />
+        <Button to="/properties" variant="secondary" className="shrink-0">
+          See all properties
+        </Button>
       </div>
 
       {isError ? (
@@ -31,13 +33,6 @@ export function FeaturedHomes() {
           ))}
         </CarouselTrack>
       )}
-
-      <div className="mt-10 flex items-center justify-between gap-4">
-        <CarouselControls carousel={carousel} label="featured homes" className="sm:hidden" />
-        <Button to="/properties" variant="secondary" className="ml-auto">
-          See all properties
-        </Button>
-      </div>
     </section>
   );
 }
