@@ -3,8 +3,8 @@ import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import { Check, ChevronDown } from 'lucide-react';
 import clsx from 'clsx';
+import { panelClass, panelMotion, panelStyle, useAnchoredPosition, useDismiss } from './popover';
 
-const MAX_HEIGHT = 288;
 const noop = () => {};
 
 /**
@@ -36,7 +36,6 @@ export const Select = forwardRef(function Select(
 
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
-  const [pos, setPos] = useState(null);
 
   const setSelect = useCallback(
     (el) => {
@@ -56,25 +55,8 @@ export const Select = forwardRef(function Select(
     if (!controlled && el && el.value !== inner) setInner(el.value);
   });
 
-  const place = useCallback(() => {
-    const r = buttonRef.current?.getBoundingClientRect();
-    if (!r) return;
-    const below = window.innerHeight - r.bottom - 8;
-    const above = r.top - 8;
-    const up = below < Math.min(MAX_HEIGHT, items.length * 44 + 12) && above > below;
-    setPos({
-      left: r.left,
-      width: r.width,
-      up,
-      top: up ? undefined : r.bottom + 6,
-      bottom: up ? window.innerHeight - r.top + 6 : undefined,
-      maxHeight: Math.min(MAX_HEIGHT, (up ? above : below) - 6),
-    });
-  }, [items.length]);
-
   const show = (index = selectedIndex) => {
     if (disabled) return;
-    place();
     setActive(Math.max(0, index));
     setOpen(true);
   };
@@ -89,21 +71,8 @@ export const Select = forwardRef(function Select(
     el.dispatchEvent(new Event('change', { bubbles: true }));
   };
 
-  // Follow the trigger while open; close on outside press
-  useLayoutEffect(() => {
-    if (!open) return undefined;
-    const onPointer = (e) => {
-      if (!buttonRef.current?.contains(e.target) && !listRef.current?.contains(e.target)) setOpen(false);
-    };
-    window.addEventListener('resize', place);
-    window.addEventListener('scroll', place, true);
-    document.addEventListener('pointerdown', onPointer);
-    return () => {
-      window.removeEventListener('resize', place);
-      window.removeEventListener('scroll', place, true);
-      document.removeEventListener('pointerdown', onPointer);
-    };
-  }, [open, place]);
+  const pos = useAnchoredPosition(buttonRef, open, items.length * 44 + 12);
+  useDismiss(open, [buttonRef, listRef], () => setOpen(false));
 
   useEffect(() => {
     if (open) document.getElementById(`${listId}-${active}`)?.scrollIntoView({ block: 'nearest' });
@@ -200,13 +169,10 @@ export const Select = forwardRef(function Select(
               id={listId}
               role="listbox"
               aria-label={aria['aria-label']}
-              initial={{ opacity: 0, y: pos.up ? 4 : -4, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, transition: { duration: 0.1 } }}
-              transition={{ duration: 0.16, ease: [0.22, 1, 0.36, 1] }}
+              {...panelMotion(pos.up)}
               onMouseDown={(e) => e.preventDefault()} // keep focus on the trigger
-              style={{ left: pos.left, width: pos.width, top: pos.top, bottom: pos.bottom, maxHeight: pos.maxHeight, transformOrigin: pos.up ? 'bottom' : 'top' }}
-              className="fixed z-[60] min-w-40 overflow-y-auto overscroll-contain rounded-card border border-line bg-paper p-1.5 shadow-lift"
+              style={panelStyle(pos)}
+              className={panelClass}
             >
               {items.map((o, i) => {
                 const isSelected = o.value === current;

@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { useCities } from '../../hooks/usePublic';
 import { useDebounced } from '../../hooks/useDebounced';
 import { Field, Input, Select } from '../ui/Field';
+import { Combobox } from '../ui/Combobox';
 import { BEDROOM_OPTIONS, PROPERTY_TYPES } from '../../lib/constants';
 import { formatPrice } from '../../lib/format';
 import { spring } from '../../lib/motion';
@@ -42,8 +43,6 @@ export function Segmented({ value, onChange, options, label, className }) {
  */
 export function FilterFields({ values, onChange }) {
   const { data: cities = [] } = useCities();
-  const listId = useId();
-
   // Location is typed, so debounce it before touching the URL
   const [location, setLocation] = useState(values.city || values.q || '');
   const debounced = useDebounced(location);
@@ -63,14 +62,15 @@ export function FilterFields({ values, onChange }) {
     <div className="flex flex-col gap-6">
       <Field label="Location">
         {(a11y) => (
-          <>
-            <Input {...a11y} list={listId} value={location} onChange={(e) => setLocation(e.target.value)} placeholder="City, area or country" autoComplete="off" />
-            <datalist id={listId}>
-              {cities.map((c) => (
-                <option key={c} value={c} />
-              ))}
-            </datalist>
-          </>
+          <Combobox
+            {...a11y}
+            as={Input}
+            value={location}
+            onChange={setLocation}
+            onPick={(city) => onChange({ city, q: '' })} // apply a picked city straight away
+            suggestions={cities}
+            placeholder="City, area or country"
+          />
         )}
       </Field>
 
