@@ -3,14 +3,15 @@ import { Link, Navigate, useNavigate, useSearchParams } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Eye, EyeOff } from '../../components/ui/icons';
+import { Heart, Lock, Mail, MessageSquareText, Search, User } from '../../components/ui/icons';
 import { useSession } from '../../auth/AuthContext';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { PageSkeleton } from '../../routes/guards';
-import { Field, Input, TextField } from '../../components/ui/Field';
+import { FadeImage } from '../../components/ui/FadeImage';
+import { IconField, PasswordToggle } from '../../components/ui/IconInput';
 import { Button } from '../../components/ui/Button';
 
-const IMG = 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1400&q=80';
+const IMG = 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&q=70';
 
 const email = z.string().trim().min(1, 'Enter your email').email('Enter a valid email address');
 const schemas = {
@@ -30,20 +31,26 @@ const COPY = {
     submit: 'Sign in',
     switchText: 'New to Niwas?',
     switchLink: 'Create an account',
-    aside: 'Welcome back',
+    aside: 'Pick up where you left off',
   },
   'sign-up': {
     title: 'Create account',
     heading: 'Create your account',
-    sub: 'Save homes and follow up on your inquiries in one place.',
+    sub: 'Free, and it takes less than a minute.',
     submit: 'Create account',
     switchText: 'Already have an account?',
     switchLink: 'Sign in',
-    aside: 'Save homes, follow up on inquiries, all in one place',
+    aside: 'Find a home worth coming back to',
   },
 };
 
-/** Email and password sign in / sign up, framed in the site's own layout. */
+const PERKS = [
+  { icon: Heart, text: 'Save the homes you love and compare them later' },
+  { icon: MessageSquareText, text: 'Follow every inquiry until an agent replies' },
+  { icon: Search, text: 'Browse villas, apartments and commercial spaces in 18 cities' },
+];
+
+/** Website sign in / sign up for buyers and renters. Staff use /admin/login. */
 export default function AuthPage({ mode }) {
   const { isLoaded, isSignedIn } = useSession();
   const [params] = useSearchParams();
@@ -60,14 +67,28 @@ export default function AuthPage({ mode }) {
   const otherHref = redirect === '/' ? other : `${other}?redirect=${encodeURIComponent(redirect)}`;
 
   return (
-    <section className="container-page grid min-h-[calc(100dvh-72px)] items-center gap-12 py-12 lg:grid-cols-2">
-      <div className="relative hidden h-full max-h-[720px] overflow-hidden rounded-hero lg:block">
-        <img src={IMG} alt="" className="absolute inset-0 size-full object-cover" />
-        <div className="absolute inset-0 bg-linear-to-t from-navy-900/80 to-transparent" />
-        <p className="absolute right-10 bottom-10 left-10 font-display text-h1 text-white">{copy.aside}</p>
+    <section className="container-page grid min-h-[calc(100dvh-72px)] items-start gap-12 py-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center lg:gap-16 lg:py-10">
+      {/* Photo panel with what an account gives you (desktop) */}
+      <div className="relative hidden h-full max-h-[700px] min-h-[560px] overflow-hidden rounded-hero bg-navy-900 lg:block">
+        <FadeImage className="absolute inset-0" src={`${IMG}&w=1200`} alt="" loading="eager" />
+        <div className="absolute inset-0 bg-linear-to-t from-navy-900/95 via-navy-900/45 to-navy-900/10" />
+        <div className="absolute inset-x-0 bottom-0 p-10 text-white">
+          <p className="font-display text-h2 leading-tight">{copy.aside}</p>
+          <ul className="mt-7 space-y-3.5">
+            {PERKS.map(({ icon: Icon, text }) => (
+              <li key={text} className="flex items-center gap-3 text-[15px] text-white/85">
+                <span className="grid size-9 shrink-0 place-items-center rounded-full bg-white/12 ring-1 ring-white/20 backdrop-blur">
+                  <Icon className="size-[18px]" aria-hidden />
+                </span>
+                {text}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
+
       <div className="flex justify-center">
-        <div className="w-full max-w-sm">
+        <div className="w-full max-w-[420px] rounded-panel border border-line bg-paper p-7 shadow-float sm:p-9">
           <h1 className="font-display text-h2">{copy.heading}</h1>
           <p className="mt-2 text-slate-500">{copy.sub}</p>
           {/* key resets the form when switching between sign in and sign up */}
@@ -76,6 +97,12 @@ export default function AuthPage({ mode }) {
             {copy.switchText}{' '}
             <Link to={otherHref} className="font-medium text-navy-900 underline underline-offset-4 hover:text-accent-700">
               {copy.switchLink}
+            </Link>
+          </p>
+          <p className="mt-6 border-t border-line pt-5 text-center text-[13px] text-slate-500">
+            Niwas staff?{' '}
+            <Link to="/admin/login" className="font-medium text-navy-900 hover:text-accent-700">
+              Sign in to the CRM
             </Link>
           </p>
         </div>
@@ -109,37 +136,28 @@ function AuthForm({ mode, redirect }) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-8 flex flex-col gap-4">
-      {mode === 'sign-up' && <TextField label="Full name" autoComplete="name" error={errors.name?.message} {...register('name')} />}
-      <TextField label="Email" type="email" autoComplete="email" inputMode="email" error={errors.email?.message} {...register('email')} />
-      <Field label="Password" error={errors.password?.message} hint={mode === 'sign-up' ? 'At least 8 characters.' : undefined}>
-        {(a11y) => (
-          <div className="relative">
-            <Input
-              {...a11y}
-              type={showPassword ? 'text' : 'password'}
-              autoComplete={mode === 'sign-in' ? 'current-password' : 'new-password'}
-              className="pr-11"
-              {...register('password')}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword((v) => !v)}
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
-              aria-pressed={showPassword}
-              className="absolute top-1/2 right-1.5 grid size-8 -translate-y-1/2 place-items-center rounded-full text-slate-500 hover:bg-mist-100 hover:text-navy-900"
-            >
-              {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-            </button>
-          </div>
-        )}
-      </Field>
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-7 flex flex-col gap-5">
+      {mode === 'sign-up' && (
+        <IconField id="auth-name" label="Full name" icon={User} autoComplete="name" placeholder="Your name" error={errors.name?.message} {...register('name')} />
+      )}
+      <IconField id="auth-email" label="Email" icon={Mail} type="email" autoComplete="email" inputMode="email" placeholder="you@example.com" error={errors.email?.message} {...register('email')} />
+      <IconField
+        id="auth-password"
+        label="Password"
+        icon={Lock}
+        type={showPassword ? 'text' : 'password'}
+        autoComplete={mode === 'sign-in' ? 'current-password' : 'new-password'}
+        placeholder={mode === 'sign-in' ? 'Your password' : 'At least 8 characters'}
+        error={errors.password?.message}
+        trailing={<PasswordToggle shown={showPassword} onToggle={() => setShowPassword((v) => !v)} />}
+        {...register('password')}
+      />
       {formError && (
-        <p className="rounded-field bg-[#fdf3f2] px-3.5 py-2.5 text-sm text-danger" role="alert">
+        <p className="rounded-field border border-danger/20 bg-[#fdf3f2] px-3.5 py-2.5 text-sm text-danger" role="alert">
           {formError}
         </p>
       )}
-      <Button type="submit" variant="dark" size="lg" loading={isSubmitting} className="mt-2 w-full">
+      <Button type="submit" variant="dark" size="lg" loading={isSubmitting} className="mt-1 w-full">
         {COPY[mode].submit}
       </Button>
     </form>

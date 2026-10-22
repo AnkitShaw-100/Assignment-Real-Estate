@@ -3,13 +3,13 @@ import { Link, Navigate, useNavigate, useSearchParams } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import clsx from 'clsx';
-import { ArrowLeft, ChartUp, Eye, EyeOff, Lock, Mail, ShieldCheck, SquareKanban, UsersRound } from '../../components/ui/icons';
+import { ArrowLeft, ChartUp, Lock, Mail, ShieldCheck, SquareKanban, UsersRound } from '../../components/ui/icons';
 import { useSession } from '../../auth/AuthContext';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { PageSkeleton } from '../../routes/guards';
 import { FadeImage } from '../../components/ui/FadeImage';
 import { Button } from '../../components/ui/Button';
+import { IconField, PasswordToggle } from '../../components/ui/IconInput';
 
 const PHOTO = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=70';
 
@@ -23,27 +23,6 @@ const schema = z.object({
   email: z.string().trim().min(1, 'Enter your email').email('Enter a valid email address'),
   password: z.string().min(1, 'Enter your password'),
 });
-
-/** Text input with a leading icon, matching the design-system field look. */
-function IconInput({ icon: Icon, invalid, className, trailing, ...props }) {
-  return (
-    <div className="relative">
-      <Icon className="pointer-events-none absolute top-1/2 left-3.5 size-[18px] -translate-y-1/2 text-slate-400" aria-hidden />
-      <input
-        className={clsx(
-          'h-12 w-full rounded-field border bg-paper pr-3.5 pl-11 text-[15px] text-navy-900 placeholder:text-slate-400 transition-[border-color,box-shadow] duration-200',
-          'focus:border-accent-400 focus:ring-3 focus:ring-accent-400/25 focus:outline-none',
-          invalid ? 'border-danger' : 'border-line',
-          trailing && 'pr-12',
-          className,
-        )}
-        aria-invalid={invalid || undefined}
-        {...props}
-      />
-      {trailing}
-    </div>
-  );
-}
 
 /**
  * CRM sign-in for admins and agents. There is no sign-up here: the admin is
@@ -130,59 +109,28 @@ export default function AdminLogin() {
             <p className="mt-2 text-slate-500">Sign in to manage listings, leads and your team.</p>
 
             <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-8 flex flex-col gap-5">
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="staff-email" className="text-sm font-medium">
-                  Work email
-                </label>
-                <IconInput
-                  id="staff-email"
-                  icon={Mail}
-                  type="email"
-                  autoComplete="username"
-                  inputMode="email"
-                  placeholder="you@niwas.app"
-                  invalid={Boolean(errors.email)}
-                  aria-describedby={errors.email ? 'staff-email-error' : undefined}
-                  {...register('email')}
-                />
-                {errors.email && (
-                  <p id="staff-email-error" className="text-[13px] text-danger">
-                    {errors.email.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="staff-password" className="text-sm font-medium">
-                  Password
-                </label>
-                <IconInput
-                  id="staff-password"
-                  icon={Lock}
-                  type={showPassword ? 'text' : 'password'}
-                  autoComplete="current-password"
-                  placeholder="Your password"
-                  invalid={Boolean(errors.password)}
-                  aria-describedby={errors.password ? 'staff-password-error' : undefined}
-                  trailing={
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword((v) => !v)}
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
-                      aria-pressed={showPassword}
-                      className="absolute top-1/2 right-2 grid size-8 -translate-y-1/2 place-items-center rounded-full text-slate-500 hover:bg-mist-100 hover:text-navy-900"
-                    >
-                      {showPassword ? <EyeOff className="size-[18px]" /> : <Eye className="size-[18px]" />}
-                    </button>
-                  }
-                  {...register('password')}
-                />
-                {errors.password && (
-                  <p id="staff-password-error" className="text-[13px] text-danger">
-                    {errors.password.message}
-                  </p>
-                )}
-              </div>
+              <IconField
+                id="staff-email"
+                label="Work email"
+                icon={Mail}
+                type="email"
+                autoComplete="username"
+                inputMode="email"
+                placeholder="you@niwas.app"
+                error={errors.email?.message}
+                {...register('email')}
+              />
+              <IconField
+                id="staff-password"
+                label="Password"
+                icon={Lock}
+                type={showPassword ? 'text' : 'password'}
+                autoComplete="current-password"
+                placeholder="Your password"
+                error={errors.password?.message}
+                trailing={<PasswordToggle shown={showPassword} onToggle={() => setShowPassword((v) => !v)} />}
+                {...register('password')}
+              />
 
               {formError && (
                 <p className="rounded-field border border-danger/20 bg-[#fdf3f2] px-3.5 py-2.5 text-sm text-danger" role="alert">
