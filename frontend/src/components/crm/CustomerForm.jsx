@@ -122,7 +122,7 @@ export function CustomerForm({ customer, onDone }) {
         />
       </fieldset>
 
-      <div className="flex justify-end gap-2">
+      <div className="form-actions">
         <Button variant="ghost" onClick={onDone}>
           Cancel
         </Button>

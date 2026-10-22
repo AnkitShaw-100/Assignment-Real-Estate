@@ -73,7 +73,7 @@ export function LeadForm({ onDone }) {
         </Field>
       )}
       <Field label="Notes from the conversation">{(a) => <Textarea {...a} rows={3} {...register('message')} />}</Field>
-      <div className="flex justify-end gap-2 pt-2">
+      <div className="form-actions">
         <Button variant="ghost" onClick={onDone}>
           Cancel
         </Button>

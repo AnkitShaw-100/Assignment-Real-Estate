@@ -100,7 +100,7 @@ export function Drawer({ open, onClose, title, description, children, footer, wi
             transition={spring.ui}
           >
             <Header title={title} description={description} onClose={onClose} />
-            <div className="flex-1 overflow-y-auto px-6 py-5">{children}</div>
+            <div className="scroll-thin min-h-0 flex-1 overflow-y-auto px-6 py-5">{children}</div>
             {footer && <div className="flex justify-end gap-3 border-t border-line px-6 py-4">{footer}</div>}
           </motion.aside>
         </>
@@ -127,15 +127,16 @@ export function Modal({ open, onClose, title, description, children, footer, wid
               aria-modal="true"
               aria-label={title}
               tabIndex={-1}
-              className={clsx('pointer-events-auto w-full rounded-panel bg-paper shadow-lift outline-none', width)}
+              // Never taller than the screen: header stays put, the body scrolls
+              className={clsx('pointer-events-auto flex max-h-[calc(100dvh-2rem)] w-full flex-col overflow-hidden rounded-panel bg-paper shadow-lift outline-none', width)}
               initial={{ opacity: 0, scale: 0.96, y: 8 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.98, y: 4 }}
               transition={spring.ui}
             >
               <Header title={title} description={description} onClose={onClose} />
-              <div className="px-6 py-5">{children}</div>
-              {footer && <div className="flex justify-end gap-3 border-t border-line px-6 py-4">{footer}</div>}
+              <div className="scroll-thin min-h-0 flex-1 overflow-y-auto px-6 py-5">{children}</div>
+              {footer && <div className="flex shrink-0 justify-end gap-3 border-t border-line px-6 py-4">{footer}</div>}
             </motion.div>
           </div>
         </>

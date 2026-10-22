@@ -100,6 +100,21 @@
 }
 
 @layer components {
+  /* Form buttons pinned to the bottom of a scrolling modal/drawer body
+     (the negative margins cancel the body's px-6 / pb-5 padding) */
+  .form-actions {
+    position: sticky;
+    bottom: -1.25rem;
+    z-index: 1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin: 0.5rem -1.5rem -1.25rem;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--color-line);
+    background: var(--color-paper);
+  }
+
   /* Slim, on-theme scrollbar for popovers and panels */
   .scroll-thin {
     scrollbar-width: thin;
