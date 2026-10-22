@@ -2,7 +2,7 @@ import { useId, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { motion } from 'motion/react';
 import clsx from 'clsx';
-import { MapPin } from 'lucide-react';
+import { MapPin } from '../ui/icons';
 import { useCities } from '../../hooks/usePublic';
 import { spring } from '../../lib/motion';
 import { Combobox } from '../ui/Combobox';

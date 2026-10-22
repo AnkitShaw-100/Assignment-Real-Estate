@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import clsx from 'clsx';
-import { Plus, Search, UsersRound } from 'lucide-react';
+import { Plus, Search, UsersRound } from '../../components/ui/icons';
 import { useCustomers } from '../../hooks/useCrm';
 import { useDebounced } from '../../hooks/useDebounced';
 import { usePageTitle } from '../../hooks/usePageTitle';

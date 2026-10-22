@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import clsx from 'clsx';
 import {
   Building2, CircleCheckBig, ExternalLink, LayoutDashboard, LogOut, Menu, SquareKanban, UserRoundSearch, Users, UsersRound, X,
-} from 'lucide-react';
+} from '../components/ui/icons';
 import { useSession } from '../auth/AuthContext';
 import { Avatar } from '../components/ui/States';
 import { PageSpinner } from './guards';

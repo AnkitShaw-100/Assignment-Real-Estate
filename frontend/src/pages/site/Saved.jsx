@@ -1,4 +1,4 @@
-import { Heart } from 'lucide-react';
+import { Heart } from '../../components/ui/icons';
 import { useSavedProperties } from '../../hooks/usePublic';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { PropertyCard, PropertyCardSkeleton } from '../../components/site/PropertyCard';

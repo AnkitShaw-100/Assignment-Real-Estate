@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router';
-import { LoaderCircle, ShieldAlert } from 'lucide-react';
+import { LoaderCircle, ShieldAlert } from '../components/ui/icons';
 import { useSession } from '../auth/AuthContext';
 import { Button } from '../components/ui/Button';
 

@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 import clsx from 'clsx';
-import { ArrowDownRight, ArrowUpRight, CircleCheckBig } from 'lucide-react';
+import { ArrowDownRight, ArrowUpRight, CircleCheckBig } from '../../components/ui/icons';
 import { useOverview } from '../../hooks/useCrm';
 import { useSession } from '../../auth/AuthContext';
 import { usePageTitle } from '../../hooks/usePageTitle';

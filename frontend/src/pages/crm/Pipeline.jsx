@@ -5,7 +5,7 @@ import {
 } from '@dnd-kit/core';
 import { motion } from 'motion/react';
 import clsx from 'clsx';
-import { CalendarClock } from 'lucide-react';
+import { CalendarClock } from '../../components/ui/icons';
 import { useLeads, useMoveStage } from '../../hooks/useCrm';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { PageHeader } from '../../routes/DashboardLayout';

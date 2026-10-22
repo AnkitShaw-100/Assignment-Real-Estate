@@ -1,4 +1,4 @@
-import { Clock, Mail, MapPin, Phone } from 'lucide-react';
+import { Clock, Mail, MapPin, Phone } from '../../components/ui/icons';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { InquiryForm } from '../../components/site/InquiryForm';
 

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'motion/react';
-import { ChevronLeft, ChevronRight, Images, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Images, X } from '../ui/icons';
 import { imageUrl } from '../../lib/format';
 import { spring } from '../../lib/motion';
 

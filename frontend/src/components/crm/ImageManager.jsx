@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import clsx from 'clsx';
-import { ArrowLeft, ArrowRight, ImagePlus, Link2, Star, Trash2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ImagePlus, Link2, Star, Trash2 } from '../ui/icons';
 import { toast } from 'sonner';
 import { uploadImage, ACCEPTED, MAX_IMAGE_MB } from '../../lib/upload';
 import { imageUrl } from '../../lib/format';

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import clsx from 'clsx';
-import { Plus, Search, UserRoundSearch } from 'lucide-react';
+import { Plus, Search, UserRoundSearch } from '../../components/ui/icons';
 import { useSession } from '../../auth/AuthContext';
 import { useAgents, useLeads } from '../../hooks/useCrm';
 import { useDebounced } from '../../hooks/useDebounced';

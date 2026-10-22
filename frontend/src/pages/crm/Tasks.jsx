@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import clsx from 'clsx';
-import { ChevronDown, CircleCheckBig, Plus } from 'lucide-react';
+import { ChevronDown, CircleCheckBig, Plus } from '../../components/ui/icons';
 import { useSession } from '../../auth/AuthContext';
 import { useAgents, useCreateTask, useTasks } from '../../hooks/useCrm';
 import { usePageTitle } from '../../hooks/usePageTitle';

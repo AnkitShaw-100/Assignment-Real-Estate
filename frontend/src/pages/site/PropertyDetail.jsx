@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import {
   AirVent, ArrowUpDown, Bath, BedDouble, Briefcase, CalendarDays, Car, Check, ChevronLeft, Clock, ConciergeBell, Dumbbell,
   Flame, HousePlug, Mail, MapPin, Phone, PlugZap, Ruler, ShieldCheck, Shirt, Sunset, Trees, Truck, Waves, Wifi, Building,
-} from 'lucide-react';
+} from '../../components/ui/icons';
 import { useProperty, useSimilar } from '../../hooks/usePublic';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { Gallery } from '../../components/site/Gallery';

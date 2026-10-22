@@ -3,7 +3,7 @@ import { Link, Navigate, useNavigate, useSearchParams } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from '../../components/ui/icons';
 import { useSession } from '../../auth/AuthContext';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { PageSpinner } from '../../routes/guards';

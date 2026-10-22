@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router';
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react';
 import clsx from 'clsx';
-import { Heart, Menu, X, LayoutDashboard, MessageSquareText, LogOut } from 'lucide-react';
+import { Heart, Menu, X, LayoutDashboard, MessageSquareText, LogOut } from '../ui/icons';
 import { useSession } from '../../auth/AuthContext';
 import { Button } from '../ui/Button';
 import { Avatar } from '../ui/States';

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { AnimatePresence, motion } from 'motion/react';
-import { SearchX, SlidersHorizontal, X } from 'lucide-react';
+import { SearchX, SlidersHorizontal, X } from '../../components/ui/icons';
 import { useProperties } from '../../hooks/usePublic';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { FilterFields } from '../../components/site/Filters';

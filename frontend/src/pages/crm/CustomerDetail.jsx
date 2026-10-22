@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router';
 import { AnimatePresence, motion } from 'motion/react';
-import { CalendarDays, ChevronLeft, Mail, MapPin, MessageSquare, Pencil, Phone, StickyNote, Users } from 'lucide-react';
+import { CalendarDays, ChevronLeft, Mail, MapPin, MessageSquare, Pencil, Phone, StickyNote, Users } from '../../components/ui/icons';
 import { useAddInteraction, useCustomer, useCustomerMatches } from '../../hooks/useCrm';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { Card, PageHeader } from '../../routes/DashboardLayout';

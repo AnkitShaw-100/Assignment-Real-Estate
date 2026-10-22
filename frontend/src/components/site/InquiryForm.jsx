@@ -3,7 +3,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AnimatePresence, motion } from 'motion/react';
-import { CircleCheck } from 'lucide-react';
+import { CircleCheck } from '../ui/icons';
 import { useSession } from '../../auth/AuthContext';
 import { useSendInquiry } from '../../hooks/usePublic';
 import { Button } from '../ui/Button';

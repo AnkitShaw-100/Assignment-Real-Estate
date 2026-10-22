@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { MessageSquareText } from 'lucide-react';
+import { MessageSquareText } from '../../components/ui/icons';
 import { useMyInquiries } from '../../hooks/usePublic';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { EmptyState, ErrorState, Skeleton } from '../../components/ui/States';

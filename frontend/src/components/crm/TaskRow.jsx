@@ -1,7 +1,7 @@
 import { Link } from 'react-router';
 import { motion } from 'motion/react';
 import clsx from 'clsx';
-import { Check, Trash2 } from 'lucide-react';
+import { Check, Trash2 } from '../ui/icons';
 import { useDeleteTask, useToggleTask } from '../../hooks/useCrm';
 import { PriorityBadge } from '../ui/Badge';
 import { Avatar } from '../ui/States';

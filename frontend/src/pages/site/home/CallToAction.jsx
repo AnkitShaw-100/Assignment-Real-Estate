@@ -1,4 +1,4 @@
-import { Check } from 'lucide-react';
+import { Check } from '../../../components/ui/icons';
 import { ExploreBadge } from '../../../components/site/ExploreBadge';
 import { Button } from '../../../components/ui/Button';
 

@@ -1,7 +1,7 @@
 import { forwardRef, useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'motion/react';
-import { Check, ChevronDown } from 'lucide-react';
+import { Check, ChevronDown } from './icons';
 import clsx from 'clsx';
 import { panelClass, panelMotion, panelStyle, useAnchoredPosition, useDismiss } from './popover';
 

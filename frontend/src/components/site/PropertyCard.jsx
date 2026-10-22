@@ -1,7 +1,7 @@
 import { Link } from 'react-router';
 import { motion } from 'motion/react';
 import clsx from 'clsx';
-import { Bath, BedDouble, Heart, MapPin, Ruler } from 'lucide-react';
+import { Bath, BedDouble, Heart, HeartFill, MapPin, Ruler } from '../ui/icons';
 import { coverOf, formatNumber, formatPrice, imageUrl } from '../../lib/format';
 import { spring } from '../../lib/motion';
 import { useSaveToggle } from '../../hooks/usePublic';
@@ -25,7 +25,7 @@ export function SaveButton({ propertyId, className }) {
       aria-label={saved ? 'Remove from saved homes' : 'Save this home'}
     >
       <motion.span key={String(saved)} initial={{ scale: 0.6 }} animate={{ scale: 1 }} transition={spring.ui}>
-        <Heart className={clsx('size-[18px]', saved && 'fill-accent-400 text-accent-500')} strokeWidth={1.75} />
+        {saved ? <HeartFill className="size-[18px] text-accent-500" /> : <Heart className="size-[18px]" />}
       </motion.span>
     </motion.button>
   );

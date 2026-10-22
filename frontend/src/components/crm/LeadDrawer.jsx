@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
-import { CalendarClock, ExternalLink, Mail, Phone, Trash2, UserCheck } from 'lucide-react';
+import { CalendarClock, ExternalLink, Mail, Phone, Trash2, UserCheck } from '../ui/icons';
 import { useSession } from '../../auth/AuthContext';
 import { useAgents, useConvertLead, useDeleteLead, useLead, useMoveStage, useUpdateLead } from '../../hooks/useCrm';
 import { Drawer } from '../ui/Overlay';

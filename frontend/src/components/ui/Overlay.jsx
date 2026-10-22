@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'motion/react';
-import { X } from 'lucide-react';
+import { X } from './icons';
 import clsx from 'clsx';
 import { spring } from '../../lib/motion';
 

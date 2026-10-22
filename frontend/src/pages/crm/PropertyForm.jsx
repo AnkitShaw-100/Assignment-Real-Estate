@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { ChevronLeft, ExternalLink } from 'lucide-react';
+import { ChevronLeft, ExternalLink } from '../../components/ui/icons';
 import { useSession } from '../../auth/AuthContext';
 import { useAgents, useManagedProperty, useSaveProperty } from '../../hooks/useCrm';
 import { usePageTitle } from '../../hooks/usePageTitle';

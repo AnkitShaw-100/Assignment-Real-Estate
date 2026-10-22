@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'motion/react';
-import { Check, MapPin } from 'lucide-react';
+import { Check, MapPin } from './icons';
 import clsx from 'clsx';
 import { panelClass, panelMotion, panelStyle, useAnchoredPosition, useDismiss } from './popover';
 

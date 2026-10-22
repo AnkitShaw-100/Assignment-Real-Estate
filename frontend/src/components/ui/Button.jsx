@@ -2,7 +2,7 @@ import { forwardRef } from 'react';
 import { Link } from 'react-router';
 import { motion } from 'motion/react';
 import clsx from 'clsx';
-import { LoaderCircle } from 'lucide-react';
+import { LoaderCircle } from './icons';
 import { spring } from '../../lib/motion';
 
 const MotionLink = motion.create(Link);

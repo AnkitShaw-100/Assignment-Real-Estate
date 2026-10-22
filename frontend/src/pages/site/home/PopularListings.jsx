@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 import { motion } from 'motion/react';
-import { MapPin } from 'lucide-react';
+import { MapPin } from '../../../components/ui/icons';
 import { useProperties } from '../../../hooks/usePublic';
 import { CarouselControls, CarouselItem, CarouselTrack, useCarousel } from '../../../components/site/Carousel';
 import { PropertyCardSkeleton } from '../../../components/site/PropertyCard';
