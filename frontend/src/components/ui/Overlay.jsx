@@ -17,7 +17,7 @@ function useOverlayBehaviour(open, onClose, panelRef) {
       if (e.key === 'Escape') onClose();
       // Keep Tab inside the panel
       if (e.key === 'Tab' && panelRef.current) {
-        const focusables = panelRef.current.querySelectorAll('a[href],button:not([disabled]),input,select,textarea,[tabindex]:not([tabindex="-1"])');
+        const focusables = panelRef.current.querySelectorAll('a[href],button:not([disabled]),input,select:not([tabindex="-1"]),textarea,[tabindex]:not([tabindex="-1"])');
         if (!focusables.length) return;
         const first = focusables[0];
         const last = focusables[focusables.length - 1];

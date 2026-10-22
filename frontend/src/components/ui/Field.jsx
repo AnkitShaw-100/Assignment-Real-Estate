@@ -1,6 +1,7 @@
 import { forwardRef, useId } from 'react';
 import clsx from 'clsx';
-import { ChevronDown } from 'lucide-react';
+
+export { Select } from './Select';
 
 const control =
   'w-full rounded-field border bg-paper px-3.5 text-[15px] text-navy-900 placeholder:text-slate-400 transition-[border-color,box-shadow] duration-200 ' +
@@ -47,27 +48,6 @@ export const Textarea = forwardRef(function Textarea({ className, rows = 4, ...p
       className={clsx(control, 'resize-y py-2.5 leading-relaxed', props['aria-invalid'] ? 'border-danger' : 'border-line', className)}
       {...props}
     />
-  );
-});
-
-export const Select = forwardRef(function Select({ className, options = [], placeholder, children, ...props }, ref) {
-  return (
-    <div className={clsx('relative', className)}>
-      <select
-        ref={ref}
-        className={clsx(control, 'h-11 cursor-pointer appearance-none pr-10', props['aria-invalid'] ? 'border-danger' : 'border-line')}
-        {...props}
-      >
-        {placeholder !== undefined && <option value="">{placeholder}</option>}
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-        {children}
-      </select>
-      <ChevronDown className="pointer-events-none absolute top-1/2 right-3.5 size-4 -translate-y-1/2 text-slate-500" aria-hidden />
-    </div>
   );
 });
 
