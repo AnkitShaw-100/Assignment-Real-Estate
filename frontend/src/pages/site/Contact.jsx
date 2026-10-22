@@ -30,8 +30,9 @@ export default function Contact() {
           ))}
         </dl>
       </div>
-      <div className="rounded-panel bg-mist-100 p-6 md:p-10">
-        <h2 className="mb-6 font-display text-h2">Send us a message</h2>
+      <div className="rounded-panel bg-mist-100 p-6 md:p-8">
+        <h2 className="font-display text-h3">Send us a message</h2>
+        <p className="mt-1 mb-6 text-sm text-slate-500">We reply within one working day.</p>
         <InquiryForm />
       </div>
     </section>

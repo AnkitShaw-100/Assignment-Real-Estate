@@ -128,22 +128,20 @@ export function InquiryForm({ property, agentName, defaultIntent, compact = fals
               />
             )}
           />
-          <div className={compact ? 'flex flex-col gap-4' : 'grid gap-4 sm:grid-cols-2'}>
+          <div className={compact ? 'flex flex-col gap-4' : 'grid gap-4 sm:grid-cols-2 lg:grid-cols-3'}>
             <TextField label="Full name" autoComplete="name" required error={errors.name?.message} {...register('name')} />
             <TextField label="Email" type="email" autoComplete="email" required error={errors.email?.message} {...register('email')} />
+            <TextField label="Phone" type="tel" autoComplete="tel" className="sm:col-span-2 lg:col-span-1" error={errors.phone?.message} {...register('phone')} />
           </div>
-          <div className={compact ? 'flex flex-col gap-4' : 'grid gap-4 sm:grid-cols-2'}>
-            <TextField label="Phone" type="tel" autoComplete="tel" error={errors.phone?.message} {...register('phone')} />
-            <AnimatePresence initial={false}>
-              {intent === 'visit' && (
-                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.25, ease: ease.out }}>
-                  <Field label="Preferred date">{(a11y) => <Input type="date" min={today()} {...a11y} {...register('preferredDate')} />}</Field>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+          <AnimatePresence initial={false}>
+            {intent === 'visit' && (
+              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.25, ease: ease.out }}>
+                <Field label="Preferred date">{(a11y) => <Input type="date" min={today()} {...a11y} {...register('preferredDate')} />}</Field>
+              </motion.div>
+            )}
+          </AnimatePresence>
           <Field label="Message" error={errors.message?.message}>
-            {(a11y) => <Textarea rows={compact ? 3 : 4} {...a11y} {...register('message')} />}
+            {(a11y) => <Textarea rows={3} placeholder="Tell us what you’re looking for" {...a11y} {...register('message')} />}
           </Field>
           {/* Honeypot: hidden from people and screen readers, bots fill it in */}
           <input type="text" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden {...register('website')} />
@@ -153,10 +151,21 @@ export function InquiryForm({ property, agentName, defaultIntent, compact = fals
               {send.error.message}
             </p>
           )}
-          <Button type="submit" variant="dark" size="lg" loading={send.isPending} className="w-full">
-            Send inquiry
-          </Button>
-          <p className="text-center text-xs text-slate-500">We only use your details to reply to this inquiry.</p>
+          {compact ? (
+            <>
+              <Button type="submit" variant="dark" size="lg" loading={send.isPending} className="w-full">
+                Send inquiry
+              </Button>
+              <p className="text-center text-xs text-slate-500">We only use your details to reply to this inquiry.</p>
+            </>
+          ) : (
+            <div className="flex flex-col-reverse items-start gap-3 pt-1 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-xs text-slate-500">We only use your details to reply to this inquiry.</p>
+              <Button type="submit" variant="dark" loading={send.isPending} className="w-full sm:w-auto">
+                Send message
+              </Button>
+            </div>
+          )}
         </motion.form>
       )}
     </AnimatePresence>
