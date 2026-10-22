@@ -28,7 +28,16 @@ createRoot(document.getElementById('root')).render(
           <Toaster
             position="bottom-right"
             toastOptions={{
-              className: '!rounded-[14px] !border-line !font-sans !text-navy-900 !shadow-[var(--shadow-float)]',
+              // Colour by outcome: green for success, red for errors, amber for warnings
+              classNames: {
+                toast: '!rounded-[14px] !font-sans !shadow-[var(--shadow-float)] !border',
+                default: '!border-line !bg-paper !text-navy-900',
+                success: '!border-success/25 !bg-[#eef8f2] !text-success',
+                error: '!border-danger/25 !bg-[#fdf2f1] !text-danger',
+                warning: '!border-[#9a6200]/25 !bg-[#fff7e8] !text-[#9a6200]',
+                info: '!border-accent-500/25 !bg-[#eef2f8] !text-accent-700',
+                description: '!text-current !opacity-80',
+              },
             }}
           />
         </MotionConfig>
