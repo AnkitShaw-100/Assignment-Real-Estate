@@ -1,4 +1,5 @@
 import { useParams } from 'react-router';
+import clsx from 'clsx';
 import { motion } from 'motion/react';
 import {
   AirVent, ArrowUpDown, Bath, BedDouble, Briefcase, CalendarDays, Car, Check, Clock, ConciergeBell, Dumbbell,
@@ -24,6 +25,9 @@ const AMENITY_ICONS = {
 };
 
 const fadeUp = { initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.6, ease: ease.out, delay: 0.15 } };
+
+// One column per fact from tablet up (Tailwind needs the full class names)
+const FACT_COLS = { 1: 'sm:grid-cols-1', 2: 'sm:grid-cols-2', 3: 'sm:grid-cols-3', 4: 'sm:grid-cols-4', 5: 'sm:grid-cols-5' };
 
 export default function PropertyDetail() {
   const { slug } = useParams();
@@ -79,10 +83,12 @@ export default function PropertyDetail() {
           </p>
 
           {facts.length > 0 && (
-            <dl className="mt-10 grid grid-cols-2 overflow-hidden rounded-panel border border-line sm:grid-cols-3 xl:grid-cols-5">
+            <dl className={clsx('mt-10 grid grid-cols-2 overflow-hidden rounded-panel border border-line', FACT_COLS[facts.length])}>
               {facts.map(({ icon: Icon, label, value }) => (
-                // right + bottom hairline per cell; the container clips the outer ones, empty cells stay white
-                <div key={label} className="-mr-px -mb-px border-r border-b border-line p-5">
+                // Right + bottom hairline per cell; the container clips the outer ones.
+                // Columns match the number of facts, so a row is never left half empty;
+                // on phones an odd last cell spans both columns.
+                <div key={label} className="-mr-px -mb-px border-r border-b border-line p-5 last:odd:col-span-2 sm:last:odd:col-span-1">
                   <Icon className="size-5 text-slate-500" strokeWidth={1.5} aria-hidden />
                   <dt className="mt-3 text-sm text-slate-500">{label}</dt>
                   <dd className="mt-0.5 text-lg font-semibold tabular">{value}</dd>
