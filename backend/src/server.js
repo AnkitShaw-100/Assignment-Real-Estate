@@ -4,10 +4,10 @@ import { env } from './config/env.js';
 
 const app = await createApp();
 
+// One entry for both environments.
 // Locally: connect up front (fail fast on a bad MONGODB_URI) and listen.
-// On Vercel the platform may load this file as the server entry too; there it
-// must not listen or crash on a DB error, it only exports the app (which
-// connects lazily per request, see app.js).
+// On Vercel (vercel.json routes every request here) it must not listen or crash
+// on a DB error; it only exports the app, which connects lazily per request.
 if (!process.env.VERCEL) {
   await connectDB();
   app.listen(env.PORT, () => {

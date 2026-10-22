@@ -243,7 +243,7 @@ Indexes: { assignedTo, status }, { followUpDate }, { email }.
 **Repo layout**
 ```
 /frontend  React app (website + dashboard)
-/backend   Express API (api/index.js = Vercel entry, src/app.js = app)
+/backend   Express API (src/server.js = entry, src/createApp.js = app)
 /docs      PRD.md, DESIGN.md, ARCHITECTURE.md, reference/
 README.md
 ```
