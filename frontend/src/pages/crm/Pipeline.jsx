@@ -5,7 +5,7 @@ import {
 } from '@dnd-kit/core';
 import { motion } from 'motion/react';
 import clsx from 'clsx';
-import { CalendarClock } from '../../components/ui/icons';
+import { CalendarClock, Users } from '../../components/ui/icons';
 import { useLeads, useMoveStage } from '../../hooks/useCrm';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { PageHeader } from '../../routes/DashboardLayout';
@@ -79,23 +79,55 @@ function Column({ stage, leads, onOpen }) {
     <section
       ref={setNodeRef}
       aria-label={`${stage.label}, ${leads.length} leads`}
-      className={clsx('flex w-[284px] shrink-0 flex-col rounded-panel transition-colors duration-200', isOver ? 'bg-mist-200' : 'bg-mist-100/0')}
+      className={clsx(
+        'flex w-[280px] shrink-0 flex-col overflow-hidden rounded-panel border bg-paper transition-[border-color,box-shadow] duration-200',
+        isOver ? 'border-accent-400 shadow-float' : 'border-line',
+      )}
     >
-      <header className="flex items-center justify-between px-2 pt-1 pb-3">
+      <span className={clsx('h-1 w-full', STAGE_DOT[stage.value])} aria-hidden />
+      <header className="flex items-center justify-between gap-2 px-4 pt-3.5 pb-3">
         <h2 className="flex items-center gap-2 text-sm font-semibold">
-          <span className={clsx('size-2 rounded-full', STAGE_DOT[stage.value])} aria-hidden />
           {stage.label}
-          <span className="font-normal text-slate-400 tabular">{leads.length}</span>
+          <span className="rounded-full bg-mist-100 px-2 py-0.5 text-xs font-medium text-slate-500 tabular">{leads.length}</span>
         </h2>
-        {total > 0 && <span className="text-xs text-slate-500 tabular">{formatPrice(total, { compact: true })}</span>}
+        <span className="text-xs text-slate-500 tabular">{total > 0 ? formatPrice(total, { compact: true }) : ''}</span>
       </header>
-      <ul className="flex min-h-[120px] flex-1 flex-col gap-2.5 px-1 pb-3">
+      <ul className="scroll-thin flex min-h-[160px] flex-1 flex-col gap-2.5 overflow-y-auto bg-mist-100/60 p-2.5">
         {leads.map((l) => (
           <DraggableCard key={l._id} lead={l} onOpen={() => onOpen(l._id)} />
         ))}
-        {leads.length === 0 && <li className="grid flex-1 place-items-center rounded-card border border-dashed border-line text-sm text-slate-400">Drop a lead here</li>}
+        {leads.length === 0 && (
+          <li className={clsx('grid flex-1 place-items-center rounded-card border border-dashed px-4 text-center text-[13px] transition-colors', isOver ? 'border-accent-400 text-accent-700' : 'border-line text-slate-400')}>
+            <span>
+              <Users className="mx-auto mb-2 size-5" aria-hidden />
+              No leads here yet
+            </span>
+          </li>
+        )}
       </ul>
     </section>
+  );
+}
+
+/** Headline numbers above the board. */
+function Summary({ leads }) {
+  const open = leads.filter((l) => !['won', 'lost'].includes(l.status));
+  const won = leads.filter((l) => l.status === 'won');
+  const sum = (list) => list.reduce((s, l) => s + (l.dealValue ?? 0), 0);
+  const stats = [
+    { label: 'Open leads', value: open.length },
+    { label: 'Open pipeline value', value: formatPrice(sum(open), { compact: true }) },
+    { label: 'Won', value: `${won.length} · ${formatPrice(sum(won), { compact: true })}` },
+  ];
+  return (
+    <dl className="mb-6 grid gap-3 sm:grid-cols-3">
+      {stats.map((s) => (
+        <div key={s.label} className="rounded-card border border-line bg-paper px-5 py-4">
+          <dt className="text-[13px] text-slate-500">{s.label}</dt>
+          <dd className="mt-1 text-xl font-semibold tabular">{s.value}</dd>
+        </div>
+      ))}
+    </dl>
   );
 }
 
@@ -137,6 +169,8 @@ export default function Pipeline() {
         Press space to pick up a lead, use the arrow keys to move it over another stage, and press space again to drop it.
       </p>
 
+      {!isPending && !isError && <Summary leads={data.data} />}
+
       {isError ? (
         <ErrorState error={error} onRetry={refetch} />
       ) : isPending ? (
@@ -161,7 +195,7 @@ export default function Pipeline() {
             },
           }}
         >
-          <div className="-mx-4 flex gap-4 overflow-x-auto px-4 pb-6 md:-mx-8 md:px-8 xl:-mx-10 xl:px-10">
+          <div className="scroll-thin -mx-4 flex min-h-[calc(100dvh-300px)] gap-4 overflow-x-auto px-4 pb-6 md:-mx-8 md:px-8 xl:-mx-10 xl:px-10">
             {LEAD_STAGES.map((s) => (
               <Column key={s.value} stage={s} leads={byStage[s.value]} onOpen={openLead} />
             ))}
