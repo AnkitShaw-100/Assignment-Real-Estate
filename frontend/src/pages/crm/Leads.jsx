@@ -123,7 +123,7 @@ export default function Leads() {
                         </td>
                       )}
                       <td className={clsx('px-3 py-3 text-sm', overdue ? 'font-medium text-danger' : 'text-slate-500')}>
-                        {l.followUpDate ? `${overdue ? 'Overdue · ' : ''}${formatDate(l.followUpDate, { day: 'numeric', month: 'short' })}` : '—'}
+                        {l.followUpDate ? `${overdue ? 'Overdue · ' : ''}${formatDate(l.followUpDate, { day: 'numeric', month: 'short' })}` : 'Not set'}
                       </td>
                       <td className="px-5 py-3 text-right text-sm text-slate-500">{timeAgo(l.createdAt)}</td>
                     </tr>

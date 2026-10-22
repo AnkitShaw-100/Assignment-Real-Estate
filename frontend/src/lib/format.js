@@ -1,8 +1,8 @@
 const currencyCache = new Map();
 
-/** $1,295,000 — or "$8,000 /month" for rentals when `purpose` is passed */
+/** $1,295,000, or "$8,000 /month" for rentals when `purpose` is passed */
 export function formatPrice(value, { currency = 'USD', purpose, compact = false } = {}) {
-  if (value == null) return '—';
+  if (value == null) return 'Price on request';
   const key = `${currency}-${compact}`;
   if (!currencyCache.has(key)) {
     currencyCache.set(
@@ -22,7 +22,7 @@ export function formatPrice(value, { currency = 'USD', purpose, compact = false 
 export const formatNumber = (n) => new Intl.NumberFormat('en-US').format(n ?? 0);
 
 export function formatDate(value, opts = { day: 'numeric', month: 'short', year: 'numeric' }) {
-  if (!value) return '—';
+  if (!value) return 'Not set';
   return new Intl.DateTimeFormat('en-GB', opts).format(new Date(value));
 }
 
