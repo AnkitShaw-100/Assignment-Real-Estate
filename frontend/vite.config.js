@@ -7,7 +7,8 @@ export default defineConfig({
   server: {
     port: 5173,
     // In dev, /api goes to the local Express server so cookies and CORS behave like prod
-    proxy: { '/api': 'http://localhost:5000' },
+    // Override with VITE_API_PROXY to point dev at another API port
+    proxy: { '/api': process.env.VITE_API_PROXY || 'http://localhost:5000' },
   },
   // Pre-bundle the icon packs at startup. They're imported through one module,
   // so Vite can miss them on the first scan and re-optimise mid-session, which
