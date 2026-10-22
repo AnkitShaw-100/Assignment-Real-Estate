@@ -327,7 +327,9 @@ docs/
 | ![CRM overview](docs/screenshots/overview.webp) | ![Sales pipeline](docs/screenshots/pipeline.webp) |
 
 <p align="center">
-  <img src="docs/screenshots/home-mobile.webp" alt="Home page on a phone" width="280">
-  &nbsp;&nbsp;
-  <img src="docs/screenshots/listings-mobile.webp" alt="Property listings on a phone" width="280">
+  <img src="docs/screenshots/home-mobile.webp" alt="Home page on a phone" width="250">
+  &nbsp;
+  <img src="docs/screenshots/listings-mobile.webp" alt="Property listings on a phone" width="250">
+  &nbsp;
+  <img src="docs/screenshots/detail-mobile.webp" alt="Property detail page on a phone" width="250">
 </p>
