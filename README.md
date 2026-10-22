@@ -294,7 +294,7 @@ Two Vercel projects from this repository:
 ```
 backend/
   api/index.js            Vercel entry (exports the Express app)
-  src/app.js              middleware chain and route mounting
+  src/createApp.js        middleware chain and route mounting
   src/auth/               token signing and password hashing
   src/middleware/         auth and roles, validation, sanitising, errors
   src/models/             User, Property, Lead, Customer, Task

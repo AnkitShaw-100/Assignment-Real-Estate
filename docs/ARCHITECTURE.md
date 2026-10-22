@@ -28,7 +28,7 @@ Two deployables in one repository: `frontend/` (static SPA) and `backend/` (Expr
 
 ## Request lifecycle (API)
 
-Every request passes through the same chain in `backend/src/app.js`:
+Every request passes through the same chain in `backend/src/createApp.js`:
 
 1. **helmet**: security headers.
 2. **CORS allowlist**: only origins in `CLIENT_URL`.

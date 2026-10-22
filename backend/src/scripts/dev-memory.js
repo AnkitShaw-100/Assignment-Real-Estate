@@ -11,7 +11,7 @@ process.env.MONGODB_URI = `${mongo.getUri()}niwas`;
 const { connectDB } = await import('../config/db.js');
 const { env } = await import('../config/env.js');
 const { seedDatabase } = await import('./seed.js');
-const { createApp } = await import('../app.js');
+const { createApp } = await import('../createApp.js');
 
 await connectDB();
 await seedDatabase();

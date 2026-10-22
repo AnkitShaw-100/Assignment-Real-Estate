@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { inject } from 'vitest';
 import request from 'supertest';
 import bcrypt from 'bcryptjs';
-import { createApp } from '../src/app.js';
+import { createApp } from '../src/createApp.js';
 import { User } from '../src/models/index.js';
 import { signToken } from '../src/auth/tokens.js';
 
