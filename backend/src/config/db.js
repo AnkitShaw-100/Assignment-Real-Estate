@@ -1,7 +1,12 @@
+import dns from 'node:dns';
 import mongoose from 'mongoose';
 import { env } from './env.js';
 
 mongoose.set('strictQuery', true);
+
+// mongodb+srv needs an SRV lookup, which fails with ECONNREFUSED when Node
+// picks up an unreachable resolver (e.g. 127.0.0.1 on some Windows setups).
+if (env.dnsServers.length) dns.setServers(env.dnsServers);
 
 // On Vercel every request may hit a fresh function instance, but warm
 // instances reuse module state. Caching the connection promise on

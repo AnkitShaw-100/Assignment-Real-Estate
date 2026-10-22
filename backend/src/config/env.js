@@ -6,6 +6,7 @@ const schema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().default(5000),
   MONGODB_URI: z.string().optional(),
+  DNS_SERVERS: z.string().default(''),
   CLIENT_URL: z.string().default('http://localhost:5173'),
   ADMIN_EMAILS: z.string().default(''),
   DEV_AUTH: z.enum(['true', 'false']).default('false'),
@@ -31,6 +32,7 @@ export const env = {
   isTest: parsed.data.NODE_ENV === 'test',
   // Comma separated lists → arrays
   clientOrigins: parsed.data.CLIENT_URL.split(',').map((s) => s.trim()).filter(Boolean),
+  dnsServers: parsed.data.DNS_SERVERS.split(',').map((s) => s.trim()).filter(Boolean),
   adminEmails: parsed.data.ADMIN_EMAILS.split(',').map((s) => s.trim().toLowerCase()).filter(Boolean),
   cloudinaryEnabled: Boolean(
     parsed.data.CLOUDINARY_CLOUD_NAME && parsed.data.CLOUDINARY_API_KEY && parsed.data.CLOUDINARY_API_SECRET,
