@@ -9,6 +9,12 @@ export default defineConfig({
     // In dev, /api goes to the local Express server so cookies and CORS behave like prod
     proxy: { '/api': 'http://localhost:5000' },
   },
+  // Pre-bundle the icon packs at startup. They're imported through one module,
+  // so Vite can miss them on the first scan and re-optimise mid-session, which
+  // shows up in the browser as "504 Outdated Optimize Dep".
+  optimizeDeps: {
+    include: ['react-icons/pi', 'react-icons/fa6'],
+  },
   build: {
     rollupOptions: {
       output: {
