@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { User, Lead, Property, ROLES, OPEN_LEAD_STAGES, PUBLIC_PROPERTY_STATUSES } from '../../models/index.js';
+import { User, Lead, Property, ROLES, STAFF_ROLES, OPEN_LEAD_STAGES, PUBLIC_PROPERTY_STATUSES } from '../../models/index.js';
+import { hashPassword } from '../../auth/tokens.js';
 import { validate } from '../../middleware/validate.js';
 import { requireAuth, requireAdmin, requireStaff } from '../../middleware/auth.js';
 import { idParams, objectId, phone } from '../../utils/schemas.js';
@@ -16,6 +17,13 @@ const meBody = z
   .partial();
 
 const roleBody = z.object({ role: z.enum(ROLES) });
+const memberBody = z.object({
+  name: z.string().trim().min(2, 'Enter a name').max(80),
+  email: z.string().trim().toLowerCase().pipe(z.email('Enter a valid email address')),
+  role: z.enum(STAFF_ROLES),
+  title: z.string().trim().max(60).optional(),
+  password: z.string().min(8, 'Use at least 8 characters').max(72, 'Use 72 characters or fewer'),
+});
 const activeBody = z.object({ active: z.boolean() });
 
 
@@ -79,6 +87,14 @@ usersRouter.get('/', requireAdmin, async (_req, res) => {
     return { ...publicUser(u), active: u.active, openLeads: s?.openLeads ?? 0, won: s?.won ?? 0, revenue: s?.revenue ?? 0 };
   });
   res.json({ data });
+});
+
+/** Admin adds an agent (or another admin) with a starting password they share. */
+usersRouter.post('/', requireAdmin, validate({ body: memberBody }), async (req, res) => {
+  const { password, ...fields } = req.body;
+  if (await User.exists({ email: fields.email })) throw new HttpError(409, 'An account with this email already exists. Change its role instead.');
+  const user = await User.create({ ...fields, passwordHash: await hashPassword(password) });
+  res.status(201).json({ data: { ...publicUser(user), active: user.active } });
 });
 
 usersRouter.patch('/:id/role', requireAdmin, validate({ params: idParams, body: roleBody }), async (req, res) => {

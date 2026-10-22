@@ -45,9 +45,52 @@ describe('auth and roles', () => {
     expect(me.body.data.email).toBe('asha@example.com');
   });
 
-  it('makes ADMIN_EMAILS users admin when they register', async () => {
+  it('always creates a normal user at sign-up', async () => {
     const res = await api().post('/api/auth/register').send({ name: 'Boss', email: 'boss@niwas.test', password: 'long-enough-pw' });
-    expect(res.body.data.user.role).toBe('admin');
+    expect(res.body.data.user.role).toBe('buyer');
+  });
+
+  it("signs the admin in with the credentials from the server settings", async () => {
+    const res = await api().post('/api/auth/login').send({ email: 'Owner@niwas.test', password: 'owner-password-1', staff: true });
+    expect(res.status).toBe(200);
+    expect(res.body.data.user).toMatchObject({ email: 'owner@niwas.test', role: 'admin' });
+    // Signing in again reuses the same account
+    await api().post('/api/auth/login').send({ email: 'owner@niwas.test', password: 'owner-password-1', staff: true });
+    expect(await User.countDocuments({ email: 'owner@niwas.test' })).toBe(1);
+
+    const wrong = await api().post('/api/auth/login').send({ email: 'owner@niwas.test', password: 'guess-guess-1', staff: true });
+    expect(wrong.status).toBe(401);
+  });
+
+  it("doesn't let anyone register the admin's email", async () => {
+    const res = await api().post('/api/auth/register').send({ name: 'Imposter', email: 'owner@niwas.test', password: 'long-enough-pw' });
+    expect(res.status).toBe(409);
+  });
+
+  it('the CRM sign-in only accepts admins and agents', async () => {
+    await makeUser('buyer', { email: 'buyer@niwas.test' });
+    await makeUser('agent', { email: 'agent@niwas.test' });
+    const buyer = await api().post('/api/auth/login').send({ email: 'buyer@niwas.test', password: TEST_PASSWORD, staff: true });
+    expect(buyer.status).toBe(403);
+    expect(buyer.body.error.message).toMatch(/CRM access/);
+    expect((await api().post('/api/auth/login').send({ email: 'agent@niwas.test', password: TEST_PASSWORD, staff: true })).status).toBe(200);
+    // The normal sign-in still works for buyers
+    expect((await api().post('/api/auth/login').send({ email: 'buyer@niwas.test', password: TEST_PASSWORD })).status).toBe(200);
+  });
+
+  it('only admins add team members, who can then sign in to the CRM', async () => {
+    const admin = await makeUser('admin');
+    const agent = await makeUser('agent');
+    const member = { name: 'New Agent', email: 'new.agent@niwas.test', role: 'agent', password: 'starting-pass-1' };
+    expect((await api(agent).post('/api/users').send(member)).status).toBe(403);
+    expect((await api(admin).post('/api/users').send({ ...member, role: 'buyer' })).status).toBe(400);
+
+    const res = await api(admin).post('/api/users').send(member);
+    expect(res.status).toBe(201);
+    expect(res.body.data).toMatchObject({ email: 'new.agent@niwas.test', role: 'agent' });
+    expect(res.body.data.passwordHash).toBeUndefined();
+    expect((await api().post('/api/auth/login').send({ email: member.email, password: member.password, staff: true })).status).toBe(200);
+    expect((await api(admin).post('/api/users').send(member)).status).toBe(409);
   });
 
   it('ignores a role sent at registration', async () => {

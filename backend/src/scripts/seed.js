@@ -8,7 +8,6 @@
 import { randomBytes } from 'node:crypto';
 import mongoose from 'mongoose';
 import { connectDB } from '../config/db.js';
-import { env } from '../config/env.js';
 import { hashPassword } from '../auth/tokens.js';
 import { User, Property, Lead, Customer, Task, OPEN_LEAD_STAGES } from '../models/index.js';
 import { PROPERTIES } from './data/properties.js';
@@ -24,7 +23,7 @@ const between = (min, max) => Math.floor(min + rand() * (max - min + 1));
 const daysAgo = (n) => new Date(Date.now() - n * 86_400_000);
 const daysFromNow = (n) => new Date(Date.now() + n * 86_400_000);
 
-const ADMIN_EMAIL = env.adminEmails[0] ?? 'admin@niwas.app';
+const ADMIN_EMAIL = 'admin@niwas.app';
 // No password is hardcoded: set SEED_PASSWORD, or a random one is generated
 // for this run and printed at the end.
 export const SEED_PASSWORD = process.env.SEED_PASSWORD || randomBytes(9).toString('base64url');
