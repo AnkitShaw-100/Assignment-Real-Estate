@@ -3,7 +3,7 @@ import { Link, Navigate, useNavigate, useSearchParams } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Heart, Lock, Mail, MessageSquareText, Search, User } from '../../components/ui/icons';
+import { ArrowLeft, Heart, Lock, Mail, MessageSquareText, Search, User } from '../../components/ui/icons';
 import { useSession } from '../../auth/AuthContext';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { PageSkeleton } from '../../routes/guards';
@@ -50,7 +50,10 @@ const PERKS = [
   { icon: Search, text: 'Browse villas, apartments and commercial spaces in 18 cities' },
 ];
 
-/** Website sign in / sign up for buyers and renters. Staff use /admin/login. */
+/**
+ * Website sign in / sign up for buyers and renters, as a full-screen split
+ * (form left, photo right). Staff use /admin/login.
+ */
 export default function AuthPage({ mode }) {
   const { isLoaded, isSignedIn } = useSession();
   const [params] = useSearchParams();
@@ -67,47 +70,59 @@ export default function AuthPage({ mode }) {
   const otherHref = redirect === '/' ? other : `${other}?redirect=${encodeURIComponent(redirect)}`;
 
   return (
-    <section className="container-page grid min-h-[calc(100dvh-72px)] items-start gap-12 py-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center lg:gap-16 lg:py-10">
-      {/* Photo panel with what an account gives you (desktop) */}
-      <div className="relative hidden h-full max-h-[700px] min-h-[560px] overflow-hidden rounded-hero bg-navy-900 lg:block">
-        <FadeImage className="absolute inset-0" src={`${IMG}&w=1200`} alt="" loading="eager" />
-        <div className="absolute inset-0 bg-linear-to-t from-navy-900/95 via-navy-900/45 to-navy-900/10" />
-        <div className="absolute inset-x-0 bottom-0 p-10 text-white">
-          <p className="font-display text-h2 leading-tight">{copy.aside}</p>
-          <ul className="mt-7 space-y-3.5">
+    <main className="grid min-h-dvh bg-paper lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
+      {/* Form side */}
+      <section className="flex flex-col px-6 py-8 sm:px-10 lg:px-14 xl:px-20">
+        <header className="flex items-center justify-between">
+          <Link to="/" className="font-display text-[28px] leading-none tracking-[-0.03em]" aria-label="Niwas home">
+            Niwas
+          </Link>
+          <Link to="/" className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-navy-900">
+            <ArrowLeft className="size-4" aria-hidden />
+            Back to website
+          </Link>
+        </header>
+
+        <div className="flex flex-1 items-center justify-center py-12">
+          <div className="w-full max-w-[400px]">
+            <h1 className="font-display text-h1 leading-[1.05]">{copy.heading}</h1>
+            <p className="mt-3 text-[17px] text-slate-500">{copy.sub}</p>
+            {/* key resets the form when switching between sign in and sign up */}
+            <AuthForm key={mode} mode={mode} redirect={redirect} />
+            <p className="mt-6 text-center text-sm text-slate-500">
+              {copy.switchText}{' '}
+              <Link to={otherHref} className="font-medium text-navy-900 underline underline-offset-4 hover:text-accent-700">
+                {copy.switchLink}
+              </Link>
+            </p>
+          </div>
+        </div>
+
+        <p className="text-center text-[13px] text-slate-500 lg:text-left">
+          Niwas staff?{' '}
+          <Link to="/admin/login" className="font-medium text-navy-900 hover:text-accent-700">
+            Sign in to the CRM
+          </Link>
+        </p>
+      </section>
+
+      {/* Photo side (desktop): what an account gives you */}
+      <section className="relative hidden overflow-hidden bg-navy-900 lg:block" aria-hidden>
+        <FadeImage className="absolute inset-0" src={`${IMG}&w=1400`} alt="" loading="eager" />
+        <div className="absolute inset-0 bg-linear-to-t from-navy-900/95 via-navy-900/35 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 p-12 text-white xl:p-16">
+          <p className="max-w-md font-display text-h1 leading-[1.05]">{copy.aside}</p>
+          <ul className="mt-8 grid max-w-lg gap-3">
             {PERKS.map(({ icon: Icon, text }) => (
-              <li key={text} className="flex items-center gap-3 text-[15px] text-white/85">
-                <span className="grid size-9 shrink-0 place-items-center rounded-full bg-white/12 ring-1 ring-white/20 backdrop-blur">
-                  <Icon className="size-[18px]" aria-hidden />
-                </span>
+              <li key={text} className="flex items-center gap-3 rounded-card bg-white/10 px-4 py-3 text-[15px] text-white/90 ring-1 ring-white/15 backdrop-blur-md">
+                <Icon className="size-5 shrink-0" />
                 {text}
               </li>
             ))}
           </ul>
         </div>
-      </div>
-
-      <div className="flex justify-center">
-        <div className="w-full max-w-[420px] rounded-panel border border-line bg-paper p-7 shadow-float sm:p-9">
-          <h1 className="font-display text-h2">{copy.heading}</h1>
-          <p className="mt-2 text-slate-500">{copy.sub}</p>
-          {/* key resets the form when switching between sign in and sign up */}
-          <AuthForm key={mode} mode={mode} redirect={redirect} />
-          <p className="mt-6 text-center text-sm text-slate-500">
-            {copy.switchText}{' '}
-            <Link to={otherHref} className="font-medium text-navy-900 underline underline-offset-4 hover:text-accent-700">
-              {copy.switchLink}
-            </Link>
-          </p>
-          <p className="mt-6 border-t border-line pt-5 text-center text-[13px] text-slate-500">
-            Niwas staff?{' '}
-            <Link to="/admin/login" className="font-medium text-navy-900 hover:text-accent-700">
-              Sign in to the CRM
-            </Link>
-          </p>
-        </div>
-      </div>
-    </section>
+      </section>
+    </main>
   );
 }
 

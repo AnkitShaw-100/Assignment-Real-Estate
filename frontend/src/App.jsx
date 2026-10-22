@@ -35,8 +35,6 @@ const router = createBrowserRouter([
       { path: 'properties/:slug', element: <PropertyDetail /> },
       { path: 'about', element: <About /> },
       { path: 'contact', element: <Contact /> },
-      { path: 'sign-in/*', element: <AuthPage mode="sign-in" /> },
-      { path: 'sign-up/*', element: <AuthPage mode="sign-up" /> },
       {
         element: <RequireAuth />,
         children: [
@@ -47,6 +45,9 @@ const router = createBrowserRouter([
       { path: '*', element: <NotFound /> },
     ],
   },
+  // Website sign in / sign up: full-screen pages outside the site layout
+  { path: 'sign-in/*', element: <Suspense fallback={<div className="min-h-dvh bg-paper" />}><AuthPage mode="sign-in" /></Suspense> },
+  { path: 'sign-up/*', element: <Suspense fallback={<div className="min-h-dvh bg-paper" />}><AuthPage mode="sign-up" /></Suspense> },
   // CRM sign-in for admins and agents (no sign-up)
   { path: 'admin/login', element: <Suspense fallback={<div className="min-h-dvh bg-navy-900" />}><AdminLogin /></Suspense> },
   // Old links: /dashboard/... → /admin/...
