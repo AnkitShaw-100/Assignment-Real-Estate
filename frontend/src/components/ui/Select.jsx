@@ -71,7 +71,7 @@ export const Select = forwardRef(function Select(
     el.dispatchEvent(new Event('change', { bubbles: true }));
   };
 
-  const pos = useAnchoredPosition(buttonRef, open, items.length * 44 + 12);
+  const pos = useAnchoredPosition(buttonRef, open);
   useDismiss(open, [buttonRef, listRef], () => setOpen(false));
 
   useEffect(() => {
@@ -169,7 +169,7 @@ export const Select = forwardRef(function Select(
               id={listId}
               role="listbox"
               aria-label={aria['aria-label']}
-              {...panelMotion(pos.up)}
+              {...panelMotion()}
               onMouseDown={(e) => e.preventDefault()} // keep focus on the trigger
               style={panelStyle(pos)}
               className={panelClass}

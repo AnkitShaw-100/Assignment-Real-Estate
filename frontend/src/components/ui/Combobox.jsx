@@ -46,7 +46,7 @@ export function Combobox({ value, onChange, onPick, suggestions = [], anchorRef,
         .sort((a, b) => Number(!a.toLowerCase().startsWith(query)) - Number(!b.toLowerCase().startsWith(query)));
   const visible = open && matches.length > 0;
 
-  const pos = useAnchoredPosition(anchorRef ?? inputRef, visible, matches.length * 44 + 12);
+  const pos = useAnchoredPosition(anchorRef ?? inputRef, visible);
   useDismiss(visible, [inputRef, listRef, ...(anchorRef ? [anchorRef] : [])], () => setOpen(false));
 
   useEffect(() => {
@@ -115,7 +115,7 @@ export function Combobox({ value, onChange, onPick, suggestions = [], anchorRef,
               id={listId}
               role="listbox"
               aria-label="Suggestions"
-              {...panelMotion(pos.up)}
+              {...panelMotion()}
               onMouseDown={(e) => e.preventDefault()} // keep focus in the input
               style={panelStyle(pos)}
               className={panelClass}

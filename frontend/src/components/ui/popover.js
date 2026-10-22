@@ -1,31 +1,24 @@
 import { useCallback, useLayoutEffect, useState } from 'react';
 
 const MAX_HEIGHT = 288;
+const MIN_HEIGHT = 168;
 
 /**
- * Fixed-position coordinates for a popover under (or, near the bottom of the
- * viewport, above) `anchorRef`. Follows the anchor on scroll and resize while
- * open. Rendering through a portal with these keeps the popover from being
- * clipped by drawers and overflow containers.
+ * Fixed-position coordinates for a popover that always opens below
+ * `anchorRef`, sized to the space left in the viewport (never less than
+ * MIN_HEIGHT, so a field near the bottom still shows a usable list).
+ * Follows the anchor on scroll and resize while open. Rendering through a
+ * portal with these keeps the popover from being clipped by drawers.
  */
-export function useAnchoredPosition(anchorRef, open, estimatedHeight = MAX_HEIGHT) {
+export function useAnchoredPosition(anchorRef, open) {
   const [pos, setPos] = useState(null);
 
   const place = useCallback(() => {
     const r = anchorRef.current?.getBoundingClientRect();
     if (!r) return;
-    const below = window.innerHeight - r.bottom - 8;
-    const above = r.top - 8;
-    const up = below < Math.min(MAX_HEIGHT, estimatedHeight) && above > below;
-    setPos({
-      left: r.left,
-      width: r.width,
-      up,
-      top: up ? undefined : r.bottom + 6,
-      bottom: up ? window.innerHeight - r.top + 6 : undefined,
-      maxHeight: Math.min(MAX_HEIGHT, (up ? above : below) - 6),
-    });
-  }, [anchorRef, estimatedHeight]);
+    const below = window.innerHeight - r.bottom - 14;
+    setPos({ left: r.left, width: r.width, top: r.bottom + 6, maxHeight: Math.max(MIN_HEIGHT, Math.min(MAX_HEIGHT, below)) });
+  }, [anchorRef]);
 
   useLayoutEffect(() => {
     if (!open) return undefined;
@@ -54,9 +47,9 @@ export function useDismiss(open, refs, onDismiss) {
 }
 
 /** Shared look for popover panels and their rows. */
-export const panelClass = 'fixed z-[60] min-w-40 overflow-y-auto overscroll-contain rounded-card border border-line bg-paper p-1.5 shadow-lift';
-export const panelMotion = (up) => ({
-  initial: { opacity: 0, y: up ? 4 : -4, scale: 0.98 },
+export const panelClass = 'scroll-thin fixed z-[60] min-w-40 overflow-y-auto overscroll-contain rounded-card border border-line bg-paper p-1.5 shadow-lift';
+export const panelMotion = () => ({
+  initial: { opacity: 0, y: -4, scale: 0.98 },
   animate: { opacity: 1, y: 0, scale: 1 },
   exit: { opacity: 0, transition: { duration: 0.1 } },
   transition: { duration: 0.16, ease: [0.22, 1, 0.36, 1] },
@@ -65,7 +58,6 @@ export const panelStyle = (pos) => ({
   left: pos.left,
   width: pos.width,
   top: pos.top,
-  bottom: pos.bottom,
   maxHeight: pos.maxHeight,
-  transformOrigin: pos.up ? 'bottom' : 'top',
+  transformOrigin: 'top',
 });
