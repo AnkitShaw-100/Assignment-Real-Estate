@@ -22,8 +22,9 @@ export function Hero() {
   const y = useTransform(scrollYProgress, [0, 1], ['0%', reduce ? '0%' : '12%']);
 
   return (
-    <section ref={ref} className="px-3 pt-3 sm:px-4 sm:pt-4" aria-labelledby="hero-title">
-      <div className="relative isolate h-[calc(100svh-24px)] max-h-[860px] min-h-[560px] overflow-hidden rounded-hero bg-navy-900">
+    <section ref={ref} aria-labelledby="hero-title">
+      {/* Full-bleed: edge to edge under the fixed navbar */}
+      <div className="relative isolate h-svh max-h-[920px] min-h-[600px] overflow-hidden bg-navy-900">
         <motion.div className="absolute inset-0 -z-10" style={{ y }}>
           <motion.img
             src={src(1920)}
