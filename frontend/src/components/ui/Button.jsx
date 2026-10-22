@@ -71,13 +71,16 @@ export function ArrowButton({ direction = 'right', active = true, className, ...
       transition={spring.ui}
       className={clsx(
         'grid size-10 place-items-center rounded-full border transition-colors duration-200 disabled:cursor-not-allowed',
-        active ? 'border-accent-500 bg-accent-500 text-white hover:bg-accent-600' : 'border-line bg-paper text-navy-900 hover:bg-mist-100',
-        'disabled:border-line disabled:bg-paper disabled:text-navy-900/40',
+        active
+          ? 'border-accent-500 bg-accent-500 text-white hover:bg-accent-600'
+          : 'border-navy-900/25 bg-paper text-navy-900 shadow-[0_1px_2px_rgb(12_26_59/0.08)] hover:border-navy-900/50 hover:bg-mist-100',
+        // Disabled stays visible, just quieter
+        'disabled:border-navy-900/15 disabled:bg-mist-100 disabled:text-navy-900/35 disabled:shadow-none',
         className,
       )}
       {...props}
     >
-      <svg viewBox="0 0 24 24" className={clsx('size-4', direction === 'left' && 'rotate-180')} fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <svg viewBox="0 0 24 24" className={clsx('size-4', direction === 'left' && 'rotate-180')} fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
         <path d="m9 6 6 6-6 6" />
       </svg>
     </motion.button>
