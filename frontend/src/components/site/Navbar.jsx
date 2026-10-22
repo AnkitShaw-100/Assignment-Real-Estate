@@ -37,6 +37,16 @@ export function Navbar({ overlay = false }) {
 
   useEffect(() => setMenuOpen(false), [location.pathname, location.search]);
 
+  // Freeze the page behind the open mobile menu
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+    const { overflow } = document.body.style;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = overflow;
+    };
+  }, [menuOpen]);
+
   const light = overlay && !scrolled && !menuOpen;
 
   return (
@@ -185,7 +195,7 @@ function MobileMenu({ open }) {
       {open && (
         <motion.div
           id="mobile-menu"
-          className="glass fixed inset-0 z-30 overflow-y-auto pt-[88px] lg:hidden"
+          className="fixed inset-0 z-30 overflow-y-auto bg-paper pt-[88px] lg:hidden"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
