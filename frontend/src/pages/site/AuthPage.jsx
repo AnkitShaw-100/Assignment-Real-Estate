@@ -74,7 +74,7 @@ export default function AuthPage({ mode }) {
           <AuthForm key={mode} mode={mode} redirect={redirect} />
           <p className="mt-6 text-center text-sm text-slate-500">
             {copy.switchText}{' '}
-            <Link to={otherHref} className="font-medium text-navy-900 underline underline-offset-4 hover:text-brass-700">
+            <Link to={otherHref} className="font-medium text-navy-900 underline underline-offset-4 hover:text-accent-700">
               {copy.switchLink}
             </Link>
           </p>

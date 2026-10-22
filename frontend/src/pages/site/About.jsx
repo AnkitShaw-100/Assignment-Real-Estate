@@ -36,7 +36,7 @@ export default function About() {
           <ol className="mt-14 grid gap-10 md:grid-cols-4">
             {STEPS.map((s, i) => (
               <li key={s.title} className="border-t border-navy-900/15 pt-6">
-                <span className="font-display text-[40px] leading-none text-brass-700">{i + 1}</span>
+                <span className="font-display text-[40px] leading-none text-accent-700">{i + 1}</span>
                 <h3 className="mt-5 font-display text-h3">{s.title}</h3>
                 <p className="mt-3 text-slate-500">{s.body}</p>
               </li>

@@ -108,7 +108,7 @@ export default function Tasks() {
 
       <div className="grid gap-5 lg:grid-cols-3">
         <Bucket title="Overdue" due="overdue" assignee={assignee} tone="bg-danger" isAdmin={isAdmin} />
-        <Bucket title="Today" due="today" assignee={assignee} tone="bg-brass-400" isAdmin={isAdmin} />
+        <Bucket title="Today" due="today" assignee={assignee} tone="bg-accent-400" isAdmin={isAdmin} />
         <Bucket title="Upcoming" due="upcoming" assignee={assignee} tone="bg-navy-600" isAdmin={isAdmin} />
       </div>
 

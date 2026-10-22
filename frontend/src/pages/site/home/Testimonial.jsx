@@ -31,7 +31,7 @@ export function Testimonial() {
               viewport={{ once: true, margin: '-10% 0px' }}
               transition={{ duration: 0.8, ease: ease.out }}
             />
-            <span className="absolute bottom-[6%] left-[2%] grid size-14 place-items-center rounded-full bg-brass-400 text-navy-900 shadow-float" aria-hidden>
+            <span className="absolute bottom-[6%] left-[2%] grid size-14 place-items-center rounded-full bg-accent-500 text-white shadow-float" aria-hidden>
               <svg viewBox="0 0 24 24" className="size-6" fill="currentColor">
                 <path d="M4 17.5V13c0-3.6 1.6-6.3 4.8-8l1 1.6C7.9 7.8 7 9.3 6.9 11.2H10v6.3H4Zm9.5 0V13c0-3.6 1.6-6.3 4.8-8l1 1.6c-1.9 1.2-2.8 2.7-2.9 4.6h3.1v6.3h-6Z" />
               </svg>

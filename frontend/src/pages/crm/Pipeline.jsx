@@ -65,7 +65,7 @@ function DraggableCard({ lead, onOpen }) {
       {...listeners}
       aria-roledescription="Draggable lead"
       aria-describedby="pipeline-help"
-      className={clsx('touch-none rounded-card outline-none focus-visible:ring-2 focus-visible:ring-brass-400', isDragging && 'opacity-30')}
+      className={clsx('touch-none rounded-card outline-none focus-visible:ring-2 focus-visible:ring-accent-400', isDragging && 'opacity-30')}
     >
       <LeadCard lead={lead} onOpen={onOpen} />
     </motion.li>

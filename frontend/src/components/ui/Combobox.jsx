@@ -141,7 +141,7 @@ export function Combobox({ value, onChange, onPick, suggestions = [], anchorRef,
                     <span className="min-w-0 flex-1 truncate">
                       <Highlight text={s} query={exact ? '' : query} />
                     </span>
-                    {selected && <Check className="size-4 shrink-0 text-brass-700" aria-hidden />}
+                    {selected && <Check className="size-4 shrink-0 text-accent-700" aria-hidden />}
                   </li>
                 );
               })}

@@ -39,7 +39,7 @@ function SidebarContent({ onNavigate }) {
                 {({ isActive }) => (
                   <>
                     {isActive && <motion.span layoutId="crm-nav-active" className="absolute inset-0 rounded-[12px] bg-white/10" transition={spring.ui} />}
-                    <Icon className={clsx('relative size-[18px]', isActive ? 'text-brass-400' : 'text-white/55 group-hover:text-white')} strokeWidth={1.6} />
+                    <Icon className={clsx('relative size-[18px]', isActive ? 'text-accent-400' : 'text-white/55 group-hover:text-white')} strokeWidth={1.6} />
                     <span className={clsx('relative', isActive ? 'font-medium text-white' : 'text-white/70 group-hover:text-white')}>{label}</span>
                   </>
                 )}

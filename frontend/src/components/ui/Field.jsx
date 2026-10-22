@@ -5,7 +5,7 @@ export { Select } from './Select';
 
 const control =
   'w-full rounded-field border bg-paper px-3.5 text-[15px] text-navy-900 placeholder:text-slate-400 transition-[border-color,box-shadow] duration-200 ' +
-  'focus:outline-none focus:border-brass-400 focus:ring-3 focus:ring-brass-400/25 disabled:bg-mist-100 disabled:text-slate-500';
+  'focus:outline-none focus:border-accent-400 focus:ring-3 focus:ring-accent-400/25 disabled:bg-mist-100 disabled:text-slate-500';
 
 /**
  * Label + control + hint/error, wired for screen readers.

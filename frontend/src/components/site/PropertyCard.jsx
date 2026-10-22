@@ -25,7 +25,7 @@ export function SaveButton({ propertyId, className }) {
       aria-label={saved ? 'Remove from saved homes' : 'Save this home'}
     >
       <motion.span key={String(saved)} initial={{ scale: 0.6 }} animate={{ scale: 1 }} transition={spring.ui}>
-        <Heart className={clsx('size-[18px]', saved && 'fill-brass-400 text-brass-500')} strokeWidth={1.75} />
+        <Heart className={clsx('size-[18px]', saved && 'fill-accent-400 text-accent-500')} strokeWidth={1.75} />
       </motion.span>
     </motion.button>
   );
@@ -42,7 +42,7 @@ export function PropertyCard({ property, variant = 'full', className, sizes = '(
   return (
     <Link to={`/properties/${property.slug}`} className={clsx('group block outline-none', className)} aria-label={`${property.title}, ${formatPrice(property.price, { purpose: property.purpose })}`}>
       <motion.div whileTap={{ scale: 0.985 }} transition={spring.ui}>
-        <div className="relative aspect-[4/3] overflow-hidden rounded-card bg-mist-100 ring-brass-400 ring-offset-2 group-focus-visible:ring-2">
+        <div className="relative aspect-[4/3] overflow-hidden rounded-card bg-mist-100 ring-accent-400 ring-offset-2 group-focus-visible:ring-2">
           <motion.img
             layoutId={`property-image-${property._id}`}
             src={imageUrl(cover?.url, 800)}
@@ -61,7 +61,7 @@ export function PropertyCard({ property, variant = 'full', className, sizes = '(
           <h3 className="font-display text-[19px] leading-snug" style={{ fontWeight: 400 }}>
             {property.title}
           </h3>
-          <p className="mt-1 text-[15px] font-semibold text-brass-700 tabular">{formatPrice(property.price, { purpose: property.purpose })}</p>
+          <p className="mt-1 text-[15px] font-semibold text-accent-700 tabular">{formatPrice(property.price, { purpose: property.purpose })}</p>
           {variant === 'full' && (
             <>
               <p className="mt-2 flex items-center gap-1.5 text-sm text-slate-500">

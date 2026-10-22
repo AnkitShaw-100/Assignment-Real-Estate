@@ -8,8 +8,8 @@ import { spring } from '../../lib/motion';
 const MotionLink = motion.create(Link);
 
 const VARIANTS = {
-  // Brass is reserved for the main action on a screen (DESIGN.md §2)
-  primary: 'bg-brass-400 text-navy-900 hover:bg-brass-500',
+  // The accent colour is reserved for the main action on a screen (DESIGN.md §2)
+  primary: 'bg-accent-500 text-white hover:bg-accent-600',
   dark: 'bg-navy-900 text-white hover:bg-navy-700',
   secondary: 'border border-line bg-paper text-navy-900 hover:bg-mist-100',
   ghost: 'text-navy-900 hover:bg-mist-100',
@@ -71,7 +71,7 @@ export function ArrowButton({ direction = 'right', active = true, className, ...
       transition={spring.ui}
       className={clsx(
         'grid size-10 place-items-center rounded-full border transition-colors duration-200 disabled:cursor-not-allowed',
-        active ? 'border-brass-400 bg-brass-400 text-navy-900 hover:bg-brass-500' : 'border-line bg-paper text-navy-900 hover:bg-mist-100',
+        active ? 'border-accent-500 bg-accent-500 text-white hover:bg-accent-600' : 'border-line bg-paper text-navy-900 hover:bg-mist-100',
         'disabled:border-line disabled:bg-paper disabled:text-navy-900/40',
         className,
       )}

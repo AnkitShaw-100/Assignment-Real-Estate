@@ -148,9 +148,9 @@ export const Select = forwardRef(function Select(
         onBlur={() => !open && onBlur?.({ type: 'blur', target: selectRef.current })}
         className={clsx(
           'flex h-11 w-full cursor-pointer items-center gap-2 rounded-field border bg-paper pr-3 pl-3.5 text-left text-[15px] transition-[border-color,box-shadow] duration-200',
-          'focus:outline-none focus-visible:border-brass-400 focus-visible:ring-3 focus-visible:ring-brass-400/25',
+          'focus:outline-none focus-visible:border-accent-400 focus-visible:ring-3 focus-visible:ring-accent-400/25',
           'disabled:cursor-not-allowed disabled:bg-mist-100 disabled:text-slate-500',
-          open ? 'border-brass-400 ring-3 ring-brass-400/25' : invalid ? 'border-danger' : 'border-line hover:border-slate-400',
+          open ? 'border-accent-400 ring-3 ring-accent-400/25' : invalid ? 'border-danger' : 'border-line hover:border-slate-400',
         )}
         {...aria}
       >
@@ -193,7 +193,7 @@ export const Select = forwardRef(function Select(
                     <span className="min-w-0 flex-1 truncate" title={o.label}>
                       {o.label}
                     </span>
-                    <Check className={clsx('size-4 shrink-0 text-brass-700', !isSelected && 'invisible')} aria-hidden />
+                    <Check className={clsx('size-4 shrink-0 text-accent-700', !isSelected && 'invisible')} aria-hidden />
                   </li>
                 );
               })}

@@ -75,7 +75,7 @@ export default function PropertiesAdmin() {
                 <div className="min-w-0 flex-1">
                   <Link to={`/dashboard/properties/${p._id}/edit`} className="flex items-center gap-1.5 font-medium hover:underline">
                     <span className="truncate">{p.title}</span>
-                    {p.featured && <Star className="size-3.5 shrink-0 fill-brass-400 text-brass-500" aria-label="Featured" />}
+                    {p.featured && <Star className="size-3.5 shrink-0 fill-accent-400 text-accent-500" aria-label="Featured" />}
                   </Link>
                   <p className="truncate text-sm text-slate-500">{p.location.city}, {p.location.country} · {formatPrice(p.price, { purpose: p.purpose })}</p>
                 </div>

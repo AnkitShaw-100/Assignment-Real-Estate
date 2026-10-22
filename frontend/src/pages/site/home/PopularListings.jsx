@@ -17,7 +17,7 @@ function FeatureCard({ property }) {
         <div className="flex flex-col p-6">
           <h3 className="font-display text-[26px] leading-tight">{property.title}</h3>
           <p className="mt-3 line-clamp-4 text-sm leading-relaxed text-slate-500">{property.description}</p>
-          <p className="mt-4 text-lg font-semibold text-brass-700 tabular">{formatPrice(property.price, { purpose: property.purpose })}</p>
+          <p className="mt-4 text-lg font-semibold text-accent-700 tabular">{formatPrice(property.price, { purpose: property.purpose })}</p>
           <ul className="mt-auto space-y-1.5 pt-6 text-[13px] text-slate-500">
             {[property.location.area, property.location.city, property.location.country].filter(Boolean).map((l) => (
               <li key={l} className="flex items-center gap-1.5">

@@ -75,7 +75,7 @@ export function ImageManager({ value, onChange, cover, onCoverChange, error }) {
           {value.map((img, i) => (
             <motion.li key={img.publicId ?? img.url} layout transition={spring.soft} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="group relative aspect-[4/3] overflow-hidden rounded-card bg-mist-100">
               <img src={imageUrl(img.url, 400)} alt={img.alt || `Photo ${i + 1}`} className="size-full object-cover" />
-              {cover === i && <span className="absolute top-2 left-2 rounded-full bg-brass-400 px-2 py-0.5 text-xs font-semibold text-navy-900">Cover</span>}
+              {cover === i && <span className="absolute top-2 left-2 rounded-full bg-accent-500 px-2 py-0.5 text-xs font-semibold text-white">Cover</span>}
               <div className="absolute inset-x-2 bottom-2 flex justify-between gap-1 opacity-100 transition-opacity md:opacity-0 md:group-focus-within:opacity-100 md:group-hover:opacity-100">
                 <div className="flex gap-1">
                   <IconBtn label="Move earlier" onClick={() => move(i, -1)} disabled={i === 0}><ArrowLeft className="size-3.5" /></IconBtn>
@@ -109,7 +109,7 @@ export function ImageManager({ value, onChange, cover, onCoverChange, error }) {
             onDrop={(e) => { e.preventDefault(); setDragging(false); addFiles(e.dataTransfer.files); }}
             className={clsx(
               'flex aspect-[4/3] w-full flex-col items-center justify-center gap-2 rounded-card border-2 border-dashed text-sm transition-colors',
-              dragging ? 'border-brass-400 bg-brass-400/10' : 'border-line text-slate-500 hover:border-navy-600 hover:text-navy-900',
+              dragging ? 'border-accent-400 bg-accent-400/10' : 'border-line text-slate-500 hover:border-navy-600 hover:text-navy-900',
             )}
           >
             <ImagePlus className="size-6" strokeWidth={1.5} />

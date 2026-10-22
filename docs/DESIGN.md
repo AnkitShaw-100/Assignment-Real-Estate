@@ -23,15 +23,16 @@ The palette is taken from the mockup and tuned for contrast.
 |---|---|---|
 | `navy-900` | `#0C1A3B` | Trust band, CTA band, footer, CRM sidebar, primary text on light |
 | `navy-700` | `#1E2E57` | Hover on navy, secondary dark surfaces |
-| `brass-400` | `#E8AD47` | The single accent: primary CTA, active arrow, badge, focus ring |
-| `brass-500` | `#D49A33` | Brass hover/pressed |
-| `brass-700` | `#94650F` | Brass **text** on white (prices): 5:1, passes AA at any size |
+| `accent-400` | `#4874F0` | Cobalt accent: focus rings, active icons, borders |
+| `accent-500` | `#2F5FE8` | Primary CTA, active arrow, badge (white text, passes AA) |
+| `accent-600` | `#2450CC` | Accent hover/pressed |
+| `accent-700` | `#2449B8` | Accent **text** on white (prices): 7:1 |
 | `mist-100` | `#F2F3F5` | Section panels (story, testimonial, logo strip), CRM canvas |
 | `paper` | `#FFFFFF` | Page background, cards in CRM |
 | `slate-500` | `#5D6678` | Body copy, secondary text (AA on white and mist) |
 | `line` | `#E3E5EA` | Hairlines, input borders, table rules |
 
-Body text is `navy-900`, never a neutral near-black. Brass appears **only on things you can act on** (buttons, arrows, the badge, focus) plus prices. That keeps it meaningful.
+Body text is `navy-900`, never a neutral near-black. The accent appears **only on things you can act on** (buttons, arrows, the badge, focus) plus prices. That keeps it meaningful.
 
 **CRM status colors** (soft background + strong text, never used decoratively):
 | Stage | bg / text |
@@ -73,7 +74,7 @@ Why: SF Pro's license allows use only on Apple platforms, so it can't be served 
 Rules:
 - Sentence case everywhere. **No all-caps labels, no eyebrow text above headings**, no single-word color/italic accents in headlines.
 - Measure ≤ 68ch for body copy.
-- Prices: Sans 600, tabular, `brass-700` on white cards; navy in tables.
+- Prices: Sans 600, tabular, `accent-700` on white cards; navy in tables.
 - CRM headings use the display face only for the page title. Everything else in the CRM is Sans.
 
 ---
@@ -173,7 +174,7 @@ Nothing else on the page auto-animates on load.
 
 **Response to touch (where most motion lives)**
 - Press: buttons and cards scale to 0.97 with `spring-ui`; release springs back.
-- Hover (pointer devices only): property images zoom 1.04 over 600ms inside a fixed frame; arrows fill brass.
+- Hover (pointer devices only): property images zoom 1.04 over 600ms inside a fixed frame; arrows fill with the accent.
 - Carousel: drag/swipe with momentum (`spring-soft`), snap to card; arrow buttons disable at the ends.
 - **Shared-element transition:** a listing card image morphs into the detail-page hero (`layoutId`). This is the key "Apple" moment of navigation.
 - Nav: transparent over the hero, then a frosted glass bar once scrolled (`backdrop-filter: blur(20px) saturate(180%)`, `rgba(255,255,255,.72)`), and hides on scroll down / shows on scroll up.
@@ -186,13 +187,13 @@ Nothing else on the page auto-animates on load.
 
 ## 6. Components (key specs)
 
-- **Button / primary**: pill, brass-400 bg, navy-900 text, 44px tall (touch target), 0 20px padding, Sans 600 14px. Hover brass-500. Focus: 2px brass ring + 2px offset.
+- **Button / primary**: pill, accent-500 bg, white text, 44px tall (touch target), 0 20px padding, Sans 600 14px. Hover accent-600. Focus: 2px accent ring + 2px offset.
 - **Button / secondary**: pill, 1px `line` border, navy text; on dark backgrounds a white 20% border with white text.
-- **Arrow button**: 40px circle; disabled = `line` border, navy at 40%; active = brass fill.
+- **Arrow button**: 40px circle; disabled = `line` border, navy at 40%; active = accent fill.
 - **Search pill**: white, `shadow-float`, location icon + input + navy "Search" button inside; on the listings page it expands into the full filter bar.
-- **Property card**: image 4:3 at 14r, then title (display 600 18px) and price (Sans 600 brass). Location and facts (beds, baths, sqft) with Lucide icons, `slate-500` small. Heart button on the image's top-right (glass circle).
+- **Property card**: image 4:3 at 14r, then title (display 600 18px) and price (Sans 600 accent). Location and facts (beds, baths, sqft) with Lucide icons, `slate-500` small. Heart button on the image's top-right (glass circle).
 - **Expanded feature card** (popular listings): mist panel holding title, blurb, price, three location lines, with the image to its right.
-- **Inputs**: 44px, 12r, `line` border; focus = brass ring. Labels above, 14px 500. Errors in `#B42318` below the field, saying what's wrong and how to fix it.
+- **Inputs**: 44px, 12r, `line` border; focus = accent ring. Labels above, 14px 500. Errors in `#B42318` below the field, saying what's wrong and how to fix it.
 - **Badge (status)**: 24px pill, stage colors from §2, Sans 500 12px, sentence case.
 - **KPI card**: white, label (small, slate), value (Sans 600 32px tabular), delta chip (green/red with arrow icon).
 - **Table**: 52px rows, `line` row dividers, sticky header on mist, row hover mist; actions in a trailing menu.
@@ -228,11 +229,11 @@ The first-pass defaults I rejected, and why:
 - **Playfair Display + Inter** (the default "luxury" pairing) → **SF Pro (system) + Inter fallback**: Apple-style clarity at no licensing cost.
 - **Identical rounded cards with soft grey shadows everywhere** → flat tonal panels plus a radius hierarchy. Shadows are kept only for floating layers, as in the mockup.
 - **Fade-up on every section** → a single hero load sequence, one image clip reveal per section, and motion otherwise only in response to the user.
-- **Gold used decoratively** → brass is reserved for actionable elements and prices, so it always means "you can do something here".
+- **Accent used decoratively** → the accent is reserved for actionable elements and prices, so it always means "you can do something here".
 - **Uppercase eyebrow labels above headings** → removed; the mockup doesn't use them.
 
 ## 10. Accessibility floor
-- Contrast AA for all text; small brass text uses `brass-700`, never `brass-400/500`.
+- Contrast AA for all text; small accent text uses `accent-700`.
 - Visible focus ring on every interactive element; logical tab order; skip link.
 - Carousels: arrow buttons + keyboard arrows + `aria-roledescription="carousel"`; kanban via dnd-kit keyboard sensor.
 - Touch targets ≥ 44px. Form errors are linked with `aria-describedby`.

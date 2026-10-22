@@ -1,16 +1,18 @@
 @import 'tailwindcss';
 
 /* Design tokens — see docs/DESIGN.md. Tailwind v4 turns these into utilities
-   (bg-navy-900, text-brass-400, font-display, rounded-hero, ease-out-soft …). */
+   (bg-navy-900, text-accent-400, font-display, rounded-hero, ease-out-soft …). */
 @theme {
   --color-navy-900: #0c1a3b;
   --color-navy-800: #152548;
   --color-navy-700: #1e2e57;
   --color-navy-600: #34446c;
-  --color-brass-300: #f1c57a;
-  --color-brass-400: #e8ad47;
-  --color-brass-500: #d49a33;
-  --color-brass-700: #94650f; /* brass for small text on white: 5:1 contrast (AA) */
+  /* Cobalt accent: buttons, focus rings and highlights (white text on 500/600 passes AA) */
+  --color-accent-300: #b9cdfc;
+  --color-accent-400: #4874f0;
+  --color-accent-500: #2f5fe8;
+  --color-accent-600: #2450cc;
+  --color-accent-700: #2449b8; /* accent for small text on white: 7:1 contrast */
   --color-mist-100: #f2f3f5;
   --color-mist-200: #e9ebef;
   --color-paper: #ffffff;
@@ -81,13 +83,13 @@
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-brass-400);
+    outline: 2px solid var(--color-accent-400);
     outline-offset: 2px;
     border-radius: 4px;
   }
 
   ::selection {
-    background: var(--color-brass-300);
+    background: var(--color-accent-300);
     color: var(--color-navy-900);
   }
 

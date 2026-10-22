@@ -6,7 +6,7 @@ import { spring } from '../../lib/motion';
 
 /**
  * The brand's signature detail (DESIGN.md §5): a slowly rotating text ring
- * around a brass button. Rotation pauses on hover and the chevrons nudge
+ * around an accent button. Rotation pauses on hover and the chevrons nudge
  * toward the destination. Reduced-motion users get a still badge (index.css).
  */
 export function ExploreBadge({ to = '/properties', label = 'Explore properties', size = 132, className, tone = 'light' }) {
@@ -28,7 +28,7 @@ export function ExploreBadge({ to = '/properties', label = 'Explore properties',
         </text>
       </svg>
       <motion.span
-        className="absolute inset-[27%] grid place-items-center rounded-full bg-brass-400 text-navy-900"
+        className="absolute inset-[27%] grid place-items-center rounded-full bg-accent-500 text-white"
         whileHover={{ scale: 1.06 }}
         whileTap={{ scale: 0.94 }}
         transition={spring.ui}
