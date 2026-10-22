@@ -1,13 +1,24 @@
 import { Suspense } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router';
-import { LoaderCircle, ShieldAlert } from '../components/ui/icons';
+import { ShieldAlert } from '../components/ui/icons';
 import { useSession } from '../auth/AuthContext';
 import { Button } from '../components/ui/Button';
 
-export function PageSpinner() {
+/** Generic page placeholder while a route's code or the session loads. */
+export function PageSkeleton() {
   return (
-    <div className="grid min-h-[50vh] place-items-center" role="status" aria-label="Loading">
-      <LoaderCircle className="size-6 animate-spin text-slate-400" />
+    <div className="container-page py-12" role="status" aria-label="Loading">
+      <div className="skeleton h-10 w-2/5 max-w-sm rounded-lg" />
+      <div className="skeleton mt-4 h-5 w-3/5 max-w-md rounded" />
+      <div className="mt-10 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 3 }, (_, i) => (
+          <div key={i}>
+            <div className="skeleton aspect-[4/3] rounded-card" />
+            <div className="skeleton mt-4 h-5 w-3/4 rounded" />
+            <div className="skeleton mt-2 h-4 w-1/3 rounded" />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -16,10 +27,10 @@ export function PageSpinner() {
 export function RequireAuth() {
   const { isLoaded, isSignedIn } = useSession();
   const location = useLocation();
-  if (!isLoaded) return <PageSpinner />;
+  if (!isLoaded) return <PageSkeleton />;
   if (!isSignedIn) return <Navigate to={`/sign-in?redirect=${encodeURIComponent(location.pathname + location.search)}`} replace />;
   return (
-    <Suspense fallback={<PageSpinner />}>
+    <Suspense fallback={<PageSkeleton />}>
       <Outlet />
     </Suspense>
   );
@@ -33,7 +44,7 @@ export function RequireRole({ roles }) {
   const { isLoaded, isSignedIn, role } = useSession();
   const location = useLocation();
 
-  if (!isLoaded) return <PageSpinner />;
+  if (!isLoaded) return <PageSkeleton />;
   if (!isSignedIn) return <Navigate to={`/sign-in?redirect=${encodeURIComponent(location.pathname)}`} replace />;
   if (!roles.includes(role)) {
     const adminOnly = roles.length === 1 && roles[0] === 'admin';
@@ -63,7 +74,7 @@ export function RequireRole({ roles }) {
     );
   }
   return (
-    <Suspense fallback={<PageSpinner />}>
+    <Suspense fallback={<PageSkeleton />}>
       <Outlet />
     </Suspense>
   );

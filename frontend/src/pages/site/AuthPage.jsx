@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { Eye, EyeOff } from '../../components/ui/icons';
 import { useSession } from '../../auth/AuthContext';
 import { usePageTitle } from '../../hooks/usePageTitle';
-import { PageSpinner } from '../../routes/guards';
+import { PageSkeleton } from '../../routes/guards';
 import { Field, Input, TextField } from '../../components/ui/Field';
 import { Button } from '../../components/ui/Button';
 
@@ -53,7 +53,7 @@ export default function AuthPage({ mode }) {
   const copy = COPY[mode];
   usePageTitle(copy.title);
 
-  if (!isLoaded) return <PageSpinner />;
+  if (!isLoaded) return <PageSkeleton />;
   if (isSignedIn) return <Navigate to={redirect} replace />;
 
   const other = mode === 'sign-in' ? '/sign-up' : '/sign-in';

@@ -7,7 +7,7 @@ import {
 } from '../components/ui/icons';
 import { useSession } from '../auth/AuthContext';
 import { Avatar } from '../components/ui/States';
-import { PageSpinner } from './guards';
+import { PageSkeleton } from './guards';
 import { spring } from '../lib/motion';
 
 const NAV = [
@@ -116,7 +116,7 @@ export default function DashboardLayout() {
       </AnimatePresence>
 
       <main className="px-4 py-6 md:px-8 md:py-8 xl:px-10">
-        <Suspense fallback={<PageSpinner />}>
+        <Suspense fallback={<PageSkeleton />}>
           <Outlet />
         </Suspense>
       </main>

@@ -1,21 +1,19 @@
 import { Link } from 'react-router';
-import { motion } from 'motion/react';
 import { MapPin } from '../../../components/ui/icons';
 import { useProperties } from '../../../hooks/usePublic';
 import { CarouselControls, CarouselItem, CarouselTrack, useCarousel } from '../../../components/site/Carousel';
-import { PropertyCardSkeleton } from '../../../components/site/PropertyCard';
+import { FadeImage } from '../../../components/ui/FadeImage';
 import { ErrorState } from '../../../components/ui/States';
 import { coverOf, formatPrice, imageUrl } from '../../../lib/format';
-import { spring } from '../../../lib/motion';
 
 /** Wide listing card: text panel + photo side by side. */
 function FeatureCard({ property }) {
   const cover = coverOf(property);
   return (
     <Link to={`/properties/${property.slug}`} className="group block h-full">
-      <motion.article whileTap={{ scale: 0.985 }} transition={spring.ui} className="grid h-full grid-cols-1 overflow-hidden rounded-card bg-mist-100 sm:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)]">
+      <article className="grid h-full grid-cols-1 overflow-hidden rounded-card bg-mist-100 sm:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)]">
         <div className="flex flex-col p-6">
-          <h3 className="font-display text-[26px] leading-tight">{property.title}</h3>
+          <h3 className="font-display text-[26px] leading-tight transition-colors group-hover:text-accent-700">{property.title}</h3>
           <p className="mt-3 line-clamp-4 text-sm leading-relaxed text-slate-500">{property.description}</p>
           <p className="mt-4 text-lg font-semibold text-accent-700 tabular">{formatPrice(property.price, { purpose: property.purpose })}</p>
           <ul className="mt-auto space-y-1.5 pt-6 text-[13px] text-slate-500">
@@ -28,21 +26,29 @@ function FeatureCard({ property }) {
           </ul>
         </div>
         <div className="relative min-h-[240px] overflow-hidden">
-          <motion.img
-            layoutId={`property-image-${property._id}`}
-            src={imageUrl(cover?.url, 900)}
-            alt={cover?.alt ?? property.title}
-            loading="lazy"
-            className="absolute inset-0 size-full object-cover transition-transform duration-[600ms] ease-out-soft group-hover:scale-[1.04]"
-          />
+          <FadeImage className="absolute inset-0" src={imageUrl(cover?.url, 900)} alt={cover?.alt ?? property.title} />
         </div>
-      </motion.article>
+      </article>
     </Link>
   );
 }
 
 // Every card uses the wide layout; two fit side by side on desktop
 const CARD_WIDTH = 'w-[88%] sm:w-[70%] lg:w-[calc((100%-20px)/2)]';
+
+function FeatureCardSkeleton() {
+  return (
+    <div className="grid h-full grid-cols-1 overflow-hidden rounded-card bg-mist-100 sm:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)]" aria-hidden>
+      <div className="flex flex-col gap-3 p-6">
+        <div className="skeleton h-7 w-4/5 rounded" />
+        <div className="skeleton h-7 w-3/5 rounded" />
+        <div className="skeleton mt-2 h-16 w-full rounded" />
+        <div className="skeleton mt-2 h-6 w-1/3 rounded" />
+      </div>
+      <div className="skeleton min-h-[240px]" />
+    </div>
+  );
+}
 
 export function PopularListings() {
   const carousel = useCarousel();
@@ -67,7 +73,7 @@ export function PopularListings() {
           {isPending
             ? Array.from({ length: 4 }, (_, i) => (
                 <CarouselItem key={i} className={CARD_WIDTH}>
-                  <PropertyCardSkeleton />
+                  <FeatureCardSkeleton />
                 </CarouselItem>
               ))
             : data.data.map((p) => (

@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import { ChevronLeft, ChevronRight, Images, X } from '../ui/icons';
 import { imageUrl } from '../../lib/format';
+import { FadeImage } from '../ui/FadeImage';
 import { spring } from '../../lib/motion';
 
 /**
@@ -22,20 +23,19 @@ export function Gallery({ property }) {
     <>
       <div className="grid gap-3 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] md:grid-rows-2">
         <button type="button" onClick={() => setOpenAt(0)} className="group relative overflow-hidden rounded-panel md:row-span-2" aria-label="Open photo 1 in full screen">
-          <motion.img
-            layoutId={`property-image-${property._id}`}
-            transition={spring.soft}
+          <FadeImage
+            className="aspect-[4/3] size-full md:aspect-auto md:h-full md:min-h-[520px]"
             src={imageUrl(ordered[0].url, 1600)}
             srcSet={`${imageUrl(ordered[0].url, 900)} 900w, ${imageUrl(ordered[0].url, 1600)} 1600w, ${imageUrl(ordered[0].url, 2200)} 2200w`}
             sizes="(min-width: 768px) 66vw, 100vw"
             alt={ordered[0].alt ?? property.title}
+            loading="eager"
             fetchPriority="high"
-            className="aspect-[4/3] size-full object-cover transition-transform duration-[800ms] ease-out-soft group-hover:scale-[1.02] md:aspect-auto md:min-h-[520px]"
           />
         </button>
         {ordered.slice(1, 3).map((img, i) => (
           <button key={img.url} type="button" onClick={() => setOpenAt(i + 1)} className="group relative hidden overflow-hidden rounded-panel md:block" aria-label={`Open photo ${i + 2} in full screen`}>
-            <img src={imageUrl(img.url, 800)} alt={img.alt ?? ''} loading="lazy" className="size-full object-cover transition-transform duration-[800ms] ease-out-soft group-hover:scale-[1.03]" />
+            <FadeImage className="size-full" src={imageUrl(img.url, 800)} alt={img.alt ?? ''} />
             {i === 1 && ordered.length > 3 && (
               <span className="glass absolute right-4 bottom-4 flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium shadow-float">
                 <Images className="size-4" strokeWidth={1.5} />

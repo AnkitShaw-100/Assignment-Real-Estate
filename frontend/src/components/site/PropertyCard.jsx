@@ -6,6 +6,7 @@ import { coverOf, formatNumber, formatPrice, imageUrl } from '../../lib/format';
 import { spring } from '../../lib/motion';
 import { useSaveToggle } from '../../hooks/usePublic';
 import { PropertyStatusBadge } from '../ui/Badge';
+import { FadeImage } from '../ui/FadeImage';
 
 export function SaveButton({ propertyId, className }) {
   const { isSaved, toggle } = useSaveToggle();
@@ -31,34 +32,28 @@ export function SaveButton({ propertyId, className }) {
   );
 }
 
-/**
- * Listing card. The image carries a layoutId so it morphs into the hero of
- * the detail page when opened (the shared-element transition in DESIGN.md §5).
- */
+/** Listing card: calm by design, no hover zoom or fly-in animation. */
 export function PropertyCard({ property, variant = 'full', className, sizes = '(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 90vw' }) {
   const cover = coverOf(property);
   const showStatus = property.status && property.status !== 'available';
 
   return (
     <Link to={`/properties/${property.slug}`} className={clsx('group block outline-none', className)} aria-label={`${property.title}, ${formatPrice(property.price, { purpose: property.purpose })}`}>
-      <motion.div whileTap={{ scale: 0.985 }} transition={spring.ui}>
+      <div>
         <div className="relative aspect-[4/3] overflow-hidden rounded-card bg-mist-100 ring-accent-400 ring-offset-2 group-focus-visible:ring-2">
-          <motion.img
-            layoutId={`property-image-${property._id}`}
+          <FadeImage
+            className="size-full"
             src={imageUrl(cover?.url, 800)}
             srcSet={cover ? `${imageUrl(cover.url, 480)} 480w, ${imageUrl(cover.url, 800)} 800w, ${imageUrl(cover.url, 1200)} 1200w` : undefined}
             sizes={sizes}
             alt={cover?.alt ?? property.title}
-            loading="lazy"
-            decoding="async"
-            className="size-full object-cover transition-transform duration-[600ms] ease-out-soft group-hover:scale-[1.04]"
           />
-          <SaveButton propertyId={property._id} className="absolute top-3 right-3 opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100" />
+          <SaveButton propertyId={property._id} className="absolute top-3 right-3" />
           {showStatus && <PropertyStatusBadge status={property.status} className="absolute top-3 left-3" />}
         </div>
 
         <div className="mt-3.5">
-          <h3 className="font-display text-[19px] leading-snug" style={{ fontWeight: 400 }}>
+          <h3 className="font-display text-[19px] leading-snug transition-colors group-hover:text-accent-700" style={{ fontWeight: 500 }}>
             {property.title}
           </h3>
           <p className="mt-1 text-[15px] font-semibold text-accent-700 tabular">{formatPrice(property.price, { purpose: property.purpose })}</p>
@@ -74,7 +69,7 @@ export function PropertyCard({ property, variant = 'full', className, sizes = '(
             </>
           )}
         </div>
-      </motion.div>
+      </div>
     </Link>
   );
 }
