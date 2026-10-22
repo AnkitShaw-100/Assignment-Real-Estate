@@ -10,6 +10,7 @@ import { Card, PageHeader } from '../../routes/DashboardLayout';
 import { Segmented } from '../../components/site/Filters';
 import { Modal } from '../../components/ui/Overlay';
 import { Button } from '../../components/ui/Button';
+import PropertyForm from './PropertyForm';
 import { Input } from '../../components/ui/Field';
 import { PropertyStatusBadge } from '../../components/ui/Badge';
 import { Avatar, EmptyState, ErrorState, Skeleton } from '../../components/ui/States';
@@ -28,6 +29,13 @@ export default function PropertiesAdmin() {
   const remove = useDeleteProperty();
   const [confirming, setConfirming] = useState(null);
 
+  const closeForm = () => {
+    const next = new URLSearchParams(params);
+    next.delete('new');
+    next.delete('edit');
+    setParams(next);
+  };
+
   const setParam = (k, v) => {
     const next = new URLSearchParams(params);
     if (v) next.set(k, v);
@@ -41,7 +49,7 @@ export default function PropertiesAdmin() {
       <PageHeader
         title="Properties"
         description={isAdmin ? 'Every listing across the company' : 'Listings you manage'}
-        actions={<Button to="/dashboard/properties/new" variant="dark" size="sm" icon={Plus}>Add property</Button>}
+        actions={<Button to="/dashboard/properties?new=1" variant="dark" size="sm" icon={Plus}>Add property</Button>}
       />
 
       <div className="mb-4 flex flex-col gap-3 xl:flex-row xl:items-center">
@@ -64,7 +72,7 @@ export default function PropertiesAdmin() {
             icon={Building2}
             title={q || status ? 'No properties match' : 'No properties yet'}
             description="Add your first listing with photos, price and details. It goes live on the website straight away."
-            action={<Button to="/dashboard/properties/new" variant="dark" size="sm">Add property</Button>}
+            action={<Button to="/dashboard/properties?new=1" variant="dark" size="sm">Add property</Button>}
             className="m-5 border-0"
           />
         ) : (
@@ -73,7 +81,7 @@ export default function PropertiesAdmin() {
               <li key={p._id} className="flex items-center gap-4 px-4 py-3 md:px-5">
                 <img src={imageUrl(coverOf(p)?.url, 200)} alt="" className="h-14 w-20 shrink-0 rounded-[10px] bg-mist-100 object-cover" loading="lazy" />
                 <div className="min-w-0 flex-1">
-                  <Link to={`/dashboard/properties/${p._id}/edit`} className="flex items-center gap-1.5 font-medium hover:underline">
+                  <Link to={`/dashboard/properties?edit=${p._id}`} className="flex items-center gap-1.5 font-medium hover:underline">
                     <span className="truncate">{p.title}</span>
                     {p.featured && <StarFill className="size-3.5 shrink-0 text-accent-500" aria-label="Featured" />}
                   </Link>
@@ -87,7 +95,7 @@ export default function PropertiesAdmin() {
                 </span>
                 <div className="hidden w-28 sm:block"><PropertyStatusBadge status={p.status} /></div>
                 <div className="flex shrink-0 gap-1">
-                  <Button to={`/dashboard/properties/${p._id}/edit`} variant="ghost" size="icon" aria-label={`Edit ${p.title}`}><Pencil className="size-4" /></Button>
+                  <Button to={`/dashboard/properties?edit=${p._id}`} variant="ghost" size="icon" aria-label={`Edit ${p.title}`}><Pencil className="size-4" /></Button>
                   <Button variant="danger-ghost" size="icon" aria-label={`Delete ${p.title}`} onClick={() => setConfirming(p)}><Trash2 className="size-4" /></Button>
                 </div>
               </li>
@@ -104,6 +112,16 @@ export default function PropertiesAdmin() {
           </div>
         )}
       </Card>
+
+      <Modal
+        open={Boolean(params.get('new') || params.get('edit'))}
+        onClose={closeForm}
+        title={params.get('edit') ? 'Edit property' : 'Add a property'}
+        description={params.get('edit') ? undefined : 'It goes live on the website when the status is Available.'}
+        width="max-w-3xl"
+      >
+        <PropertyForm key={params.get('edit') ?? 'new'} id={params.get('edit') ?? undefined} onDone={closeForm} />
+      </Modal>
 
       <Modal
         open={Boolean(confirming)}

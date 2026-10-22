@@ -62,7 +62,7 @@ export default function Overview() {
             <Button to="/dashboard/leads?new=1" variant="dark" size="sm">
               Add lead
             </Button>
-            <Button to="/dashboard/properties/new" variant="secondary" size="sm">
+            <Button to="/dashboard/properties?new=1" variant="secondary" size="sm">
               Add property
             </Button>
           </>

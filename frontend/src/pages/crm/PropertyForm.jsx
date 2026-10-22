@@ -1,13 +1,10 @@
 import { useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { ChevronLeft, ExternalLink } from '../../components/ui/icons';
+import { ExternalLink } from '../../components/ui/icons';
 import { useSession } from '../../auth/AuthContext';
 import { useAgents, useManagedProperty, useSaveProperty } from '../../hooks/useCrm';
-import { usePageTitle } from '../../hooks/usePageTitle';
-import { Card, PageHeader } from '../../routes/DashboardLayout';
 import { ImageManager } from '../../components/crm/ImageManager';
 import { Segmented } from '../../components/site/Filters';
 import { Button } from '../../components/ui/Button';
@@ -71,25 +68,24 @@ function toBody(v, isAdmin) {
 
 function Section({ title, description, children }) {
   return (
-    <Card className="grid gap-6 p-5 md:grid-cols-[220px_minmax(0,1fr)] md:p-7">
-      <div>
-        <h2 className="font-semibold">{title}</h2>
-        {description && <p className="mt-1 text-sm text-slate-500">{description}</p>}
-      </div>
-      <div className="min-w-0">{children}</div>
-    </Card>
+    <section className="border-b border-line py-6 first:pt-0 last:border-b-0">
+      <h3 className="font-semibold">{title}</h3>
+      {description && <p className="mt-1 text-sm text-slate-500">{description}</p>}
+      <div className="mt-4 min-w-0">{children}</div>
+    </section>
   );
 }
 
-export default function PropertyForm() {
-  const { id } = useParams();
+/**
+ * Add / edit a listing. Rendered inside a modal on the Properties page
+ * (`?new=1` or `?edit=<id>`); `onDone` closes it.
+ */
+export default function PropertyForm({ id, onDone }) {
   const editing = Boolean(id);
-  const navigate = useNavigate();
   const { isAdmin } = useSession();
   const { data: agents = [] } = useAgents();
   const { data: property, isPending, isError, error } = useManagedProperty(id);
-  const save = useSaveProperty({ onSuccess: () => navigate('/dashboard/properties') });
-  usePageTitle(editing ? 'Edit property' : 'Add property');
+  const save = useSaveProperty({ onSuccess: onDone });
 
   const { register, handleSubmit, control, reset, watch, setValue, setError, formState: { errors, isDirty } } = useForm({
     resolver: zodResolver(schema),
@@ -115,31 +111,25 @@ export default function PropertyForm() {
     );
 
   if (editing && isError) return <ErrorState error={error} />;
-  if (editing && isPending) return <Skeleton className="h-[600px] rounded-panel" />;
+  if (editing && isPending) {
+    return (
+      <div className="space-y-4" aria-label="Loading">
+        <Skeleton className="h-11" />
+        <Skeleton className="h-36" />
+        <div className="grid grid-cols-2 gap-4"><Skeleton className="h-11" /><Skeleton className="h-11" /></div>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit(submit)} noValidate>
-      <PageHeader
-        title={editing ? property.title : 'Add a property'}
-        actions={
-          <>
-            {editing && (
-              <Button to={`/properties/${property.slug}`} target="_blank" variant="secondary" size="sm" icon={ExternalLink}>
-                View on website
-              </Button>
-            )}
-            <Button type="submit" variant="dark" size="sm" loading={save.isPending} disabled={editing && !isDirty}>
-              {editing ? 'Save changes' : 'Add property'}
-            </Button>
-          </>
-        }
-      >
-        <Link to="/dashboard/properties" className="mb-2 inline-flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-navy-900">
-          <ChevronLeft className="size-4" /> Properties
-        </Link>
-      </PageHeader>
+      {editing && (
+        <a href={`/properties/${property.slug}`} target="_blank" rel="noreferrer" className="-mt-1 mb-5 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-navy-900">
+          View on website <ExternalLink className="size-4" />
+        </a>
+      )}
 
-      <div className="space-y-5">
+      <div>
         <Section title="Basics" description="What buyers see first on the listing.">
           <div className="grid gap-4 sm:grid-cols-2">
             <TextField label="Title" required className="sm:col-span-2" error={errors.title?.message} placeholder="Seaside villa with private pool" {...register('title')} />
@@ -218,9 +208,9 @@ export default function PropertyForm() {
           </div>
         </Section>
 
-        <div className="flex justify-end gap-2 pb-6">
-          <Button to="/dashboard/properties" variant="ghost">Cancel</Button>
-          <Button type="submit" variant="dark" loading={save.isPending}>{editing ? 'Save changes' : 'Add property'}</Button>
+        <div className="form-actions">
+          <Button variant="ghost" onClick={onDone}>Cancel</Button>
+          <Button type="submit" variant="dark" loading={save.isPending} disabled={editing && !isDirty}>{editing ? 'Save changes' : 'Add property'}</Button>
         </div>
       </div>
     </form>
