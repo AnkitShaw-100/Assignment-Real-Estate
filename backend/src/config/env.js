@@ -8,7 +8,9 @@ const schema = z.object({
   MONGODB_URI: z.string().optional(),
   DNS_SERVERS: z.string().default(''),
   CLIENT_URL: z.string().default('http://localhost:5173'),
-  ADMIN_EMAILS: z.string().default(''),
+  // The admin account. Its password lives only in the server settings.
+  ADMIN_EMAIL: z.string().trim().toLowerCase().pipe(z.email()).optional(),
+  ADMIN_PASSWORD: z.string().min(8, 'ADMIN_PASSWORD must be at least 8 characters').optional(),
   // Signs session tokens. Required in production; a fixed dev value is used otherwise.
   JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters').optional(),
   JWT_EXPIRES_IN: z.string().default('7d'),
@@ -34,7 +36,8 @@ export const env = {
   // Comma separated lists → arrays
   clientOrigins: parsed.data.CLIENT_URL.split(',').map((s) => s.trim()).filter(Boolean),
   dnsServers: parsed.data.DNS_SERVERS.split(',').map((s) => s.trim()).filter(Boolean),
-  adminEmails: parsed.data.ADMIN_EMAILS.split(',').map((s) => s.trim().toLowerCase()).filter(Boolean),
+  // Admin sign-in is enabled only when both are set
+  admin: parsed.data.ADMIN_EMAIL && parsed.data.ADMIN_PASSWORD ? { email: parsed.data.ADMIN_EMAIL, password: parsed.data.ADMIN_PASSWORD } : null,
   cloudinaryEnabled: Boolean(
     parsed.data.CLOUDINARY_CLOUD_NAME && parsed.data.CLOUDINARY_API_KEY && parsed.data.CLOUDINARY_API_SECRET,
   ),

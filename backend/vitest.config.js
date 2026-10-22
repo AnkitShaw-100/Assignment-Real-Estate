@@ -8,6 +8,6 @@ export default defineConfig({
     hookTimeout: 180_000,
     testTimeout: 30_000,
     fileParallelism: false,
-    env: { NODE_ENV: 'test', ADMIN_EMAILS: 'boss@niwas.test', CLIENT_URL: 'http://localhost:5173' },
+    env: { NODE_ENV: 'test', ADMIN_EMAIL: 'owner@niwas.test', ADMIN_PASSWORD: 'owner-password-1', CLIENT_URL: 'http://localhost:5173' },
   },
 });

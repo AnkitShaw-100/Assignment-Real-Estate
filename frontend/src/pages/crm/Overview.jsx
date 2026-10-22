@@ -60,10 +60,10 @@ export default function Overview() {
         description={scopeNote}
         actions={
           <>
-            <Button to="/dashboard/leads?new=1" variant="dark" size="sm">
+            <Button to="/admin/leads?new=1" variant="dark" size="sm">
               Add lead
             </Button>
-            <Button to="/dashboard/properties?new=1" variant="secondary" size="sm">
+            <Button to="/admin/properties?new=1" variant="secondary" size="sm">
               Add property
             </Button>
           </>
@@ -105,7 +105,7 @@ export default function Overview() {
             <Card className="flex flex-col p-5 md:p-6">
               <div className="mb-2 flex items-baseline justify-between">
                 <h2 className="text-[17px] font-semibold">Today</h2>
-                <Link to="/dashboard/tasks" className="text-sm font-medium text-slate-500 hover:text-navy-900">
+                <Link to="/admin/tasks" className="text-sm font-medium text-slate-500 hover:text-navy-900">
                   All tasks
                 </Link>
               </div>
@@ -133,14 +133,14 @@ export default function Overview() {
             <Card className="p-5 md:p-6 lg:col-span-2 xl:col-span-1">
               <div className="mb-2 flex items-baseline justify-between">
                 <h2 className="text-[17px] font-semibold">Recent leads</h2>
-                <Link to="/dashboard/leads" className="text-sm font-medium text-slate-500 hover:text-navy-900">
+                <Link to="/admin/leads" className="text-sm font-medium text-slate-500 hover:text-navy-900">
                   All leads
                 </Link>
               </div>
               <ul className="divide-y divide-line">
                 {data.recentLeads.map((l) => (
                   <li key={l._id}>
-                    <Link to={`/dashboard/leads?open=${l._id}`} className="-mx-2 flex items-center gap-3 rounded-[10px] px-2 py-3 hover:bg-mist-100">
+                    <Link to={`/admin/leads?open=${l._id}`} className="-mx-2 flex items-center gap-3 rounded-[10px] px-2 py-3 hover:bg-mist-100">
                       <Avatar user={{ name: l.name }} size={34} />
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-[15px] font-medium">{l.name}</p>

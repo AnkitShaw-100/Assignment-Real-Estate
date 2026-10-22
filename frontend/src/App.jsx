@@ -1,5 +1,5 @@
-import { lazy } from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router';
+import { lazy, Suspense } from 'react';
+import { Navigate, createBrowserRouter, RouterProvider, useLocation } from 'react-router';
 import { SiteLayout } from './routes/SiteLayout';
 import { RequireAuth, RequireRole } from './routes/guards';
 import Home from './pages/site/Home';
@@ -24,6 +24,7 @@ const CustomerDetail = lazy(() => import('./pages/crm/CustomerDetail'));
 const Tasks = lazy(() => import('./pages/crm/Tasks'));
 const PropertiesAdmin = lazy(() => import('./pages/crm/PropertiesAdmin'));
 const Team = lazy(() => import('./pages/crm/Team'));
+const AdminLogin = lazy(() => import('./pages/crm/AdminLogin'));
 
 const router = createBrowserRouter([
   {
@@ -46,8 +47,12 @@ const router = createBrowserRouter([
       { path: '*', element: <NotFound /> },
     ],
   },
+  // CRM sign-in for admins and agents (no sign-up)
+  { path: 'admin/login', element: <Suspense fallback={<div className="min-h-dvh bg-navy-900" />}><AdminLogin /></Suspense> },
+  // Old links: /dashboard/... → /admin/...
+  { path: 'dashboard/*', element: <DashboardRedirect /> },
   {
-    path: 'dashboard',
+    path: 'admin',
     element: <RequireRole roles={['agent', 'admin']} />,
     children: [
       {
@@ -69,6 +74,11 @@ const router = createBrowserRouter([
     ],
   },
 ]);
+
+function DashboardRedirect() {
+  const { pathname, search } = useLocation();
+  return <Navigate to={pathname.replace(/^\/dashboard/, '/admin') + search} replace />;
+}
 
 export function AppRouter() {
   return <RouterProvider router={router} />;

@@ -193,7 +193,7 @@ export function LeadDrawer({ leadId, onClose, listKey }) {
 
           <section className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-6">
             {lead.customer ? (
-              <Button to={`/dashboard/customers/${lead.customer._id}`} variant="secondary" size="sm" icon={UserCheck}>
+              <Button to={`/admin/customers/${lead.customer._id}`} variant="secondary" size="sm" icon={UserCheck}>
                 Open customer profile
               </Button>
             ) : (

@@ -8,6 +8,9 @@ import { Segmented } from '../../components/site/Filters';
 import { Select } from '../../components/ui/Field';
 import { Button } from '../../components/ui/Button';
 import { Avatar, ErrorState, Skeleton } from '../../components/ui/States';
+import { Modal } from '../../components/ui/Overlay';
+import { AddMemberForm } from '../../components/crm/AddMemberForm';
+import { Plus } from '../../components/ui/icons';
 import { formatDate, formatPrice } from '../../lib/format';
 
 const ROLES = [
@@ -23,6 +26,7 @@ export default function Team() {
   const changeRole = useChangeRole();
   const setActive = useSetActive();
   const [show, setShow] = useState('staff');
+  const [adding, setAdding] = useState(false);
 
   const rows = data.filter((u) => (show === 'staff' ? u.role !== 'buyer' : u.role === 'buyer'));
 
@@ -30,9 +34,14 @@ export default function Team() {
     <>
       <PageHeader
         title="Team"
-        description="New sign-ups start as buyers. Promote someone to agent to give them CRM access."
+        description="Add agents here; they sign in at /admin/login. Website sign-ups are buyers."
         actions={
-          <Segmented label="Show" value={show} onChange={setShow} options={[{ value: 'staff', label: 'Staff' }, { value: 'buyers', label: 'Buyers' }]} className="w-56" />
+          <>
+            <Segmented label="Show" value={show} onChange={setShow} options={[{ value: 'staff', label: 'Staff' }, { value: 'buyers', label: 'Buyers' }]} className="w-56" />
+            <Button variant="dark" size="sm" icon={Plus} onClick={() => setAdding(true)}>
+              Add team member
+            </Button>
+          </>
         }
       />
       <Card className="overflow-hidden">
@@ -85,6 +94,9 @@ export default function Team() {
           </ul>
         )}
       </Card>
+      <Modal open={adding} onClose={() => setAdding(false)} title="Add a team member" description="Creates an agent or admin account." width="max-w-xl">
+        <AddMemberForm onDone={() => setAdding(false)} />
+      </Modal>
     </>
   );
 }

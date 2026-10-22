@@ -30,6 +30,8 @@ export const useOverview = () => useQuery({ queryKey: ['dashboard'], queryFn: ()
 // ---------- people ----------
 export const useAgents = () => useQuery({ queryKey: ['agents'], queryFn: () => get('/users/agents').then((r) => r.data), staleTime: 5 * 60_000 });
 export const useTeam = () => useQuery({ queryKey: ['team'], queryFn: () => get('/users').then((r) => r.data) });
+export const useAddMember = (opts) =>
+  useAction((body) => api.post('/users', body), { success: (_r, v) => `${v.name} added to the team`, invalidate: ['team', 'agents'], ...opts });
 export const useChangeRole = () =>
   useAction(({ id, role }) => api.patch(`/users/${id}/role`, { role }), { success: 'Role updated', invalidate: ['team', 'agents'] });
 export const useSetActive = () =>

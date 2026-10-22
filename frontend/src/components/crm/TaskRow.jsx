@@ -14,7 +14,7 @@ export function TaskRow({ task, showAssignee = false, allowDelete = false }) {
   const remove = useDeleteTask();
   const done = task.status === 'done';
   const overdue = !done && new Date(task.dueAt) < new Date(new Date().setHours(0, 0, 0, 0));
-  const related = task.lead ? { to: `/dashboard/leads?open=${task.lead._id}`, name: task.lead.name } : task.customer ? { to: `/dashboard/customers/${task.customer._id}`, name: task.customer.name } : null;
+  const related = task.lead ? { to: `/admin/leads?open=${task.lead._id}`, name: task.lead.name } : task.customer ? { to: `/admin/customers/${task.customer._id}`, name: task.customer.name } : null;
 
   return (
     <li className="group flex items-start gap-3 py-3">

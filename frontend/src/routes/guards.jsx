@@ -45,7 +45,8 @@ export function RequireRole({ roles }) {
   const location = useLocation();
 
   if (!isLoaded) return <PageSkeleton />;
-  if (!isSignedIn) return <Navigate to={`/sign-in?redirect=${encodeURIComponent(location.pathname)}`} replace />;
+  // The CRM has its own staff sign-in page
+  if (!isSignedIn) return <Navigate to={`/admin/login?redirect=${encodeURIComponent(location.pathname + location.search)}`} replace />;
   if (!roles.includes(role)) {
     const adminOnly = roles.length === 1 && roles[0] === 'admin';
     return (
@@ -56,8 +57,8 @@ export function RequireRole({ roles }) {
             <>
               <h1 className="mt-4 font-display text-h2">Only admins can open this page</h1>
               <p className="mt-3 text-slate-500">Team and role settings are managed by admins. Ask one if something here needs changing.</p>
-              <Button to="/dashboard" variant="dark" className="mt-6">
-                Back to the dashboard
+              <Button to="/admin" variant="dark" className="mt-6">
+                Back to the CRM
               </Button>
             </>
           ) : (
